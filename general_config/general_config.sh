@@ -30,7 +30,7 @@ general_config() {
 		# Install new Kernel From Elrepo for compatible with CPU
 		sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
 		sudo yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
-
+  sudo yum --enablerepo=elrepo-kernel install kernel-ml -y
 	}
 	main >>$HOME/Drive/logs/general_config.log 2>&1
 }
