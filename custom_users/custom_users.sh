@@ -71,7 +71,7 @@ accessibility() {
 gnome_extensions() {
 	cd $HOME/Drive
 	declare -a extensions
-	extensions=('1460' '3628' '1160' '4679' '3733' '5219' '120')	# '704' '2087' '1082' 
+	extensions=('1460' '1160' '4679' '3733' '5219' '120')	# '704' '2087' '1082' '3628'
 	for i in "${extensions[@]}"; do
 		echo $(./install-gnome-extensions.sh -e -o -u $i)
 	done
