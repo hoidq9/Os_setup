@@ -15,7 +15,7 @@ general_config() {
 	epel_check >>$HOME/Drive/logs/general_config.log 2>&1
 
 	main() {
-		sudo dnf install gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb gparted ibus-m17n -y # podman-compose cockpit-podman cockpit-machines podman dconf-editor 
+		sudo dnf install gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb gparted ibus-m17n jq -y # podman-compose cockpit-podman cockpit-machines podman dconf-editor 
 		sudo chsh -s /bin/zsh $USER
 		if [ ! -d "$HOME/Drive" ]; then
 			mkdir $HOME/Drive
@@ -24,7 +24,7 @@ general_config() {
 			sudo sh -c 'echo -e "directive clean_requirements_on_remove=1" >> /etc/dnf/dnf.conf'
 		fi
 		sudo systemctl set-default graphical.target
-		sudo dnf autoremove cockpit -y
+		# sudo dnf autoremove cockpit -y
 		# sudo systemctl enable --now cockpit.socket
 
 		# Install new Kernel From Elrepo for compatible with CPU
