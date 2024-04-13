@@ -85,9 +85,9 @@ keybinding() {
 	# gsettings set $KEY1_PATH:$KEY_PATH/custom0/ command "microsoft-edge-stable"
 	# gsettings set $KEY1_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>E"
 	# Launch Terminal
-	gsettings set $KEY1_PATH:$KEY_PATH/custom1/ name "GNOME Terminal"
-	gsettings set $KEY1_PATH:$KEY_PATH/custom1/ command "gnome-terminal"
-	gsettings set $KEY1_PATH:$KEY_PATH/custom1/ binding "<Primary><Alt>T"
+	gsettings set $KEY1_PATH:$KEY_PATH/custom0/ name "GNOME Terminal"
+	gsettings set $KEY1_PATH:$KEY_PATH/custom0/ command "gnome-terminal"
+	gsettings set $KEY1_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 	# Switch Input Method
 	# gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Alt>Z', 'XF86Keyboard']"
 }
