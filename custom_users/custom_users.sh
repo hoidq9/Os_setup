@@ -45,7 +45,7 @@ terminal() {
 
 accessibility() {
 	interface_settings=(
-		# "text-scaling-factor 1.25"
+		"text-scaling-factor 1.25"
 		"gtk-theme 'redhat-alt'"
 		"icon-theme 'rhel'"
 		"cursor-theme 'WhiteSur-cursors'"
@@ -57,8 +57,6 @@ accessibility() {
 	for setting in "${interface_settings[@]}"; do
 		gsettings set org.gnome.desktop.interface $setting
 	done
-	gsettings set org.gnome.login-screen banner-message-enable true
-	gsettings set org.gnome.login-screen banner-message-text 'LEADER'
 	gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 	gsettings set org.gnome.desktop.session idle-delay 1800
 	gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
