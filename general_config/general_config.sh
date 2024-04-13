@@ -7,7 +7,7 @@ general_config() {
 
 	epel_check() {
 		if ! rpm -q epel-release; then
-			sudo subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
+			# sudo subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
 			# Extra Packages for Enterprise Linux 9 (EPEL)
 			sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
 		fi
@@ -28,7 +28,7 @@ general_config() {
 		# sudo systemctl enable --now cockpit.socket
 
 		# Install new Kernel From Elrepo for compatible with CPU
-		sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+		# sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
 		sudo yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
   sudo yum --enablerepo=elrepo-kernel install kernel-ml -y
 	}
