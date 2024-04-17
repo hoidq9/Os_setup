@@ -22,7 +22,7 @@ function_info = {
     "general_config": ("general_config/general_config.sh", True),
     "microsoft_softwares": ("microsoft_softwares/microsoft_softwares.sh", True),
     "custom_cmd": ("custom_cmd/custom_cmd.sh", True),
-    "bootloader": ("bootloader/bootloader.sh", True),
+    "bootloader_grub": ("bootloader_grub/bootloader_grub.sh", True),
     "themes": ("themes/themes.sh", True),
     "icons": ("icons/icons.sh", True),
     "cursors": ("cursors/cursors.sh", True),

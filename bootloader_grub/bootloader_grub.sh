@@ -2,14 +2,14 @@
 # GRUB Configuration
 source variables.sh
 
-bootloader() {
+bootloader_grub() {
 	if [ ! -d /boot/grub2/themes ]; then
 		sudo mkdir -p /boot/grub2/themes
 	fi
 	cd $REPO_DIR/..
-	sudo cp -r bootloader /boot/grub2/themes
-	if ! grep -q "/boot/grub2/themes/bootloader/theme.txt" /etc/default/grub; then
-		sudo sh -c 'echo "GRUB_THEME=\"/boot/grub2/themes/bootloader/theme.txt\"" >> /etc/default/grub'
+	sudo cp -r bootloader_grub /boot/grub2/themes
+	if ! grep -q "/boot/grub2/themes/bootloader_grub/theme.txt" /etc/default/grub; then
+		sudo sh -c 'echo "GRUB_THEME=\"/boot/grub2/themes/bootloader_grub/theme.txt\"" >> /etc/default/grub'
 	fi
 	# Set timeout to 20 seconds
 	sudo sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/' /etc/default/grub
@@ -23,4 +23,4 @@ bootloader() {
 	sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 }
 
-bootloader &>$HOME/Drive/logs/bootloader.log
+bootloader_grub &>$HOME/Drive/logs/bootloader_grub.log
