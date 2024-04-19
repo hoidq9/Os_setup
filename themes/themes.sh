@@ -14,8 +14,7 @@ themes() {
 	sudo ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i standard -b default
 	cd $REPO_DIR
 	sudo cp intel-processor.jpg intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
-	gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Lenovo_Legion_Wallpaper.png'
-	sudo ./change-gdm-background /usr/share/backgrounds/intel-core-i9.jpg 
+	gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Lenovo_Legion_Wallpaper.png' 
 }
 
 themes &>$HOME/Drive/logs/themes.log
