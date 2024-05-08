@@ -1,0 +1,13 @@
+#!/bin/bash
+REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+mkdir -p $HOME/Drive/logs
+
+cd $REPO_DIR
+sudo sh super_user $USER
+
+# cd $HOME/Drive
+# git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git
+# cd WhiteSur-gtk-theme
+
+# gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/Lenovo_Legion_Wallpaper.png'
+# gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml

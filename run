@@ -1,0 +1,79 @@
+REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+#!/bin/bash
+
+# Tính tổng số bước trong hàm general_config
+total_steps=9  # Số lượng bước trong hàm general_config
+current_step=0  # Số lượng bước đã hoàn thành
+
+# Hàm hiển thị tiến trình cho hàm general_config
+show_progress() {
+    local duration=$1
+    local interval=1
+    local progress=0
+
+    # In tiêu đề hàm
+    echo "Đang chạy hàm general_config"
+
+    # Hiển thị thanh tiến trình cho mỗi bước trong hàm
+    while [ $progress -le $duration ]; do
+        local current_progress=$((current_step * 100 / total_steps))
+        echo -ne "[$(printf "%-${duration}s" "" | tr ' ' '=')] $(($current_progress + $progress * 100 / $duration))% \r"
+        sleep $interval
+        ((progress+=$interval))
+    done
+
+    # Cập nhật số lượng bước đã hoàn thành
+    ((current_step++))
+}
+
+# Hàm cài đặt general_config
+general_config() {
+    cd "$REPO_DIR/general_config" || return
+
+    # Bước 1: Copy và cấp quyền cho rmkernel
+    cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
+    show_progress 10
+    ((current_step++))
+
+    # Bước 2: Đổi định dạng các file
+    find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
+    show_progress 20
+    ((current_step++))
+
+    # Bước 3: Cài đặt epel-release nếu chưa có
+    rpm -q epel-release || dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
+    show_progress 30
+    ((current_step++))
+
+    # Bước 4: Cài đặt các gói phần mềm
+    dnf install gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+    show_progress 40
+    ((current_step++))
+
+    # Bước 5: Đổi shell mặc định sang Zsh
+    chsh -s /bin/zsh $1
+    show_progress 50
+    ((current_step++))
+
+    # Bước 6: Cập nhật cài đặt dnf
+    grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
+    show_progress 60
+    ((current_step++))
+
+    # Bước 7: Đặt mặc định là graphical.target
+    systemctl set-default graphical.target
+    show_progress 70
+    ((current_step++))
+
+    # Bước 8: Cài đặt kernel mới từ elrepo
+    yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
+    yum --enablerepo=elrepo-kernel install kernel-ml -y
+    show_progress 80
+    ((current_step++))
+
+    # Bước 9: Hoàn thành
+    echo "Hàm general_config: Hoàn thành."
+}
+
+# Gọi hàm cài đặt general_config
+general_config

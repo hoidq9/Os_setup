@@ -1,0 +1,82 @@
+#!/bin/bash
+REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+
+wifi_install() {
+    cd "$REPO_DIR/wifi_install" || return
+    if nmcli device status | grep -q "wifi"; then
+        wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
+        for rpm in "${wifi_rpms[@]}"; do
+            wifi_file=$(ls $rpm 2>/dev/null | head -n 1)
+            if [ -n "$wifi_file" ]; then
+                rpm -ivh $wifi_file
+            else
+                echo "No wifi rpm found"
+                break
+            fi
+        done
+        systemctl restart NetworkManager
+        sleep 30
+        dnf reinstall iw wireless-regdb wpa_supplicant NetworkManager-wifi -y
+    fi
+    dnf upgrade -y
+    dnf install zsh git -y
+}
+
+general_config() {
+    cd "$REPO_DIR/general_config" || return
+    cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
+    find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
+    rpm -q epel-release || dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
+    dnf install gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+    chsh -s /bin/zsh $1
+    grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
+    systemctl set-default graphical.target
+    yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
+    yum --enablerepo=elrepo-kernel install kernel-ml -y
+}
+
+microsoft_softwares() {
+    cd "$REPO_DIR/microsoft_softwares" || return
+    cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+    dnf install microsoft-edge-stable code -y
+}
+
+bootloader_grub() {
+    cd "$REPO_DIR" || return
+    [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
+    cp -r bootloader_grub /boot/grub2/themes
+    cp "$REPO_DIR/bootloader_grub/30_uefi-firmware" /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+    sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
+    grep -q "/boot/grub2/themes/bootloader_grub/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader_grub/theme.txt\"" >>/etc/default/grub
+    grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
+    grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
+}
+
+themes() {
+    cd "$REPO_DIR/themes" || return
+    rm -rf /usr/share/themes/redhat-alt
+    chmod -R 777 src/main/gnome-shell/gnome-shell-theme.gresource.xml
+    ./install.sh -n 'rhel' -o normal -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right -i standard
+    ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i standard -b default
+    cp intel-processor.jpg intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
+}
+
+# wifi_install &>/home/"$1"/Drive/logs/wifi_install.log
+# general_config "$1" &>/home/"$1"/Drive/logs/general_config.log
+# microsoft_softwares &>/home/"$1"/Drive/logs/microsoft_softwares.log
+# bootloader_grub &>/home/"$1"/Drive/logs/bootloader_grub.log
+# themes &>/home/"$1"/Drive/logs/themes.log
+
+#!/bin/bash
+
+function run_with_logging {
+    echo "Tên hàm: $1 - Start"
+    "$@" &>"/home/$USER/Drive/logs/$1.log"
+    echo "Tên hàm: $1 - Finish"
+}
+
+run_with_logging wifi_install
+run_with_logging general_config "$1"
+run_with_logging microsoft_softwares
+run_with_logging bootloader_grub
+run_with_logging themes
