@@ -37,6 +37,7 @@ warp() {
 custom_softwares() {
 	gcm
 	# shfmt
+	warp
 }
 
 custom_softwares &>$HOME/Drive/logs/custom_softwares.log
