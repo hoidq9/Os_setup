@@ -30,6 +30,10 @@ shfmt() {
 	sudo chmod +x /usr/bin/shfmt
 }
 
+warp() {
+	curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
+	sudo dnf install cloudflare-warp -y
+}
 custom_softwares() {
 	gcm
 	# shfmt
