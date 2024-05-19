@@ -69,14 +69,14 @@ accessibility() {
 gnome_extensions() {
 	cd $HOME/Drive
 	declare -a extensions
-	extensions=('704' '3628' '4679' '1082' '3088' '1486' '3843' '120' '3733' '5219' '1460' '4670') # '704' '2087' '1160'
+	extensions=('3628' '4679' '1082' '3088' '1486' '3843' '120' '3733' '5219' '1460' '4670' '307') # '704' '2087' '1160' '704'
 	for i in "${extensions[@]}"; do
 		echo $(./install-gnome-extensions.sh -e -o -u $i)
 	done
 
 	# Config extensions All Windows
-	sed -i 's/this\.actor\.hide();/\/\/ this.actor.hide();/g' $HOME/.local/share/gnome-shell/extensions/all-windows@ezix.org/extension.js
-	sed -i 's/Main.panel.addToStatusArea('\''window-list'\'', _windowlist, -1);/Main.panel.addToStatusArea('\''window-list'\'', _windowlist, 0, '\''right'\'');/g' $HOME/.local/share/gnome-shell/extensions/all-windows@ezix.org/extension.js
+	# sed -i 's/this\.actor\.hide();/\/\/ this.actor.hide();/g' $HOME/.local/share/gnome-shell/extensions/all-windows@ezix.org/extension.js
+	# sed -i 's/Main.panel.addToStatusArea('\''window-list'\'', _windowlist, -1);/Main.panel.addToStatusArea('\''window-list'\'', _windowlist, 0, '\''right'\'');/g' $HOME/.local/share/gnome-shell/extensions/all-windows@ezix.org/extension.js
 
 	# Config extensions CPU konkor
 	sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
@@ -91,7 +91,7 @@ gnome_extensions() {
 	sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/extension.js
 
 	# Config extensions Top Hat
-	sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 50;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
+	sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 1000;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
 
 }
 

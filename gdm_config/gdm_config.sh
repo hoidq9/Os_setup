@@ -27,7 +27,7 @@ gdm_config() {
 	# 	sudo sed -i "s/$user_custom/$user_local/g" /etc/gdm/custom.conf
 	# fi
 	cd $REPO_DIR
-	sudo ./change-gdm-background /usr/share/backgrounds/rhel9-dark.jpg
+	# sudo ./change-gdm-background /usr/share/backgrounds/rhel9-dark.jpg
 }
 
 gdm_config &>$HOME/Drive/logs/gdm_config.log
