@@ -17,17 +17,16 @@ completed_functions_file = os.path.join(folder_path, "completed_functions.txt")
 
 
 function_info = {
-    "wifi_install": ("wifi_install/wifi_install.sh", True),
+    "wifi": ("wifi/wifi.sh", True),
     # "create_users": ("create_users/create_users.sh", False),
-    "general_config": ("general_config/general_config.sh", True),
-    "microsoft_softwares": ("microsoft_softwares/microsoft_softwares.sh", True),
-    "bootloader_grub": ("bootloader_grub/bootloader_grub.sh", True),
+    "system": ("system/system.sh", True),
+    "softwares": ("softwares/softwares.sh", True),
+    "bootloader": ("bootloader/bootloader.sh", True),
     "themes": ("themes/themes.sh", True),
     "icons": ("icons/icons.sh", True),
     "cursors": ("cursors/cursors.sh", True),
     "fonts": ("fonts/fonts.sh", True),
-    "custom_softwares": ("custom_softwares/custom_softwares.sh", True),
-    "gdm_config": ("gdm_config/gdm_config.sh", True),
+    "gdms": ("gdms/gdms.sh", True),
     "custom_users": ("custom_users/custom_users.sh", True),
     "clean_data": ("clean_data/clean_data.sh", True),
 }

@@ -1,8 +1,10 @@
 #!/bin/bash
 REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+user_current=$(logname)
+mkdir -p $REPO_DIR/logs $REPO_DIR/data_prepared
 
-wifi_install() {
-    cd "$REPO_DIR/wifi_install" || return
+wifi() {
+    cd "$REPO_DIR/wifi" || return
     if nmcli device status | grep -q "wifi"; then
         wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
         for rpm in "${wifi_rpms[@]}"; do
@@ -18,65 +20,171 @@ wifi_install() {
         sleep 30
         dnf reinstall iw wireless-regdb wpa_supplicant NetworkManager-wifi -y
     fi
-    dnf upgrade -y
-    dnf install zsh git -y
 }
 
-general_config() {
-    cd "$REPO_DIR/general_config" || return
-    cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
-    find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
-    rpm -q epel-release || dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
-    dnf install gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
-    chsh -s /bin/zsh $1
+system() {
+    commands() {
+        cd "$REPO_DIR/system" || return
+        cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
+    }
+    epel() {
+        if ! rpm -q epel-release; then
+            dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
+        fi
+    }
+    gnome() {
+        dnf upgrade -y
+        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+    }
+    kernel() {
+        yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
+        yum --enablerepo=elrepo-kernel install kernel-ml -y
+    }
+    shell() {
+        chsh -s /bin/zsh $user_current
+    }
+    run() {
+        commands
+        epel
+        gnome
+        kernel
+        shell
+        systemctl set-default graphical.target
+    }
     grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
-    systemctl set-default graphical.target
-    yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
-    yum --enablerepo=elrepo-kernel install kernel-ml -y
+    find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
+    run >>$REPO_DIR/logs/system.log 2>&1
 }
 
-microsoft_softwares() {
-    cd "$REPO_DIR/microsoft_softwares" || return
-    cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
-    dnf install microsoft-edge-stable code -y
+prepared() {
+    cd $REPO_DIR/data_prepared
+    # themes
+    git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git
+    # icons
+    git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git
+    # cursors
+    git clone https://github.com/vinceliuice/WhiteSur-cursors.git
+    # fonts
+    wget $(curl -s https://api.github.com/repos/tonsky/FiraCode/releases/latest | grep browser_download_url | cut -d '"' -f 4) -O fira-code.zip
+    unzip fira-code.zip -d fira-code
 }
 
-bootloader_grub() {
+softwares() {
+    microsoft() {
+        cd "$REPO_DIR/softwares" || return
+        cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+        dnf install microsoft-edge-stable code -y
+    }
+    gcm() {
+        cd $REPO_DIR/data_prepared/
+        curl -s https://api.github.com/repos/git-ecosystem/git-credential-manager/releases/latest | grep "browser_download_url" | grep -v "symbol" | grep "linux" | grep "tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        gcm_file=$(ls gcm*.tar.gz)
+        tar -xvf $gcm_file -C /usr/local/bin
+    }
+    warp() {
+        curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
+        dnf install cloudflare-warp -y
+    }
+    microsoft
+    gcm
+    warp
+}
+
+bootloader() {
     cd "$REPO_DIR" || return
     [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
-    cp -r bootloader_grub /boot/grub2/themes
-    cp "$REPO_DIR/bootloader_grub/30_uefi-firmware" /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+    cp -r bootloader /boot/grub2/themes
+    cp "$REPO_DIR/bootloader/30_uefi-firmware" /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
-    grep -q "/boot/grub2/themes/bootloader_grub/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader_grub/theme.txt\"" >>/etc/default/grub
+    grep -q "/boot/grub2/themes/bootloader/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader/theme.txt\"" >>/etc/default/grub
     grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
     grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 }
 
 themes() {
-    cd "$REPO_DIR/themes" || return
-    rm -rf /usr/share/themes/redhat-alt
+    cd $REPO_DIR/data_prepared/WhiteSur-gtk-theme
+    for target in background-default.png background-darken.png; do
+        cp $REPO_DIR/themes/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
+    done
+    rm -rf /usr/share/themes/red_hat_linux_themes
+    gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
     chmod -R 777 src/main/gnome-shell/gnome-shell-theme.gresource.xml
-    ./install.sh -n 'rhel' -o normal -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right -i standard
-    ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i standard -b default
-    cp intel-processor.jpg intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
+    ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
+    ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i gnome -b default
+    cd $REPO_DIR/themes
+    cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
+    cd /usr/share/themes
+    rhel_important=$(ls -d /usr/share/themes/rhel*alt)
+    mv $rhel_important /usr/share/themes/red_hat_linux_themes
+    rm -rf rhel*
+    cd red_hat_linux_themes
+    rm -rf cinnamon plank gnome-shell
 }
 
-# wifi_install &>/home/"$1"/Drive/logs/wifi_install.log
-# general_config "$1" &>/home/"$1"/Drive/logs/general_config.log
-# microsoft_softwares &>/home/"$1"/Drive/logs/microsoft_softwares.log
-# bootloader_grub &>/home/"$1"/Drive/logs/bootloader_grub.log
-# themes &>/home/"$1"/Drive/logs/themes.log
-
-#!/bin/bash
-
-function run_with_logging {
-    echo "Tên hàm: $1 - Start"
-    "$@" &>"/home/$USER/Drive/logs/$1.log"
-    echo "Tên hàm: $1 - Finish"
+icons() {
+    cd $REPO_DIR/data_prepared/WhiteSur-icon-theme
+    ./install.sh -n 'rhel' -t default -a -b
+    cd /usr/share/icons
+    rm -rf rhel-dark rhel-light
 }
 
-run_with_logging wifi_install
-run_with_logging general_config "$1"
-run_with_logging microsoft_softwares
-run_with_logging bootloader_grub
-run_with_logging themes
+cursors() {
+    cd $REPO_DIR/data_prepared/WhiteSur-cursors
+    ./install.sh
+}
+
+fonts() {
+    cd $REPO_DIR/data_prepared/fira-code
+    mkdir -p /usr/share/fonts/fira-code-fonts
+    cp ttf/FiraCode-SemiBold.ttf /usr/share/fonts/fira-code-fonts
+    fc-cache -f -v
+    dnf group install "Fonts" -y
+}
+
+gdms() {
+    settings=(
+        "org.gnome.desktop.interface text-scaling-factor 1.25"
+        "org.gnome.desktop.interface gtk-theme 'redhat-alt'"
+        "org.gnome.desktop.interface icon-theme 'rhel'"
+        "org.gnome.desktop.interface cursor-theme 'WhiteSur-cursors'"
+        "org.gnome.desktop.interface clock-show-date true"
+        "org.gnome.desktop.interface show-battery-percentage true"
+        "org.gnome.desktop.interface clock-show-seconds true"
+        "org.gnome.desktop.interface clock-show-weekday true"
+        "org.gnome.settings-daemon.plugins.power power-button-action 'action'"
+        "org.gnome.desktop.peripherals.touchpad tap-to-click true"
+        "org.gnome.login-screen disable-user-list true"
+        "org.gnome.settings-daemon.plugins.color night-light-enabled true"
+        "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
+        "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
+        "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
+        "org.gnome.login-screen banner-message-enable true"
+        "org.gnome.login-screen banner-message-text 'LEADER'"
+    )
+    for setting in "${settings[@]}"; do
+        sudo -u gdm dbus-launch gsettings set $setting
+    done
+    sudo cp $REPO_DIR/gdms/custom.conf /etc/gdm
+}
+
+# users() {
+
+# }
+
+progress() {
+    echo "Task 1: Start"
+
+    echo -e "\033[A\033[KTask 1: Done"
+    echo "Task 2: Start"
+
+    echo -e "\033[A\033[KTask 2: Done"
+
+}
+# wifi &>/home/"$1"/Drive/logs/wifi.log
+system "$1" &>$REPO_DIR/logs/system.log
+# softwares &>/home/"$1"/Drive/logs/softwares.log
+# bootloader &>/home/"$1"/Drive/logs/bootloader.log
+themes &>$REPO_DIR/logs/themes.log
+fonts &>$REPO_DIR/logs/fonts.log
+
+echo $REPO_DIR
