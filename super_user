@@ -92,17 +92,17 @@ softwares() {
         gcm_install() {
             curl -s https://api.github.com/repos/git-ecosystem/git-credential-manager/releases/latest | grep "browser_download_url" | grep -v "symbol" | grep "linux" | grep "tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
             gcm_file=$(ls gcm*.tar.gz)
-            tar -xvf $gcm_file -C /usr/bin
-            git-credential-manager configure
+            tar -xvf $gcm_file -C /usr/local/bin
+            sudo -u "$user_current" /usr/local/bin/git-credential-manager configure
         }
         if [ command -v git-credential-manager ] &>/dev/null; then
-            git-credential-manager unconfigure
+            sudo -u "$user_current" /usr/local/bin/git-credential-manager unconfigure
             sudo rm -rf $(command -v git-credential-manager)
             gcm_install
         else
             gcm_install
         fi
-        git config --global credential.credentialStore secretservice
+        sudo -u "$user_current" git config --global credential.credentialStore secretservice
     }
     warp() {
         curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
@@ -217,10 +217,32 @@ terminal() {
     done
 }
 
+accessibility() {
+    interface_settings=(
+        "text-scaling-factor 1.25"
+        "gtk-theme 'redhat-alt'"
+        "icon-theme 'rhel'"
+        "cursor-theme 'WhiteSur-cursors'"
+        "clock-show-date true"
+        "show-battery-percentage true"
+        "clock-show-seconds true"
+        "clock-show-weekday true"
+    )
+    for setting in "${interface_settings[@]}"; do
+        sudo -u "$user_current" gsettings set org.gnome.desktop.interface $setting
+    done
+    sudo -u "$user_current" bash -c 'gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true'
+    sudo -u "$user_current" gsettings set org.gnome.desktop.session idle-delay 1800
+    sudo -u "$user_current" gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+    sudo -u "$user_current" gsettings set org.gnome.desktop.input-sources show-all-sources true
+    sudo -u "$user_current" gsettings set org.gnome.desktop.input-sources sources "[('ibus', 'm17n:vi:telex'), ('xkb', 'us')]"
+    sudo -u "$user_current" gsettings set org.gnome.desktop.interface locate-pointer true
+    sudo -u "$user_current" gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
+}
+
 check_and_run() {
     local task_name="$1"
     local log_file="$REPO_DIR/logs/$task_name.log"
-
     if grep -q "Task completed" "$log_file" 2>/dev/null; then
         echo "$task_name already completed, skipping."
         echo -ne ""
@@ -236,10 +258,7 @@ check_and_run() {
     fi
 }
 
-# Danh sách các hàm cần chạy
-tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "fonts")
-
-# Chạy từng hàm và kiểm tra trạng thái
+tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "fonts" "gdms" "terminal" "accessibility")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
