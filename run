@@ -1,5 +1,6 @@
 #!/bin/bash
 REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+mkdir -p $REPO_DIR/logs $REPO_DIR/data_prepared
 
 
 
@@ -12,5 +13,3 @@ cd $REPO_DIR
 sudo sh super_user $USER
 
 
-git-credential-manager configure
-git config --global credential.credentialStore secretservice
