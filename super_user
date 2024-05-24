@@ -1,27 +1,31 @@
 #!/bin/bash
-REPO_DIR="$(dirname "$(readlink -m "${0}")")"
-user_current=$(logname)
-mkdir -p $REPO_DIR/logs $REPO_DIR/data_prepared
-YELLOW='\033[1;33m'
-GREEN='\033[1;32m'
-NC='\033[0m' # Không màu
+source $(pwd)/variables
 
 wifi() {
     cd "$REPO_DIR/wifi" || return
-    if nmcli device status | grep -q "wifi"; then
-        wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
+    if rpm -q NetworkManager-wifi; then
+        dnf upgrade -y
+        rm -rf *
+        wifi_rpms=("iw" "wireless-regdb" "wpa_supplicant" "NetworkManager-wifi")
         for rpm in "${wifi_rpms[@]}"; do
-            wifi_file=$(ls $rpm 2>/dev/null | head -n 1)
-            if [ -n "$wifi_file" ]; then
-                rpm -ivh $wifi_file
-            else
-                echo "No wifi rpm found"
-                break
-            fi
+            sudo dnf download --downloadonly $rpm
         done
-        systemctl restart NetworkManager
-        sleep 30
-        dnf reinstall iw wireless-regdb wpa_supplicant NetworkManager-wifi -y
+    else
+        if nmcli device status | grep -q "wifi"; then
+            wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
+            for rpm in "${wifi_rpms[@]}"; do
+                wifi_file=$(ls $rpm 2>/dev/null | head -n 1)
+                if [ -n "$wifi_file" ]; then
+                    rpm -ivh $wifi_file
+                else
+                    echo "No wifi rpm found"
+                    break
+                fi
+            done
+            systemctl restart NetworkManager
+            sleep 30
+            dnf reinstall iw wireless-regdb wpa_supplicant NetworkManager-wifi -y
+        fi
     fi
 }
 
@@ -29,15 +33,25 @@ system() {
     commands() {
         cd "$REPO_DIR/system" || return
         cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
+        sudo rmkernel
     }
     epel() {
         if ! rpm -q epel-release; then
-            dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
+            cat <<EOM >/etc/yum.repos.d/epel-bootstrap.repo
+                [epel]
+                name=Bootstrap EPEL
+                mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-\$releasever&arch=\$basearch
+                failovermethod=priority
+                enabled=1
+                gpgcheck=0
+EOM
+            yum install epel-release -y
+            rm -rf /etc/yum.repos.d/epel-bootstrap.repo
         fi
     }
     gnome() {
         dnf upgrade -y
-        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
     }
     kernel() {
         yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
@@ -47,9 +61,9 @@ system() {
         chsh -s /bin/zsh $user_current
     }
     run() {
-        commands
-        epel
         gnome
+        epel
+        commands
         kernel
         shell
         systemctl set-default graphical.target
@@ -68,17 +82,17 @@ prepared() {
         "https://github.com/dracula/gnome-terminal"
     )
     for repo in "${repos[@]}"; do
-        sudo -u "$user_current" git clone "$repo"
+        git clone "$repo"
     done
     # Download và giải nén fonts
     font_url=$(curl -s https://api.github.com/repos/tonsky/FiraCode/releases/latest | grep browser_download_url | cut -d '"' -f 4)
-    sudo -u "$user_current" wget -q "$font_url" -O fira-code.zip
-    sudo -u "$user_current" unzip -q fira-code.zip -d fira-code
+    wget -q "$font_url" -O fira-code.zip
+    unzip -q fira-code.zip -d fira-code
     # Download oh-my-zsh install script
-    sudo -u "$user_current" wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     # Download gnome extensions install script
-    sudo -u "$user_current" wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
-    sudo -u "$user_current" chmod +x install-gnome-extensions.sh
+    wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
+    chmod -R 777 $REPO_DIR/data_prepared
 }
 
 softwares() {
@@ -93,16 +107,16 @@ softwares() {
             curl -s https://api.github.com/repos/git-ecosystem/git-credential-manager/releases/latest | grep "browser_download_url" | grep -v "symbol" | grep "linux" | grep "tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
             gcm_file=$(ls gcm*.tar.gz)
             tar -xvf $gcm_file -C /usr/local/bin
-            sudo -u "$user_current" /usr/local/bin/git-credential-manager configure
+            /usr/local/bin/git-credential-manager configure
         }
         if [ command -v git-credential-manager ] &>/dev/null; then
-            sudo -u "$user_current" /usr/local/bin/git-credential-manager unconfigure
-            sudo rm -rf $(command -v git-credential-manager)
+            /usr/local/bin/git-credential-manager unconfigure
+            rm -rf $(command -v git-credential-manager)
             gcm_install
         else
             gcm_install
         fi
-        sudo -u "$user_current" git config --global credential.credentialStore secretservice
+        git config --global credential.credentialStore secretservice
     }
     warp() {
         curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
@@ -131,7 +145,6 @@ themes() {
     done
     rm -rf /usr/share/themes/red_hat_linux_themes
     gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
-    chmod -R 777 src/main/gnome-shell/gnome-shell-theme.gresource.xml
     ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
     ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i gnome -b default
     cd $REPO_DIR/themes
@@ -142,6 +155,7 @@ themes() {
     rm -rf rhel*
     cd red_hat_linux_themes
     rm -rf cinnamon plank gnome-shell
+    dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
 }
 
 icons() {
@@ -190,77 +204,14 @@ gdms() {
     cp $REPO_DIR/gdms/custom.conf /etc/gdm
 }
 
-terminal() {
-    cd "$REPO_DIR/data_prepared/gnome-terminal" || exit
-    id=$(sudo -u "$user_current" gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
-    profile_path="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/"
-    keybindings_path="org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
-    keybindings=(
-        "copy '<Ctrl>C'" "new-tab '<Ctrl>T'" "new-window '<Ctrl>N'" "save-contents '<Ctrl>S'"
-        "close-tab '<Ctrl>W'" "close-window '<Ctrl>Q'" "copy-html '<Ctrl>X'" "paste '<Ctrl>V'"
-        "select-all '<Ctrl>A'" "preferences '<Ctrl>P'" "find '<Ctrl>F'" "find-next '<Ctrl>G'"
-        "find-previous '<Ctrl>H'" "find-clear '<Ctrl>J'"
-    )
-    profile=(
-        "visible-name '$user_current'" "cursor-shape 'ibeam'"
-    )
-    for binding in "${keybindings[@]}"; do
-        sudo -u "$user_current" gsettings set $keybindings_path $binding
-    done
-    for setting in "${profile[@]}"; do
-        sudo -u "$user_current" gsettings set $profile_path $setting
-    done
-    sudo -u "$user_current" gsettings set org.gnome.desktop.interface enable-hot-corners false
-    sudo -u "$user_current" ./install.sh -s Dracula -p "$user_current" --skip-dircolors
-    for file in .zshrc .spaceshiprc.zsh; do
-        sudo -u "$user_current" cp "$REPO_DIR/create_users/$file" "/home/$user_current/$file"
-    done
+remove_packages() {
+    dnf autoremove sassc glib2-devel ImageMagick dialog ostree libappstream-glib inkscape optipng -y
+    dnf install PackageKit-command-not-found -y
 }
 
-accessibility() {
-    interface_settings=(
-        "text-scaling-factor 1.25"
-        "gtk-theme 'redhat-alt'"
-        "icon-theme 'rhel'"
-        "cursor-theme 'WhiteSur-cursors'"
-        "clock-show-date true"
-        "show-battery-percentage true"
-        "clock-show-seconds true"
-        "clock-show-weekday true"
-    )
-    for setting in "${interface_settings[@]}"; do
-        sudo -u "$user_current" gsettings set org.gnome.desktop.interface $setting
-    done
-    sudo -u "$user_current" bash -c 'gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true'
-    sudo -u "$user_current" gsettings set org.gnome.desktop.session idle-delay 1800
-    sudo -u "$user_current" gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-    sudo -u "$user_current" gsettings set org.gnome.desktop.input-sources show-all-sources true
-    sudo -u "$user_current" gsettings set org.gnome.desktop.input-sources sources "[('ibus', 'm17n:vi:telex'), ('xkb', 'us')]"
-    sudo -u "$user_current" gsettings set org.gnome.desktop.interface locate-pointer true
-    sudo -u "$user_current" gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
-}
-
-check_and_run() {
-    local task_name="$1"
-    local log_file="$REPO_DIR/logs/$task_name.log"
-    if grep -q "Task completed" "$log_file" 2>/dev/null; then
-        echo "$task_name already completed, skipping."
-        echo -ne ""
-    else
-        echo -e "${YELLOW}Task $task_name: Start${NC}"
-        if $task_name &>"$log_file"; then
-            echo -e "\033[A\033[K${GREEN}Task $task_name: Done${NC}"
-            echo "Task completed" >>"$log_file"
-        else
-            echo "Task $task_name encountered an error. Check $log_file for details."
-            exit 1
-        fi
-    fi
-}
-
-tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "fonts" "gdms" "terminal" "accessibility")
+tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
 
-echo "All tasks completed successfully."
+chmod -R 777 $REPO_DIR
