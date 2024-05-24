@@ -104,7 +104,11 @@ softwares() {
     gcm() {
         cd $REPO_DIR/data_prepared/
         gcm_install() {
-            curl -s https://api.github.com/repos/git-ecosystem/git-credential-manager/releases/latest | grep "browser_download_url" | grep -v "symbol" | grep "linux" | grep "tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
+            curl -s https://api.github.com/repos/ldennington/git-credential-manager/releases/latest |
+                grep -E 'browser_download_url.*gcm-linux.*[0-9].[0-9].[0-9].tar.gz' |
+                cut -d : -f 2,3 |
+                tr -d \" |
+                xargs -I 'url' curl -LO 'url'
             gcm_file=$(ls gcm*.tar.gz)
             tar -xvf $gcm_file -C /usr/local/bin
             /usr/local/bin/git-credential-manager configure
@@ -146,7 +150,7 @@ themes() {
     rm -rf /usr/share/themes/red_hat_linux_themes
     gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
     ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
-    ./tweaks.sh -g default -o normal -c Dark -t default -p 60 -P smaller -n -i gnome -b default
+    ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
     cd $REPO_DIR/themes
     cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
     cd /usr/share/themes
@@ -155,7 +159,6 @@ themes() {
     rm -rf rhel*
     cd red_hat_linux_themes
     rm -rf cinnamon plank gnome-shell
-    dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
 }
 
 icons() {
@@ -205,7 +208,7 @@ gdms() {
 }
 
 remove_packages() {
-    dnf autoremove sassc glib2-devel ImageMagick dialog ostree libappstream-glib inkscape optipng -y
+    dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
     dnf install PackageKit-command-not-found -y
 }
 
@@ -215,3 +218,4 @@ for task in "${tasks[@]}"; do
 done
 
 chmod -R 777 $REPO_DIR
+chown -R $user_current:$user_current $REPO_DIR

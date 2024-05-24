@@ -4,5 +4,4 @@ mkdir -p "$REPO_DIR"/{data_prepared,logs} $HOME/Prj
 cd $REPO_DIR
 sudo sh super_user
 sh normal_user
-cp -r $REPO_DIR $HOME/Prj
 rm -rf $REPO_DIR/{data_prepared,logs}
