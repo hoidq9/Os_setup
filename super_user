@@ -51,7 +51,7 @@ EOM
     }
     gnome() {
         dnf upgrade -y
-        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
     }
     kernel() {
         yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
@@ -209,7 +209,7 @@ gdms() {
 
 remove_packages() {
     dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
-    dnf install PackageKit-command-not-found -y
+    dnf install PackageKit-command-not-found gnome-software -y
 }
 
 tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
