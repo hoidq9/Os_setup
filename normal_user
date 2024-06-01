@@ -40,7 +40,7 @@ terminal() {
 accessibility() {
     interface_settings=(
         "text-scaling-factor 1.25"
-        "gtk-theme 'redhat-alt'"
+        "gtk-theme 'red_hat_linux_themes'"
         "icon-theme 'rhel'"
         "cursor-theme 'WhiteSur-cursors'"
         "clock-show-date true"
@@ -63,9 +63,9 @@ accessibility() {
 gnome_extensions() {
     cd $REPO_DIR/data_prepared
     declare -a extensions
-    extensions=('3628' '4679' '1082' '3088' '1486' '3843' '120' '3733' '5219' '1460' '4670') # '1160'
+    extensions=('3628' '4679' '1082' '3088' '1486' '3843' '120' '3733' '5219' '1460' '4670' '1160')
     for i in "${extensions[@]}"; do
-        echo $(./install-gnome-extensions.sh -e -o -u $i)
+        echo $(./install-gnome-extensions.sh -o -u $i)
     done
     sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
     sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
