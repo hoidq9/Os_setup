@@ -37,16 +37,7 @@ system() {
     }
     epel() {
         if ! rpm -q epel-release; then
-            cat <<EOM >/etc/yum.repos.d/epel-bootstrap.repo
-                [epel]
-                name=Bootstrap EPEL
-                mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-\$releasever&arch=\$basearch
-                failovermethod=priority
-                enabled=1
-                gpgcheck=0
-EOM
-            yum install epel-release -y
-            rm -rf /etc/yum.repos.d/epel-bootstrap.repo
+            yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E '%{rhel}').noarch.rpm -y
         fi
     }
     gnome() {
