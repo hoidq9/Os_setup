@@ -76,9 +76,9 @@ prepared() {
         git clone "$repo"
     done
     # Download và giải nén fonts
-    font_url=$(curl -s https://api.github.com/repos/tonsky/FiraCode/releases/latest | grep browser_download_url | cut -d '"' -f 4)
-    wget -q "$font_url" -O fira-code.zip
-    unzip -q fira-code.zip -d fira-code
+    font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.zip" | cut -d '"' -f 4)
+    wget -q "$font_url" -O fira-code-nerd.zip
+    unzip -q fira-code-nerd.zip -d fira-code-nerd
     # Download oh-my-zsh install script
     wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     # Download gnome extensions install script
@@ -165,9 +165,9 @@ cursors() {
 }
 
 fonts() {
-    cd $REPO_DIR/data_prepared/fira-code
-    mkdir -p /usr/share/fonts/fira-code-fonts
-    cp ttf/FiraCode-SemiBold.ttf /usr/share/fonts/fira-code-fonts
+    cd $REPO_DIR/data_prepared/fira-code-nerd
+    mkdir -p /usr/share/fonts/fira-code-nerd-fonts
+    cp FiraCodeNerdFontMono-SemiBold.ttf /usr/share/fonts/fira-code-nerd-fonts
     fc-cache -f -v
     dnf group install "Fonts" -y
 }
