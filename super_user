@@ -42,7 +42,7 @@ system() {
     }
     gnome() {
         dnf upgrade -y
-        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
+        dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq firefox -y
     }
     kernel() {
         yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
@@ -75,13 +75,10 @@ prepared() {
     for repo in "${repos[@]}"; do
         git clone "$repo"
     done
-    # Download và giải nén fonts
     font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.zip" | cut -d '"' -f 4)
     wget -q "$font_url" -O fira-code-nerd.zip
     unzip -q fira-code-nerd.zip -d fira-code-nerd
-    # Download oh-my-zsh install script
     wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-    # Download gnome extensions install script
     wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
     chmod -R 777 $REPO_DIR/data_prepared
 }
@@ -89,8 +86,8 @@ prepared() {
 softwares() {
     microsoft() {
         cd "$REPO_DIR/softwares" || return
-        cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
-        dnf install microsoft-edge-stable code -y
+        cp vscode.repo /etc/yum.repos.d/
+        dnf install code -y
     }
     gcm() {
         cd $REPO_DIR/data_prepared/
@@ -130,6 +127,10 @@ bootloader() {
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
     grep -q "/boot/grub2/themes/bootloader/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader/theme.txt\"" >>/etc/default/grub
     grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
+    cd bootloader
+    sh grub_custom
+    cd /boot/grub2/themes/bootloader
+    rm -rf 30_uefi-firmware bootloader.sh config.cfg grub_custom
     grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 }
 
@@ -142,6 +143,7 @@ themes() {
     gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
     ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
     ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
+    ./tweaks -f alt 
     cd $REPO_DIR/themes
     cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
     cd /usr/share/themes
