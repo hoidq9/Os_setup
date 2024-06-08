@@ -129,9 +129,6 @@ bootloader() {
     grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
     cd bootloader
     sh grub_custom
-    cd /boot/grub2/themes/bootloader
-    rm -rf 30_uefi-firmware bootloader.sh config.cfg grub_custom
-    grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 }
 
 themes() {
@@ -143,7 +140,7 @@ themes() {
     gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
     ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
     ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
-    ./tweaks -f alt 
+    ./tweaks.sh -f alt 
     cd $REPO_DIR/themes
     cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
     cd /usr/share/themes
