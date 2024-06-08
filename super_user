@@ -128,7 +128,7 @@ bootloader() {
     grep -q "/boot/grub2/themes/bootloader/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader/theme.txt\"" >>/etc/default/grub
     grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
     cd bootloader
-    sh grub_custom
+    sh grub_custom $REPO_DIR/bootloader
 }
 
 themes() {

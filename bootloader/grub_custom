@@ -37,6 +37,6 @@ rm -rf 30_uefi-firmware bootloader.sh config.cfg grub_custom
 grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 
 # Clean
-cd ..
+cd $1
 rm -rf grub_efi /bin/btrfs
 dnf autoremove grub2-efi-x64-modules -y
