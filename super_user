@@ -50,6 +50,7 @@ system() {
     }
     shell() {
         chsh -s /bin/zsh $user_current
+        chsh -s /bin/zsh $USER
     }
     run() {
         gnome
@@ -81,6 +82,25 @@ prepared() {
     wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
     chmod -R 777 $REPO_DIR/data_prepared
+}
+
+ohmyzsh_root() {
+    rm -rf $HOME/.oh-my-zsh
+    cd $REPO_DIR/data_prepared
+    declare -a gitarray
+    gitarray=('zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'' 'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions'' 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt'' 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate'')
+    sh install.sh --unattended
+    for i in "${gitarray[@]}"; do
+        echo $(git clone https://github.com/$i)
+    done
+    ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+    rm -rf $HOME/.oh-my-zsh/themes
+    cd $REPO_DIR/create_users
+    if [ -f $HOME/.zshrc ]; then
+        rm -rf $HOME/.zshrc
+    fi
+    cp .zshrc $HOME/.zshrc
+    cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
 }
 
 softwares() {
@@ -140,7 +160,7 @@ themes() {
     gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
     ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
     ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
-    ./tweaks.sh -f alt 
+    ./tweaks.sh -f default
     cd $REPO_DIR/themes
     cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
     cd /usr/share/themes
@@ -203,7 +223,7 @@ remove_packages() {
     dnf install PackageKit-command-not-found gnome-software -y
 }
 
-tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
+tasks=("wifi" "system" "prepared" "ohmyzsh_root" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
