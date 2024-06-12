@@ -101,6 +101,7 @@ ohmyzsh_root() {
     fi
     cp .zshrc $HOME/.zshrc
     cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+    rm -rf .zshrc.pre*
 }
 
 softwares() {
