@@ -18,7 +18,7 @@ new_dir=$(unzip -l "$zip_file" | awk 'NR>3 {print $4}' | grep -o '^[^/]*' | sort
 
 cd $new_dir
 
-./refind-install --shim /boot/efi/EFI/redhat/shimx64.efi --nodrivers --keepname --yes
+./refind-install --shim /boot/efi/EFI/redhat/shimx64.efi --keepname --yes
 
 cd ../..
 
