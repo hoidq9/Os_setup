@@ -182,8 +182,6 @@ else
         grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
         cd bootloader
         sh grub_custom $REPO_DIR/bootloader
-        sh refind_custom
-
     }
 
     themes() {
