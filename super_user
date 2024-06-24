@@ -1,34 +1,5 @@
 #!/bin/bash
-REPO_DIR="$(dirname "$(readlink -m "${0}")")"
-user_current=$(logname)
-YELLOW='\033[1;33m'
-GREEN='\033[1;32m'
-RED='\033[0;31m'
-NC='\033[0m' # Không màu
-
-check_and_run() {
-    local task_name="$1"
-    local log_file="$REPO_DIR/logs/$task_name.log"
-    if grep -q "Task completed" "$log_file" 2>/dev/null; then
-        echo ""
-        echo "Task $task_name: Already completed, skipping."
-    else
-        echo "" # Print an empty line for spacing
-        echo -e "${YELLOW}Task $task_name: Start${NC}"
-        sleep 3
-        echo -e "\033[A\033[K${RED}Task $task_name: Running${NC}"
-        if $task_name &>"$log_file"; then
-            echo -e "\033[A\033[K${GREEN}Task $task_name: Done${NC}"
-            echo "Task completed" >>"$log_file"
-        else
-            echo "Task $task_name encountered an error. Check $log_file for details."
-            exit 1
-        fi
-    fi
-}
-
-mkdir -p "$REPO_DIR"/{data_prepared,logs} $HOME/Prj
-chmod -R 777 $HOME/{data_prepared,logs}
+source $(pwd)/variables
 
 if [ "$EUID" -ne 0 ]; then
     exit 1
@@ -64,17 +35,17 @@ else
     system() {
         commands() {
             cd "$REPO_DIR/system" || return
-            cp rmkernel /usr/bin && chmod +x /usr/bin/rmkernel
-            sudo rmkernel
+            chmod +x rmkernel
+            ./rmkernel
         }
         epel() {
             if ! rpm -q epel-release; then
                 yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E '%{rhel}').noarch.rpm -y
             fi
         }
-        gnome() {
+        packages() {
             dnf upgrade -y
-            dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq firefox -y
+            dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
         }
         kernel() {
             yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
@@ -85,7 +56,7 @@ else
             chsh -s /bin/zsh $USER
         }
         run() {
-            gnome
+            packages
             epel
             commands
             kernel
@@ -99,48 +70,21 @@ else
 
     prepared() {
         cd $REPO_DIR/data_prepared
-        repos=(
-            "https://github.com/vinceliuice/WhiteSur-gtk-theme.git"
-            "https://github.com/vinceliuice/WhiteSur-icon-theme.git"
-            "https://github.com/vinceliuice/WhiteSur-cursors.git"
-            "https://github.com/dracula/gnome-terminal"
-        )
-        for repo in "${repos[@]}"; do
-            git clone "$repo"
-        done
-        font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.zip" | cut -d '"' -f 4)
-        wget -q "$font_url" -O fira-code-nerd.zip
-        unzip -q fira-code-nerd.zip -d fira-code-nerd
+        mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
+        mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
+        wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
+        git clone https://github.com/dracula/gnome-terminal
+        curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.zip" | cut -d '"' -f 4 | wget -qi - -O fira-code-nerd.zip && unzip -q fira-code-nerd.zip -d fira-code-nerd
         wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
         chmod -R 777 $REPO_DIR/data_prepared
     }
 
-    ohmyzsh_root() {
-        rm -rf $HOME/.oh-my-zsh
-        cd $REPO_DIR/data_prepared
-        declare -a gitarray
-        gitarray=('zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'' 'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions'' 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt'' 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate'')
-        sh install.sh --unattended
-        for i in "${gitarray[@]}"; do
-            echo $(git clone https://github.com/$i)
-        done
-        ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
-        rm -rf $HOME/.oh-my-zsh/themes
-        cd $REPO_DIR/create_users
-        if [ -f $HOME/.zshrc ]; then
-            rm -rf $HOME/.zshrc
-        fi
-        cp .zshrc $HOME/.zshrc
-        cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
-        rm -rf $HOME/.zshrc.pre*
-    }
-
     softwares() {
         microsoft() {
             cd "$REPO_DIR/softwares" || return
-            cp vscode.repo /etc/yum.repos.d/
-            dnf install code -y
+            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+            dnf install code microsoft-edge-stable -y
         }
         gcm() {
             cd $REPO_DIR/data_prepared/
@@ -175,13 +119,15 @@ else
     bootloader() {
         cd "$REPO_DIR" || return
         [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
-        cp -r bootloader /boot/grub2/themes
+        rm -rf /boot/grub2/themes/*
+        rsync -av --exclude={30_uefi-firmware,bootloader.sh,config.cfg,grub_custom,refind_custom} bootloader /boot/grub2/themes/
         cp "$REPO_DIR/bootloader/30_uefi-firmware" /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
         sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
         grep -q "/boot/grub2/themes/bootloader/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bootloader/theme.txt\"" >>/etc/default/grub
         grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub || echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >>/etc/default/grub
         cd bootloader
         sh grub_custom $REPO_DIR/bootloader
+        grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
     }
 
     themes() {
@@ -193,7 +139,6 @@ else
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
         ./install.sh -n 'rhel' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
         ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
-        ./tweaks.sh -f default
         cd $REPO_DIR/themes
         cp intel-core-i9.jpg Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
         cd /usr/share/themes
@@ -206,14 +151,16 @@ else
 
     icons() {
         cd $REPO_DIR/data_prepared/WhiteSur-icon-theme
-        ./install.sh -n 'rhel' -t default -a -b
+        ./install.sh -n 'red_hat_linux_icons' -t default -a -b
         cd /usr/share/icons
-        rm -rf rhel-dark rhel-light
+        rm -rf red_hat_linux_icons-{dark,light}
     }
 
     cursors() {
-        cd $REPO_DIR/data_prepared/WhiteSur-cursors
-        ./install.sh
+        cd $REPO_DIR/data_prepared/
+        sudo cp -r macOS /usr/share/icons/
+        cd /usr/share/icons/
+        mv macOS red_hat_linux_icons
     }
 
     fonts() {
@@ -222,15 +169,16 @@ else
         cp FiraCodeNerdFontMono-SemiBold.ttf /usr/share/fonts/fira-code-nerd-fonts
         fc-cache -f -v
         dnf group install "Fonts" -y
-        dnf install abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
+        dnf install redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
+        # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
     }
 
     gdms() {
         settings=(
             "org.gnome.desktop.interface text-scaling-factor 1.25"
-            "org.gnome.desktop.interface gtk-theme 'redhat-alt'"
-            "org.gnome.desktop.interface icon-theme 'rhel'"
-            "org.gnome.desktop.interface cursor-theme 'WhiteSur-cursors'"
+            "org.gnome.desktop.interface gtk-theme 'red_hat_linux_themes'"
+            "org.gnome.desktop.interface icon-theme 'red_hat_linux_icons'"
+            "org.gnome.desktop.interface cursor-theme 'red_hat_linux_cursors'"
             "org.gnome.desktop.interface clock-show-date true"
             "org.gnome.desktop.interface show-battery-percentage true"
             "org.gnome.desktop.interface clock-show-seconds true"
@@ -253,14 +201,10 @@ else
 
     remove_packages() {
         dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
-        dnf install PackageKit-command-not-found gnome-software -y
     }
 
-    tasks=("wifi" "system" "prepared" "ohmyzsh_root" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
+    tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
     for task in "${tasks[@]}"; do
         check_and_run "$task"
     done
-
-    # chmod -R 777 $REPO_DIR
-    chown -R $user_current:$user_current $REPO_DIR
 fi

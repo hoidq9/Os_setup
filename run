@@ -1,6 +1,7 @@
 #!/bin/bash
-REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+source $(pwd)/variables
 cd $REPO_DIR
+mkdir -p {logs,data_prepared}
 sudo sh super_user
 sh normal_user
-rm -rf $REPO_DIR/{data_prepared,logs} $HOME/.zshrc.pre-oh-my-zsh*
+rm -rf {data_prepared,logs} $HOME/.zshrc.pre-oh-my-zsh*

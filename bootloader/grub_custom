@@ -44,5 +44,4 @@ if blkid | grep -q "btrfs"; then
 
 else
     dnf reinstall grub2-efi -y
-    grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 fi
