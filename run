@@ -1,7 +1,6 @@
 #!/bin/bash
 source $(pwd)/variables
 cd $REPO_DIR
-mkdir -p {logs,data_prepared}
 sudo sh super_user
 sh normal_user
 rm -rf {data_prepared,logs} $HOME/.zshrc.pre-oh-my-zsh*
