@@ -1,5 +1,6 @@
 #!/bin/bash
 source $(pwd)/variables
+mkdir -p $REPO_DIR/{logs,data_prepared}
 
 if [ "$EUID" -ne 0 ]; then
     exit 1
@@ -77,7 +78,7 @@ else
         curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.zip" | cut -d '"' -f 4 | wget -qi - -O fira-code-nerd.zip && unzip -q fira-code-nerd.zip -d fira-code-nerd
         wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
-        chmod -R 777 $REPO_DIR/data_prepared
+        chmod -R 777 $REPO_DIR/{logs,data_prepared}
     }
 
     softwares() {
