@@ -1,0 +1,215 @@
+#!/bin/bash
+source $(pwd)/variables
+mkdir -p $REPO_DIR/{logs,data_prepared} && chmod -R 777 $REPO_DIR/logs
+
+if [ "$EUID" -ne 0 ]; then
+    exit 1
+else
+    wifi() {
+        cd $REPO_DIR || return
+        if rpm -q NetworkManager-wifi; then
+            dnf upgrade -y
+            rm -rf iw* wireless-regdb* wpa_supplicant* NetworkManager-wifi*
+            wifi_rpms=("iw" "wireless-regdb" "wpa_supplicant" "NetworkManager-wifi")
+            for rpm in "${wifi_rpms[@]}"; do
+                sudo dnf download --downloadonly $rpm
+            done
+        else
+            if nmcli device status | grep -q "wifi"; then
+                wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
+                for rpm in "${wifi_rpms[@]}"; do
+                    wifi_file=$(ls $rpm 2>/dev/null | head -n 1)
+                    if [ -n "$wifi_file" ]; then
+                        rpm -ivh $wifi_file
+                    else
+                        echo "No wifi rpm found"
+                        break
+                    fi
+                done
+                systemctl restart NetworkManager
+                sleep 30
+                dnf reinstall iw wireless-regdb wpa_supplicant NetworkManager-wifi -y
+            fi
+        fi
+        cd $REPO_DIR || return
+    }
+
+    system() {
+        cd $REPO_DIR || return
+        commands() {
+            chmod +x rmkernel
+            ./rmkernel
+        }
+        epel() {
+            if ! rpm -q epel-release; then
+                dnf install epel-release -y
+            fi
+        }
+        packages() {
+            dnf upgrade -y
+            dnf install gnome-shell git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq gnome-extensions-app.x86_64 -y
+            systemctl set-default graphical.target
+        }
+        kernel() {
+            dnf install elrepo-release -y
+            yum --enablerepo=elrepo-kernel install kernel-ml -y
+        }
+        run() {
+            packages
+            epel
+            commands
+            kernel
+        }
+        grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
+        find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
+        run >>$REPO_DIR/logs/system.log 2>&1
+        cd $REPO_DIR || return
+    }
+
+    prepared() {
+        cd $REPO_DIR/data_prepared
+        mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
+        mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
+        wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
+        git clone https://github.com/harishnkr/bsol.git
+        mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
+        cd $REPO_DIR || return
+    }
+
+    softwares() {
+        cd $REPO_DIR || return
+        microsoft() {
+            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+            dnf install code microsoft-edge-stable -y
+        }
+        gcm() {
+            cd $REPO_DIR/data_prepared/
+            gcm_install() {
+                curl -s https://api.github.com/repos/ldennington/git-credential-manager/releases/latest |
+                    grep -E 'browser_download_url.*gcm-linux.*[0-9].[0-9].[0-9].tar.gz' |
+                    cut -d : -f 2,3 |
+                    tr -d \" |
+                    xargs -I 'url' curl -LO 'url'
+                gcm_file=$(ls gcm*.tar.gz)
+                tar -xvf $gcm_file -C /usr/local/bin
+                /usr/local/bin/git-credential-manager configure
+            }
+            if [ command -v git-credential-manager ] &>/dev/null; then
+                /usr/local/bin/git-credential-manager unconfigure
+                rm -rf $(command -v git-credential-manager)
+                gcm_install
+            else
+                gcm_install
+            fi
+            git config --global credential.credentialStore secretservice
+        }
+        warp() {
+            curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
+            dnf install cloudflare-warp -y
+        }
+        microsoft
+        gcm
+        warp
+        cd $REPO_DIR || return
+    }
+
+    bootloader() {
+        cd "$REPO_DIR" || return
+        cp 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+        [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
+        rm -rf /boot/grub2/themes/*
+        cd data_prepared/bsol/bsol/icons
+        mv alma.png almalinux.png
+        cd ../..
+        cp -r bsol /boot/grub2/themes
+        sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
+        grep -q "/boot/grub2/themes/bsol/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bsol/theme.txt\"" >>/etc/default/grub
+        cd "$REPO_DIR" || return
+        sh grub_custom $REPO_DIR
+    }
+
+    themes() {
+        cd "$REPO_DIR" || return
+        cp Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
+        cd data_prepared/WhiteSur-gtk-theme
+        for target in background-default.png background-darken.png; do
+            cp $REPO_DIR/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
+        done
+        rm -rf /usr/share/themes/almalinux_themes
+        gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
+        ./install.sh -n 'WoW' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
+        ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
+        cd /usr/share/themes
+        alma_important=$(ls -d /usr/share/themes/WoW*alt)
+        mv $alma_important /usr/share/themes/almalinux_themes
+        rm -rf WoW*
+        cd almalinux_themes
+        rm -rf cinnamon plank gnome-shell
+        cd "$REPO_DIR" || return
+    }
+
+    icons() {
+        cd "$REPO_DIR/data_prepared/WhiteSur-icon-theme" || return
+        ./install.sh -n 'almalinux_icons' -t default -a -b
+        cd /usr/share/icons
+        rm -rf almalinux_icons-{dark,light}
+        cd "$REPO_DIR" || return
+    }
+
+    cursors() {
+        cd $REPO_DIR/data_prepared/
+        sudo cp -r macOS /usr/share/icons/
+        cd /usr/share/icons/
+        mv macOS almalinux_icons
+        cd "$REPO_DIR" || return
+    }
+
+    fonts() {
+        cd $REPO_DIR/data_prepared/fira-code-nerd
+        mkdir -p /usr/share/fonts/fira-code-nerd-fonts
+        cp FiraCodeNerdFontMono-SemiBold.ttf /usr/share/fonts/fira-code-nerd-fonts
+        fc-cache -f -v
+        dnf group install "Fonts" -y
+        cd "$REPO_DIR" || return
+        dnf install redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
+        # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
+    }
+
+    gdms() {
+        cd "$REPO_DIR" || return
+        settings=(
+            "org.gnome.desktop.interface text-scaling-factor 1.25"
+            "org.gnome.desktop.interface gtk-theme 'almalinux_themes'"
+            "org.gnome.desktop.interface icon-theme 'almalinux_icons'"
+            "org.gnome.desktop.interface cursor-theme 'almalinux_cursors'"
+            "org.gnome.desktop.interface clock-show-date true"
+            "org.gnome.desktop.interface show-battery-percentage true"
+            "org.gnome.desktop.interface clock-show-seconds true"
+            "org.gnome.desktop.interface clock-show-weekday true"
+            "org.gnome.settings-daemon.plugins.power power-button-action 'action'"
+            "org.gnome.desktop.peripherals.touchpad tap-to-click true"
+            "org.gnome.login-screen disable-user-list true"
+            "org.gnome.settings-daemon.plugins.color night-light-enabled true"
+            "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
+            "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
+            "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
+            "org.gnome.login-screen banner-message-enable true"
+            "org.gnome.login-screen banner-message-text 'LEADER'"
+        )
+        for setting in "${settings[@]}"; do
+            sudo -u gdm dbus-launch gsettings set $setting
+        done
+        cp custom.conf /etc/gdm
+    }
+
+    remove_packages() {
+        dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
+        dnf install PackageKit-command-not-found gnome-software -y
+    }
+
+    tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
+    for task in "${tasks[@]}"; do
+        check_and_run "$task"
+    done
+    chmod -R 777 $REPO_DIR/data_prepared
+fi

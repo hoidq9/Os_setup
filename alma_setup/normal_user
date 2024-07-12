@@ -1,0 +1,82 @@
+#!/bin/bash
+source $(pwd)/variables
+
+terminal() {
+    id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
+    profile_path="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/"
+    keybindings_path="org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
+    keybindings=("copy '<Ctrl>C'" "new-tab '<Ctrl>T'" "new-window '<Ctrl>N'" "save-contents '<Ctrl>S'" "close-tab '<Ctrl>W'" "close-window '<Ctrl>Q'" "copy-html '<Ctrl>X'" "paste '<Ctrl>V'" "select-all '<Ctrl>A'" "preferences '<Ctrl>P'" "find '<Ctrl>F'" "find-next '<Ctrl>G'" "find-previous '<Ctrl>H'" "find-clear '<Ctrl>J'")
+    profile=("visible-name '$user_current'" "cursor-shape 'ibeam'")
+    for binding in "${keybindings[@]}"; do
+        gsettings set $keybindings_path $binding
+    done
+    for setting in "${profile[@]}"; do
+        gsettings set $profile_path $setting
+    done
+    gsettings set org.gnome.desktop.interface enable-hot-corners false
+    cd $REPO_DIR/data_prepared/
+    git clone https://github.com/dracula/gnome-terminal
+    cd gnome-terminal
+    ./install.sh -s Dracula -p $user_current --skip-dircolors
+}
+
+accessibility() {
+    interface_settings=(
+        "text-scaling-factor 1.25"
+        "gtk-theme 'almalinux_themes'"
+        "icon-theme 'almalinux_icons'"
+        "cursor-theme 'almalinux_cursors'"
+        "clock-show-date true"
+        "show-battery-percentage true"
+        "clock-show-seconds true"
+        "clock-show-weekday true"
+    )
+    night_light=(
+        "night-light-enabled true"
+        "night-light-temperature 3168"
+        "night-light-schedule-from 0.0"
+        "night-light-schedule-to 0.0"
+    )
+    for setting in "${interface_settings[@]}"; do
+        gsettings set org.gnome.desktop.interface $setting
+    done
+    for setting in "${night_light[@]}"; do
+        gsettings set org.gnome.settings-daemon.plugins.color $setting
+    done
+    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+    gsettings set org.gnome.desktop.session idle-delay 1800
+    gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+    gsettings set org.gnome.desktop.input-sources show-all-sources true
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
+    gsettings set org.gnome.desktop.interface locate-pointer true
+    gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
+}
+
+gnome_extensions() {
+    cd $REPO_DIR/data_prepared
+    wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
+    chmod +x install-gnome-extensions.sh
+    declare -a extensions
+    extensions=('3628' '1082' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670')
+    for i in "${extensions[@]}"; do
+        echo $(./install-gnome-extensions.sh -e -o -u $i)
+    done
+    sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
+    sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
+    sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+}
+
+keybinding() {
+    KEY0_PATH="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding"
+    KEY_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
+        "['$KEY_PATH/custom0/']"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ name "GNOME Terminal"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ command "gnome-terminal"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
+}
+
+tasks=("terminal" "accessibility" "gnome_extensions" "keybinding")
+for task in "${tasks[@]}"; do
+    check_and_run "$task"
+done
