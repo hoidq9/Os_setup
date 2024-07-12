@@ -47,7 +47,7 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install gnome-shell git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq gnome-extensions-app.x86_64 -y
+            dnf install conky gnome-shell git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq gnome-extensions-app.x86_64 -y
             systemctl set-default graphical.target
         }
         kernel() {
