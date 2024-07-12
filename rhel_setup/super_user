@@ -161,7 +161,7 @@ else
         cd $REPO_DIR/data_prepared/
         sudo cp -r macOS /usr/share/icons/
         cd /usr/share/icons/
-        mv macOS red_hat_linux_icons
+        mv macOS red_hat_linux_cursors
     }
 
     fonts() {

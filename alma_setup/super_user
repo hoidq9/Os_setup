@@ -149,6 +149,7 @@ else
     }
 
     icons() {
+        rm -rf /usr/share/icons/almalinux_icons
         cd "$REPO_DIR/data_prepared/WhiteSur-icon-theme" || return
         ./install.sh -n 'almalinux_icons' -t default -a -b
         cd /usr/share/icons
@@ -157,10 +158,11 @@ else
     }
 
     cursors() {
+        rm -rf /usr/share/icons/almalinux_cursors
         cd $REPO_DIR/data_prepared/
         sudo cp -r macOS /usr/share/icons/
         cd /usr/share/icons/
-        mv macOS almalinux_icons
+        mv macOS almalinux_cursors
         cd "$REPO_DIR" || return
     }
 
