@@ -1,6 +1,24 @@
 #!/bin/bash
 source $(pwd)/variables
 
+ohmyzsh() {
+    rm -rf $HOME/.zshrc.pre-oh-my-zsh*
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        cd $REPO_DIR/data_prepared
+        declare -a gitarray
+        gitarray=('zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'' 'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions'' 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt'' 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate'')
+        sh install.sh --unattended
+        for i in "${gitarray[@]}"; do
+            echo $(git clone https://github.com/$i)
+        done
+        ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+        rm -rf $HOME/.oh-my-zsh/themes
+    else
+        cd $HOME/.oh-my-zsh
+        git pull
+    fi
+}
+
 terminal() {
     id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
     profile_path="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/"
@@ -18,6 +36,12 @@ terminal() {
     git clone https://github.com/dracula/gnome-terminal
     cd gnome-terminal
     ./install.sh -s Dracula -p $user_current --skip-dircolors
+    if [ -f $HOME/.zshrc ]; then
+        rm -rf $HOME/.zshrc
+    fi
+    cd $REPO_DIR/
+    cp .zshrc $HOME/.zshrc
+    cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
 }
 
 accessibility() {
@@ -76,7 +100,7 @@ keybinding() {
     gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 }
 
-tasks=("terminal" "accessibility" "gnome_extensions" "keybinding")
+tasks=("ohmyzsh" "terminal" "accessibility" "gnome_extensions" "keybinding")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done

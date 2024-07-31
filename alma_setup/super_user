@@ -47,18 +47,22 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install conky gnome-shell git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq gnome-extensions-app.x86_64 -y
+            dnf install conky gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh kitty -y
             systemctl set-default graphical.target
         }
         kernel() {
             dnf install elrepo-release -y
             yum --enablerepo=elrepo-kernel install kernel-ml -y
         }
+        shell() {
+            chsh -s /bin/zsh $user_current
+        }
         run() {
             packages
             epel
             commands
             kernel
+            shell
         }
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
         find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
@@ -72,6 +76,7 @@ else
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
         git clone https://github.com/harishnkr/bsol.git
+        wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
         cd $REPO_DIR || return
     }
@@ -173,7 +178,7 @@ else
         fc-cache -f -v
         dnf group install "Fonts" -y
         cd "$REPO_DIR" || return
-        dnf install redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
+        # dnf install redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
         # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
     }
 
