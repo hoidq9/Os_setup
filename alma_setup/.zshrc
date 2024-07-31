@@ -421,7 +421,7 @@ plugins=(git
 	sdk
 )
 # Uncomment the following line to change how often to auto-update (in days).
-export UPDATE_ZSH_DAYS=7
+export UPDATE_ZSH_DAYS=2
 ZSH_CUSTOM_AUTOUPDATE_QUIET=true
 
 source $ZSH/oh-my-zsh.sh
