@@ -135,7 +135,6 @@ else
 
     themes() {
         cd "$REPO_DIR" || return
-        cp Lenovo_Legion_Wallpaper.png /usr/share/backgrounds
         cd data_prepared/WhiteSur-gtk-theme
         for target in background-default.png background-darken.png; do
             cp $REPO_DIR/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
@@ -214,7 +213,7 @@ else
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
-    tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
+    tasks=("wifi" "system" "prepared" "softwares" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
     for task in "${tasks[@]}"; do
         check_and_run "$task"
     done

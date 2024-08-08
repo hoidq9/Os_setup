@@ -31,7 +31,6 @@ terminal() {
     for setting in "${profile[@]}"; do
         gsettings set $profile_path $setting
     done
-    gsettings set org.gnome.desktop.interface enable-hot-corners false
     cd $REPO_DIR/data_prepared/
     git clone https://github.com/dracula/gnome-terminal
     cd gnome-terminal
@@ -54,6 +53,7 @@ accessibility() {
         "show-battery-percentage true"
         "clock-show-seconds true"
         "clock-show-weekday true"
+        "enable-hot-corners false"
     )
     night_light=(
         "night-light-enabled true"
@@ -100,7 +100,7 @@ keybinding() {
     gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 }
 
-tasks=("ohmyzsh" "terminal" "accessibility" "gnome_extensions" "keybinding")
+tasks=("accessibility" "gnome_extensions" "keybinding")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
