@@ -47,8 +47,9 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install conky gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh kitty -y
+            dnf install cockpit conky gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh kitty -y
             systemctl set-default graphical.target
+            systemctl enable --now cockpit.socket
         }
         kernel() {
             dnf install elrepo-release -y
