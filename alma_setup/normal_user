@@ -81,11 +81,11 @@ gnome_extensions() {
     wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
     chmod +x install-gnome-extensions.sh
     declare -a extensions
-    extensions=('3628' '1082' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670')
+    extensions=('3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670')
     for i in "${extensions[@]}"; do
         echo $(./install-gnome-extensions.sh -e -o -u $i)
     done
-    sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
+    # sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
     sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
     sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
 }
@@ -100,7 +100,7 @@ keybinding() {
     gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 }
 
-tasks=("accessibility" "gnome_extensions" "keybinding")
+tasks=("ohmyzsh" "terminal" "accessibility" "gnome_extensions" "keybinding")
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done

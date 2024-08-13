@@ -47,7 +47,7 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install cockpit conky gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh kitty -y
+            dnf install cockpit conky gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
@@ -76,7 +76,6 @@ else
         mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
-        git clone https://github.com/harishnkr/bsol.git
         wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
         cd $REPO_DIR || return
@@ -121,22 +120,17 @@ else
 
     bootloader() {
         cd "$REPO_DIR" || return
-        cp 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
         [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
         rm -rf /boot/grub2/themes/*
-        cd data_prepared/bsol/bsol/
-        rm -rf *.pf2
-        cd icons
-        cp $REPO_DIR/alma.png almalinux.png
-        cd ../..
-        cp -r bsol /boot/grub2/themes
-        sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=20/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1/; s/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT="intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash"/g' /etc/default/grub
-        grep -q "/boot/grub2/themes/bsol/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/bsol/theme.txt\"" >>/etc/default/grub
+        cp 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+        cp -r dedsec /boot/grub2/themes
+        sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=99/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1; /g' /etc/default/grub
+        grep -q "/boot/grub2/themes/dedsec/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/dedsec/theme.txt\"" >>/etc/default/grub
         if ! grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub; then
-		    sudo sh -c 'echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >> /etc/default/grub'
-	    fi
-        cd "$REPO_DIR" || return
+            sudo sh -c 'echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >> /etc/default/grub'
+        fi
         sh grub_custom $REPO_DIR
+        cd "$REPO_DIR" || return
     }
 
     themes() {
@@ -183,7 +177,7 @@ else
         fc-cache -f -v
         dnf group install "Fonts" -y
         cd "$REPO_DIR" || return
-        # dnf install redhat-mono-fonts redhat-display-fonts redhat-text-fonts -y
+        dnf install redhat-mono-fonts -y
         # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
     }
 
