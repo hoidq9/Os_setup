@@ -38,7 +38,6 @@ else
         cd $REPO_DIR || return
         commands() {
             chmod +x rmkernel
-            ./rmkernel
         }
         epel() {
             if ! rpm -q epel-release; then
