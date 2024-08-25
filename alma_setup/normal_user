@@ -24,7 +24,7 @@ terminal() {
     profile_path="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/"
     keybindings_path="org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
     keybindings=("copy '<Ctrl>C'" "new-tab '<Ctrl>T'" "new-window '<Ctrl>N'" "save-contents '<Ctrl>S'" "close-tab '<Ctrl>W'" "close-window '<Ctrl>Q'" "copy-html '<Ctrl>X'" "paste '<Ctrl>V'" "select-all '<Ctrl>A'" "preferences '<Ctrl>P'" "find '<Ctrl>F'" "find-next '<Ctrl>G'" "find-previous '<Ctrl>H'" "find-clear '<Ctrl>J'")
-    profile=("visible-name '$user_current'" "cursor-shape 'ibeam'")
+    profile=("visible-name '$user_current'" "cursor-shape 'ibeam'" "font 'Red Hat Mono Light, Medium 12'")
     for binding in "${keybindings[@]}"; do
         gsettings set $keybindings_path $binding
     done
