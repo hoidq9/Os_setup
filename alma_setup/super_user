@@ -46,7 +46,7 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky
+            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh eza fzf -y # conky
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
@@ -61,7 +61,7 @@ else
             packages
             epel
             commands
-            kernel
+            # kernel
             shell
         }
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf

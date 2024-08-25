@@ -2,6 +2,7 @@
 
 desktop-image: "background.png"
 title-text: ""
+terminal-font: "Red Hat Mono Bold 22"
 terminal-left: "20%"
 terminal-top: "35%"
 terminal-width: "60%"
@@ -14,7 +15,9 @@ terminal-box: "menu_bkg_*.png"
     width = 60%
     top = 30%
     height = 40%
+    item_font = "Red Hat Mono Bold 28"
     item_color = "#919090"
+    selected_item_font = "Red Hat Mono Bold 30"
     selected_item_color = "#ffffff"
     icon_width = 48
     icon_height = 48
@@ -36,6 +39,7 @@ terminal-box: "menu_bkg_*.png"
     height = 20
     text = ""
     text_color = "#ffffff"
+    font = "Red Hat Mono Bold 24"
     bar_style = "progress_bar_*.png"
     highlight_style = "progress_highlight_*.png"
 }
