@@ -1,7 +1,7 @@
 #!/bin/bash
 source $(pwd)/variables
 
-ohmyzsh() {
+ohmyzsh_user() {
     rm -rf $HOME/.zshrc.pre-oh-my-zsh*
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         cd $REPO_DIR/data_prepared
@@ -167,7 +167,7 @@ keybinding() {
 }
 
 tasks=(
-    "ohmyzsh"
+    "ohmyzsh_user"
     "terminal"
     "accessibility"
     "gnome_extensions"

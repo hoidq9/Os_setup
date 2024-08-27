@@ -216,7 +216,7 @@ else
         cp custom.conf /etc/gdm
     }
 
-    ohmyzsh() {
+    ohmyzsh_root() {
         rm -rf $HOME/.zshrc.pre-oh-my-zsh*
         if [ ! -d "$HOME/.oh-my-zsh" ]; then
             cd $REPO_DIR/data_prepared
@@ -261,7 +261,7 @@ else
         "cursors"
         "fonts"
         "gdms"
-        "ohmyzsh"
+        "ohmyzsh_root"
         "remove_packages"
     )
     for task in "${tasks[@]}"; do
