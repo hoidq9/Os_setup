@@ -55,7 +55,7 @@ else
             fi
         }
         packages() {
-            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh eza fzf -y # conky
+            dnf install ykclient ykpers pam_yubico gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh eza fzf -y # conky
             dnf upgrade -y
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
