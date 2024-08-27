@@ -60,8 +60,8 @@ HIST_STAMPS="mm/dd/yyyy"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-plugins=(git
-	octozen
+plugins=(
+	git
 	bundler
 	dotenv
 	rake
@@ -371,3 +371,8 @@ alias podman_ubuntu_kde='podman run --pull always -it --rm -d --privileged -p 30
 alias sudo_podman_ubuntu_kde='sudo podman run --pull always -it --rm -d --privileged -p 3000:3000/tcp -p 3001:3001/tcp linuxserver/webtop:ubuntu-kde'
 alias podman_portainer='podman run --pull always -d -p 8000:8000 -p 9443:9443 --privileged --name portainer -v /run/user/1000/podman/podman.sock:/var/run/docker.sock:Z -v portainer_data:/data docker.io/portainer/portainer-ce:latest'
 alias lla='eza -l --icons --total-size --smart-group -a -A'
+
+TMOUT=1
+TRAPALRM() {
+	zle reset-prompt
+}
