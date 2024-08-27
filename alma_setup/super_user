@@ -47,7 +47,8 @@ else
     system() {
         cd $REPO_DIR || return
         commands() {
-            chmod +x rmkernel
+            cp rmkernel /usr/local/bin
+            chmod +x /usr/local/bin/rmkernel
         }
         epel() {
             if ! rpm -q epel-release; then
@@ -242,7 +243,7 @@ else
         fi
         cd $REPO_DIR/
         cp .zshrc $HOME/.zshrc
-        cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+        cp .spaceshiprc.zsh_root $HOME/.spaceshiprc.zsh
     }
 
     remove_packages() {

@@ -79,7 +79,7 @@ terminal() {
     fi
     cd $REPO_DIR/
     cp .zshrc $HOME/.zshrc
-    cp .spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+    cp .spaceshiprc.zsh_user $HOME/.spaceshiprc.zsh
 }
 
 accessibility() {
