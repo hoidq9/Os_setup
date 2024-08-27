@@ -6,7 +6,12 @@ ohmyzsh() {
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         cd $REPO_DIR/data_prepared
         declare -a gitarray
-        gitarray=('zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting'' 'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions'' 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt'' 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate'')
+        gitarray=(
+            'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
+            'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions''
+            'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
+            'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
+        )
         sh install.sh --unattended
         for i in "${gitarray[@]}"; do
             echo $(git clone https://github.com/$i)
@@ -21,15 +26,49 @@ ohmyzsh() {
 
 terminal() {
     id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
-    profile_path="org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/"
-    keybindings_path="org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
-    keybindings=("copy '<Ctrl>C'" "new-tab '<Ctrl>T'" "new-window '<Ctrl>N'" "save-contents '<Ctrl>S'" "close-tab '<Ctrl>W'" "close-window '<Ctrl>Q'" "copy-html '<Ctrl>X'" "paste '<Ctrl>V'" "select-all '<Ctrl>A'" "preferences '<Ctrl>P'" "find '<Ctrl>F'" "find-next '<Ctrl>G'" "find-previous '<Ctrl>H'" "find-clear '<Ctrl>J'")
-    profile=("visible-name '$user_current'" "cursor-shape 'ibeam'" "font 'Red Hat Mono Light, Medium 12'")
-    for binding in "${keybindings[@]}"; do
-        gsettings set $keybindings_path $binding
-    done
-    for setting in "${profile[@]}"; do
-        gsettings set $profile_path $setting
+    path_terminal="/org/gnome/terminal/legacy/"
+    val=(
+        "profiles:/:$id/font"
+        "'Red Hat Mono Light, Medium 12'"
+        "profiles:/:$id/use-system-font"
+        "false"
+        "profiles:/:$id/visible-name"
+        "'$user_current'"
+        "profiles:/:$id/cursor-shape"
+        "'ibeam'"
+        "keybindings/copy"
+        "'<Ctrl>C'"
+        "keybindings/new-tab"
+        "'<Ctrl>T'"
+        "keybindings/new-window"
+        "'<Ctrl>N'"
+        "keybindings/save-contents"
+        "'<Ctrl>S'"
+        "keybindings/close-tab"
+        "'<Ctrl>W'"
+        "keybindings/close-window"
+        "'<Ctrl>Q'"
+        "keybindings/copy-html"
+        "'<Ctrl>X'"
+        "keybindings/paste"
+        "'<Ctrl>V'"
+        "keybindings/select-all"
+        "'<Ctrl>A'"
+        "keybindings/preferences"
+        "'<Ctrl>P'"
+        "keybindings/find"
+        "'<Ctrl>F'"
+        "keybindings/find-next"
+        "'<Ctrl>G'"
+        "keybindings/find-previous"
+        "'<Ctrl>H'"
+        "keybindings/find-clear"
+        "'<Ctrl>J'"
+    )
+    for ((i = 0; i < ${#val[@]}; i += 2)); do
+        setting="${val[i]}"
+        value="${val[i + 1]}"
+        dconf write "${path_terminal}${setting}" "${value}"
     done
     cd $REPO_DIR/data_prepared/
     git clone https://github.com/dracula/gnome-terminal
@@ -44,36 +83,53 @@ terminal() {
 }
 
 accessibility() {
-    interface_settings=(
-        "text-scaling-factor 1.25"
-        "gtk-theme 'almalinux_themes'"
-        "icon-theme 'almalinux_icons'"
-        "cursor-theme 'almalinux_cursors'"
-        "clock-show-date true"
-        "show-battery-percentage true"
-        "clock-show-seconds true"
-        "clock-show-weekday true"
-        "enable-hot-corners false"
+    val=(
+        "desktop/interface/text-scaling-factor"
+        "1.25"
+        "desktop/interface/gtk-theme"
+        "'almalinux_themes'"
+        "desktop/interface/icon-theme"
+        "'almalinux_icons'"
+        "desktop/interface/cursor-theme"
+        "'almalinux_cursors'"
+        "desktop/interface/clock-show-date"
+        "true"
+        "desktop/interface/show-battery-percentage"
+        "true"
+        "desktop/interface/clock-show-seconds"
+        "true"
+        "desktop/interface/clock-show-weekday"
+        "true"
+        "desktop/interface/enable-hot-corners"
+        "false"
+        "desktop/interface/locate-pointer"
+        "true"
+        "desktop/peripherals/touchpad/tap-to-click"
+        "true"
+        "desktop/session/idle-delay"
+        "1800"
+        "desktop/sound/allow-volume-above-100-percent"
+        "true"
+        "desktop/input-sources/show-all-sources"
+        "true"
+        "desktop/input-sources/sources"
+        "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
+        "desktop/wm/preferences/button-layout"
+        "'close,minimize,maximize:appmenu'"
+        "settings-daemon/plugins/color/night-light-enabled"
+        "true"
+        "settings-daemon/plugins/color/night-light-temperature"
+        "3168"
+        "settings-daemon/plugins/color/night-light-schedule-from"
+        "0.0"
+        "settings-daemon/plugins/color/night-light-schedule-to"
+        "0.0"
     )
-    night_light=(
-        "night-light-enabled true"
-        "night-light-temperature 3168"
-        "night-light-schedule-from 0.0"
-        "night-light-schedule-to 0.0"
-    )
-    for setting in "${interface_settings[@]}"; do
-        gsettings set org.gnome.desktop.interface $setting
+    for ((i = 0; i < ${#val[@]}; i += 2)); do
+        setting="${val[i]}"
+        value="${val[i + 1]}"
+        dconf write /org/gnome/${setting} "${value}"
     done
-    for setting in "${night_light[@]}"; do
-        gsettings set org.gnome.settings-daemon.plugins.color $setting
-    done
-    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-    gsettings set org.gnome.desktop.session idle-delay 1800
-    gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-    gsettings set org.gnome.desktop.input-sources show-all-sources true
-    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
-    gsettings set org.gnome.desktop.interface locate-pointer true
-    gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
 }
 
 gnome_extensions() {
@@ -81,7 +137,17 @@ gnome_extensions() {
     wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
     chmod +x install-gnome-extensions.sh
     declare -a extensions
-    extensions=('3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670')
+    extensions=(
+        '3628'
+        '1160'
+        '1486'
+        '3843'
+        '4405'
+        '3010'
+        '4679'
+        '3733'
+        '4670'
+    )
     for i in "${extensions[@]}"; do
         echo $(./install-gnome-extensions.sh -e -o -u $i)
     done
@@ -100,7 +166,13 @@ keybinding() {
     gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 }
 
-tasks=("ohmyzsh" "terminal" "accessibility" "gnome_extensions" "keybinding")
+tasks=(
+    "ohmyzsh"
+    "terminal"
+    "accessibility"
+    "gnome_extensions"
+    "keybinding"
+)
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done

@@ -10,13 +10,23 @@ else
         if rpm -q NetworkManager-wifi; then
             dnf upgrade -y
             rm -rf iw* wireless-regdb* wpa_supplicant* NetworkManager-wifi*
-            wifi_rpms=("iw" "wireless-regdb" "wpa_supplicant" "NetworkManager-wifi")
+            wifi_rpms=(
+                "iw"
+                "wireless-regdb"
+                "wpa_supplicant"
+                "NetworkManager-wifi"
+            )
             for rpm in "${wifi_rpms[@]}"; do
                 sudo dnf download --downloadonly $rpm
             done
         else
             if nmcli device status | grep -q "wifi"; then
-                wifi_rpms=("iw*" "wireless-regdb*" "wpa_supplicant*" "NetworkManager-wifi*")
+                wifi_rpms=(
+                    "iw*"
+                    "wireless-regdb*"
+                    "wpa_supplicant*"
+                    "NetworkManager-wifi*"
+                )
                 for rpm in "${wifi_rpms[@]}"; do
                     wifi_file=$(ls $rpm 2>/dev/null | head -n 1)
                     if [ -n "$wifi_file" ]; then
@@ -45,8 +55,8 @@ else
             fi
         }
         packages() {
-            dnf upgrade -y
             dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh eza fzf -y # conky
+            dnf upgrade -y
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
@@ -176,8 +186,7 @@ else
         fc-cache -f -v
         dnf group install "Fonts" -y
         cd "$REPO_DIR" || return
-        dnf install redhat-mono-fonts -y
-        # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
+        dnf install redhat-mono-fonts abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts -y
     }
 
     gdms() {
@@ -212,7 +221,19 @@ else
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
-    tasks=("wifi" "system" "prepared" "softwares" "bootloader" "themes" "icons" "cursors" "fonts" "gdms" "remove_packages")
+    tasks=(
+        "wifi"
+        "system"
+        "prepared"
+        "softwares"
+        "bootloader"
+        "themes"
+        "icons"
+        "cursors"
+        "fonts"
+        "gdms"
+        "remove_packages"
+    )
     for task in "${tasks[@]}"; do
         check_and_run "$task"
     done
