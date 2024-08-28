@@ -335,8 +335,6 @@ plugins=(
 	fastfile
 	sdk
 	themes
-	eza
-	fzf
 )
 
 # Uncomment the following line to change how often to auto-update (in days).
