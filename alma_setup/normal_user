@@ -24,7 +24,7 @@ ohmyzsh_user() {
     fi
     cd $REPO_DIR/
     touch $HOME/.zshrc $HOME/.spaceshiprc.zsh
-    cp -f .zshrc $HOME/.zshrc
+    cp -f .zshrc_user $HOME/.zshrc
     cp -f .spaceshiprc_user.zsh $HOME/.spaceshiprc.zsh
 }
 
@@ -78,9 +78,6 @@ terminal() {
     git clone https://github.com/dracula/gnome-terminal
     cd gnome-terminal
     ./install.sh -s Dracula -p $user_current --skip-dircolors
-    if [ -f $HOME/.zshrc ]; then
-        rm -rf $HOME/.zshrc
-    fi
 }
 
 accessibility() {

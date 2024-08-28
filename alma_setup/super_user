@@ -245,8 +245,8 @@ else
         fi
         cd $REPO_DIR/
         touch $HOME/.zshrc $HOME/.spaceshiprc.zsh
-        cp -f .zshrc $HOME/.zshrc
-        cp -f .spaceshiprc_user.zsh $HOME/.spaceshiprc.zsh
+        cp -f .zshrc_root $HOME/.zshrc
+        cp -f .spaceshiprc_root.zsh $HOME/.spaceshiprc.zsh
     }
 
     remove_packages() {
