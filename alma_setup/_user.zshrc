@@ -66,6 +66,7 @@ plugins=(
 	dotenv
 	rake
 	rbenv
+	ruby
 	zsh-syntax-highlighting
 	zsh-autosuggestions
 	web-search
@@ -74,267 +75,285 @@ plugins=(
 	jsontools
 	autoupdate
 	battery
-	redis-cli
-	laravel
-	rails
-	toolbox
-	fasd
-	wakeonlan
-	ant
-	hanami
-	magic-enter
-	kube-ps1
-	kitchen
-	dnf
-	svcat
-	git-lfs
-	sudo
-	doctl
-	stack
-	perms
-	procs
-	gradle
-	istioctl
-	gem
-	gas
-	ros
-	mongo-atlas
-	postgres
-	n98-magerun
-	azure
-	frontend-search
-	globalias
-	composer
-	grails
-	brew
-	shell-proxy
-	mix
-	knife_ssh
-	node
-	systemd
-	firewalld
-	bgnotify
-	encode64
-	virtualenv
-	fancy-ctrl-z
-	copyfile
-	pip
-	marktext
-	laravel5
-	gitfast
-	docker
-	cloudfoundry
-	perl
-	pep8
-	aws
-	isodate
-	branch
-	github
-	bazel
-	extract
-	pylint
-	git-commit
-	gatsby
-	pyenv
-	repo
-	knife
-	scw
-	kubectl
-	bridgetown
-	cp
-	git-extras
-	rand-quote
-	dirhistory
-	jenv
-	mvn
-	stripe
-	mise
-	git-flow
-	marked2
-	glassfish
-	kind
-	mix-fast
-	last-working-dir
-	svn-fast-info
-	zsh-navigation-tools
-	profiles
-	ember-cli
-	bedtools
-	coffee
-	emoji
-	juju
-	dircycle
-	cpanm
-	vagrant
-	transfer
-	term_tab
-	jira
-	symfony6
-	emotty
-	poetry-env
-	qodana
-	cake
-	fbterm
-	bun
-	asdf
-	percol
-	golang
-	docker-compose
-	git-hubflow
-	forklift
-	dbt
-	fnm
-	laravel4
-	supervisor
-	tig
-	yii
-	dotnet
-	nmap
-	alias-finder
-	rbfu
-	argocd
-	lol
-	z
-	direnv
-	fossil
-	compleat
-	qrcode
-	emoji-clock
-	yii2
-	pod
-	jhbuild
-	deno
-	svn
-	lxd
-	jfrog
-	lighthouse
-	ruby
-	colored-man-pages
-	gpg-agent
-	kops
-	nats
-	powder
-	opentofu
-	git-auto-fetch
-	fig
-	helm
-	git-prompt
-	dirpersist
-	python
-	grc
-	pass
-	hasura
-	mercurial
-	oc
-	per-directory-history
-	1password
-	sigstore
-	pj
-	kubectx
-	invoke
-	flutter
-	git
-	skaffold
-	copybuffer
-	gnu-utils
-	npm
-	salt
-	mongocli
-	symfony2
-	kn
-	git-escape-magic
-	gulp
-	httpie
-	command-not-found
-	sfdx
-	snap
-	rebar
-	pow
-	paver
-	mosh
-	ipfs
-	taskwarrior
-	thor
-	jruby
-	scd
-	yum
-	sbt
-	gitignore
-	tldr
-	vagrant-prompt
-	fabric
-	nanoc
-	ionic
-	minikube
-	zeus
-	bundler
-	rake-fast
-	poetry
-	grunt
-	droplr
-	react-native
-	gh
-	otp
-	please
-	ssh-agent
-	nvm
-	dnote
-	rsync
-	ansible
-	history-substring-search
 	vscode
-	fluxcd
-	autopep8
-	codeclimate
-	shrink-path
-	microk8s
-	gcloud
-	lpass
-	watson
-	samtools
-	universalarchive
-	nodenv
-	arcanist
-	textmate
-	operator-sdk
-	keychain
-	wd
-	bower
-	pre-commit
-	zsh-interactive-cd
-	tugboat
-	sprunge
-	genpass
-	rvm
-	scala
-	geeknote
-	copypath
-	podman
-	aliases
-	urltools
-	rbw
-	rust
+	docker
 	systemadmin
-	lein
-	celery
+	podman
 	ssh
-	torrent
-	singlechar
-	eecms
-	terraform
-	jake-node
-	lando
-	capistrano
-	nomad
-	ufw
-	meteor
-	git-flow-avh
-	rake
-	spring
-	colorize
-	fastfile
-	sdk
-	themes
+	# git
+	# bundler
+	# dotenv
+	# rake
+	# rbenv
+	# zsh-syntax-highlighting
+	# zsh-autosuggestions
+	# web-search
+	# safe-paste
+	# history
+	# jsontools
+	# autoupdate
+	# battery
+	# redis-cli
+	# laravel
+	# rails
+	# toolbox
+	# fasd
+	# wakeonlan
+	# ant
+	# hanami
+	# magic-enter
+	# kube-ps1
+	# kitchen
+	# dnf
+	# svcat
+	# git-lfs
+	# sudo
+	# doctl
+	# stack
+	# perms
+	# procs
+	# gradle
+	# istioctl
+	# gem
+	# gas
+	# ros
+	# mongo-atlas
+	# postgres
+	# n98-magerun
+	# azure
+	# frontend-search
+	# globalias
+	# composer
+	# grails
+	# brew
+	# shell-proxy
+	# mix
+	# knife_ssh
+	# node
+	# systemd
+	# firewalld
+	# bgnotify
+	# encode64
+	# virtualenv
+	# fancy-ctrl-z
+	# copyfile
+	# pip
+	# marktext
+	# laravel5
+	# gitfast
+	# docker
+	# cloudfoundry
+	# perl
+	# pep8
+	# aws
+	# isodate
+	# branch
+	# github
+	# bazel
+	# extract
+	# pylint
+	# git-commit
+	# gatsby
+	# pyenv
+	# repo
+	# knife
+	# scw
+	# kubectl
+	# bridgetown
+	# cp
+	# git-extras
+	# rand-quote
+	# dirhistory
+	# jenv
+	# mvn
+	# stripe
+	# mise
+	# git-flow
+	# marked2
+	# glassfish
+	# kind
+	# mix-fast
+	# last-working-dir
+	# svn-fast-info
+	# zsh-navigation-tools
+	# profiles
+	# ember-cli
+	# bedtools
+	# coffee
+	# emoji
+	# juju
+	# dircycle
+	# cpanm
+	# vagrant
+	# transfer
+	# term_tab
+	# jira
+	# symfony6
+	# emotty
+	# poetry-env
+	# qodana
+	# cake
+	# fbterm
+	# bun
+	# asdf
+	# percol
+	# golang
+	# docker-compose
+	# git-hubflow
+	# forklift
+	# dbt
+	# fnm
+	# laravel4
+	# supervisor
+	# tig
+	# yii
+	# dotnet
+	# nmap
+	# alias-finder
+	# rbfu
+	# argocd
+	# lol
+	# z
+	# direnv
+	# fossil
+	# compleat
+	# qrcode
+	# emoji-clock
+	# yii2
+	# pod
+	# jhbuild
+	# deno
+	# svn
+	# lxd
+	# jfrog
+	# lighthouse
+	# ruby
+	# colored-man-pages
+	# gpg-agent
+	# kops
+	# nats
+	# powder
+	# opentofu
+	# git-auto-fetch
+	# fig
+	# helm
+	# git-prompt
+	# dirpersist
+	# python
+	# grc
+	# pass
+	# hasura
+	# mercurial
+	# oc
+	# per-directory-history
+	# 1password
+	# sigstore
+	# pj
+	# kubectx
+	# invoke
+	# flutter
+	# git
+	# skaffold
+	# copybuffer
+	# gnu-utils
+	# npm
+	# salt
+	# mongocli
+	# symfony2
+	# kn
+	# git-escape-magic
+	# gulp
+	# httpie
+	# command-not-found
+	# sfdx
+	# snap
+	# rebar
+	# pow
+	# paver
+	# mosh
+	# ipfs
+	# taskwarrior
+	# thor
+	# jruby
+	# scd
+	# yum
+	# sbt
+	# gitignore
+	# tldr
+	# vagrant-prompt
+	# fabric
+	# nanoc
+	# ionic
+	# minikube
+	# zeus
+	# bundler
+	# rake-fast
+	# poetry
+	# grunt
+	# droplr
+	# react-native
+	# gh
+	# otp
+	# please
+	# ssh-agent
+	# nvm
+	# dnote
+	# rsync
+	# ansible
+	# history-substring-search
+	# vscode
+	# fluxcd
+	# autopep8
+	# codeclimate
+	# shrink-path
+	# microk8s
+	# gcloud
+	# lpass
+	# watson
+	# samtools
+	# universalarchive
+	# nodenv
+	# arcanist
+	# textmate
+	# operator-sdk
+	# keychain
+	# wd
+	# bower
+	# pre-commit
+	# zsh-interactive-cd
+	# tugboat
+	# sprunge
+	# genpass
+	# rvm
+	# scala
+	# geeknote
+	# copypath
+	# podman
+	# aliases
+	# urltools
+	# rbw
+	# rust
+	# systemadmin
+	# lein
+	# celery
+	# ssh
+	# torrent
+	# singlechar
+	# eecms
+	# terraform
+	# jake-node
+	# lando
+	# capistrano
+	# nomad
+	# ufw
+	# meteor
+	# git-flow-avh
+	# rake
+	# spring
+	# colorize
+	# fastfile
+	# sdk
+	# themes
 )
 
 # Uncomment the following line to change how often to auto-update (in days).
