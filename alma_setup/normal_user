@@ -12,10 +12,10 @@ ohmyzsh_user() {
             'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
             'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
         )
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
         for i in "${gitarray[@]}"; do
             echo $(git clone https://github.com/$i)
         done
+        sh install.sh --unattended
         ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
         rm -rf $HOME/.oh-my-zsh/themes
     else

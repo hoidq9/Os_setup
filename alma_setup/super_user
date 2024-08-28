@@ -53,11 +53,11 @@ else
         epel() {
             if ! rpm -q epel-release; then
                 dnf install epel-release -y
+                dnf upgrade -y
             fi
         }
         packages() {
-            dnf install ykclient ykpers pam_yubico gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky eza fzf
-            dnf upgrade -y
+            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky eza fzf ykclient ykpers pam_yubico 
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
@@ -67,7 +67,7 @@ else
         }
         shell() {
             chsh -s /bin/zsh $user_current
-            chsh -s /bin/zsh $USER
+            # chsh -s /bin/zsh $USER
         }
         run() {
             packages
@@ -88,6 +88,7 @@ else
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
         mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
+        wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         cd $REPO_DIR || return
     }
 
@@ -132,7 +133,7 @@ else
         cd "$REPO_DIR" || return
         [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
         rm -rf /boot/grub2/themes/*
-        cp 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+        cp -f 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
         cp -r dedsec /boot/grub2/themes
         sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=99/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1; /g' /etc/default/grub
         grep -q "/boot/grub2/themes/dedsec/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/dedsec/theme.txt\"" >>/etc/default/grub
@@ -229,10 +230,10 @@ else
                 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
                 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
             )
-            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
             for i in "${gitarray[@]}"; do
                 echo $(git clone https://github.com/$i)
             done
+            sh install.sh --unattended
             ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
             rm -rf $HOME/.oh-my-zsh/themes
         else
@@ -263,7 +264,7 @@ else
         "cursors"
         "fonts"
         "gdms"
-        "ohmyzsh_root"
+        # "ohmyzsh_root"
         "remove_packages"
     )
     for task in "${tasks[@]}"; do
