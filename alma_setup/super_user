@@ -73,7 +73,7 @@ else
             packages
             epel
             commands
-            # kernel
+            kernel
             shell
         }
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
@@ -87,7 +87,6 @@ else
         mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
-        # wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
         cd $REPO_DIR || return
     }
@@ -244,9 +243,8 @@ else
             rm -rf $HOME/.zshrc
         fi
         cd $REPO_DIR/
-        touch $HOME/.zshrc $HOME/.spaceshiprc.zsh
-        cp -f .zshrc_root $HOME/.zshrc
-        cp -f .spaceshiprc_root.zsh $HOME/.spaceshiprc.zsh
+        cp -f _root.zshrc $HOME/.zshrc
+        cp -f .root_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
     }
 
     remove_packages() {

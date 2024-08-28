@@ -23,9 +23,8 @@ ohmyzsh_user() {
         git pull
     fi
     cd $REPO_DIR/
-    touch $HOME/.zshrc $HOME/.spaceshiprc.zsh
-    cp -f .zshrc_user $HOME/.zshrc
-    cp -f .spaceshiprc_user.zsh $HOME/.spaceshiprc.zsh
+    cp -f _user.zshrc $HOME/.zshrc
+    cp -f .user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
 }
 
 terminal() {
@@ -128,6 +127,9 @@ accessibility() {
         value="${val[i + 1]}"
         dconf write /org/gnome/${setting} "${value}"
     done
+    cd $REPO_DIR/
+    mkdir -p $HOME/.local/share/backgrounds/
+    cp -f Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds/Legion.png
 }
 
 gnome_extensions() {
