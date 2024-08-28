@@ -86,7 +86,7 @@ else
         mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
-        wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        # wget -q https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         mkdir -p fira-code-nerd && wget $(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode*.tar.xz" | cut -d '"' -f 4) -O fira-code-nerd.tar.xz && tar -xvf fira-code-nerd.tar.xz -C fira-code-nerd
         cd $REPO_DIR || return
     }
@@ -228,7 +228,7 @@ else
                 'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
                 'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
             )
-            sh install.sh --unattended
+            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
             for i in "${gitarray[@]}"; do
                 echo $(git clone https://github.com/$i)
             done
@@ -243,7 +243,7 @@ else
         fi
         cd $REPO_DIR/
         cp .zshrc $HOME/.zshrc
-        cp .spaceshiprc.zsh_root $HOME/.spaceshiprc.zsh
+        cp .spaceshiprc_root.zsh $HOME/.spaceshiprc.zsh
     }
 
     remove_packages() {

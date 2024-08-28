@@ -22,6 +22,9 @@ ohmyzsh_user() {
         cd $HOME/.oh-my-zsh
         git pull
     fi
+    cd $REPO_DIR/
+    cp .zshrc $HOME/.zshrc
+    cp .spaceshiprc_user.zsh $HOME/.spaceshiprc.zsh
 }
 
 terminal() {
@@ -77,9 +80,6 @@ terminal() {
     if [ -f $HOME/.zshrc ]; then
         rm -rf $HOME/.zshrc
     fi
-    cd $REPO_DIR/
-    cp .zshrc $HOME/.zshrc
-    cp .spaceshiprc.zsh_user $HOME/.spaceshiprc.zsh
 }
 
 accessibility() {
