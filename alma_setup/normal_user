@@ -25,6 +25,15 @@ ohmyzsh_user() {
     cd $REPO_DIR/
     cp -f _user.zshrc $HOME/.zshrc
     cp -f .user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+    if command -v /home/linuxbrew/.linuxbrew/bin/brew; then
+        (
+            echo
+            echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        ) >>$HOME/.zshrc
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+
+    source $HOME/.zshrc
 }
 
 terminal() {
