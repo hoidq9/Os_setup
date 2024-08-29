@@ -12,6 +12,7 @@ plugins=(
 	battery
 	vscode
 	brew
+	history
 )
 
 export UPDATE_ZSH_DAYS=1

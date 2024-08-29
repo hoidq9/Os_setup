@@ -17,7 +17,7 @@ else
                 "NetworkManager-wifi"
             )
             for rpm in "${wifi_rpms[@]}"; do
-                sudo dnf download --downloadonly $rpm
+                dnf download --downloadonly $rpm
             done
         else
             if nmcli device status | grep -q "wifi"; then
@@ -57,7 +57,7 @@ else
             fi
         }
         packages() {
-            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky eza fzf ykclient ykpers pam_yubico 
+            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky eza fzf ykclient ykpers pam_yubico
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
@@ -249,7 +249,7 @@ else
     }
 
     remove_packages() {
-        dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
+        dnf autoremove vim-common vim-enhanced vi -y # sassc glib2-devel ImageMagick dialog inkscape optipng
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
