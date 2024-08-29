@@ -5,6 +5,7 @@ ohmyzsh_user() {
     rm -rf $HOME/.zshrc.pre-oh-my-zsh*
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         cd $REPO_DIR/data_prepared
+        sh install.sh --unattended
         declare -a gitarray
         gitarray=(
             'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
@@ -15,7 +16,6 @@ ohmyzsh_user() {
         for i in "${gitarray[@]}"; do
             echo $(git clone https://github.com/$i)
         done
-        sh install.sh --unattended
         ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
         rm -rf $HOME/.oh-my-zsh/themes
     else
