@@ -335,24 +335,14 @@ plugins=(
 	# sdk
 	# themes
 	git
-	bundler
-	dotenv
-	rake
-	rbenv
-	ruby
 	zsh-syntax-highlighting
 	zsh-autosuggestions
-	web-search
 	safe-paste
 	history
 	jsontools
 	autoupdate
 	battery
-	vscode
-	docker
 	systemadmin
-	podman
-	ssh
 )
 
 # Uncomment the following line to change how often to auto-update (in days).
@@ -380,12 +370,6 @@ alias dinfo='sudo dnf info'
 alias ginfo='sudo dnf groupinfo'
 alias list='sudo dnf list installed'
 alias all='sudo dnf list all'
-alias podman_jupyter='podman run --pull always --user root -e GRANT_SUDO=yes --privileged --rm -e USE_HTTPS=yes -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' -it -p 8888:8888/tcp -v $HOME/Jupyter:/home/jovyan/work --name Jupyter -w /home/jovyan/work jupyter/base-notebook:latest'
-alias podman_ubuntu='podman run --pull always --rm --network=host -v "$HOME/Ubuntu":/usr/src/ubuntu -w /usr/src/ubuntu -it --privileged ubuntu:latest'
-alias sudo_podman_ubuntu='sudo podman run --pull always --rm --network=host -v "$HOME/Ubuntu":/usr/src/ubuntu -w /usr/src/ubuntu -it --privileged ubuntu:latest'
-alias podman_ubuntu_kde='podman run --pull always -it --rm -d --privileged -p 3000:3000/tcp -p 3001:3001/tcp linuxserver/webtop:ubuntu-kde'
-alias sudo_podman_ubuntu_kde='sudo podman run --pull always -it --rm -d --privileged -p 3000:3000/tcp -p 3001:3001/tcp linuxserver/webtop:ubuntu-kde'
-alias podman_portainer='podman run --pull always -d -p 8000:8000 -p 9443:9443 --privileged --name portainer -v /run/user/1000/podman/podman.sock:/var/run/docker.sock:Z -v portainer_data:/data docker.io/portainer/portainer-ce:latest'
 alias lla='eza -l --icons --total-size --smart-group -a -A'
 
 TMOUT=1
