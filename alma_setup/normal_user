@@ -32,56 +32,29 @@ ohmyzsh_user() {
         ) >>$HOME/.zshrc
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
-
     source $HOME/.zshrc
 }
 
 terminal() {
     id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
-    path_terminal="/org/gnome/terminal/legacy/"
-    val=(
-        "profiles:/:$id/font"
-        "'Red Hat Mono Light, Medium 12'"
-        "profiles:/:$id/use-system-font"
-        "false"
-        "profiles:/:$id/visible-name"
-        "'$user_current'"
-        "profiles:/:$id/cursor-shape"
-        "'ibeam'"
-        "keybindings/copy"
-        "'<Ctrl>C'"
-        "keybindings/new-tab"
-        "'<Ctrl>T'"
-        "keybindings/new-window"
-        "'<Ctrl>N'"
-        "keybindings/save-contents"
-        "'<Ctrl>S'"
-        "keybindings/close-tab"
-        "'<Ctrl>W'"
-        "keybindings/close-window"
-        "'<Ctrl>Q'"
-        "keybindings/copy-html"
-        "'<Ctrl>X'"
-        "keybindings/paste"
-        "'<Ctrl>V'"
-        "keybindings/select-all"
-        "'<Ctrl>A'"
-        "keybindings/preferences"
-        "'<Ctrl>P'"
-        "keybindings/find"
-        "'<Ctrl>F'"
-        "keybindings/find-next"
-        "'<Ctrl>G'"
-        "keybindings/find-previous"
-        "'<Ctrl>H'"
-        "keybindings/find-clear"
-        "'<Ctrl>J'"
-    )
-    for ((i = 0; i < ${#val[@]}; i += 2)); do
-        setting="${val[i]}"
-        value="${val[i + 1]}"
-        dconf write "${path_terminal}${setting}" "${value}"
-    done
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ visible-name "'$user_current'"
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ cursor-shape "'ibeam'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy "'<Ctrl>C'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-tab "'<Ctrl>T'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-window "'<Ctrl>N'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ save-contents "'<Ctrl>S'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-tab "'<Ctrl>W'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-window "'<Ctrl>Q'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy-html "'<Ctrl>X'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste "'<Ctrl>V'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ select-all "'<Ctrl>A'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ preferences "'<Ctrl>P'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find "'<Ctrl>F'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-next "'<Ctrl>G'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-previous "'<Ctrl>H'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-clear "'<Ctrl>J'"
     cd $REPO_DIR/data_prepared/
     git clone https://github.com/dracula/gnome-terminal
     cd gnome-terminal
@@ -89,53 +62,26 @@ terminal() {
 }
 
 accessibility() {
-    val=(
-        "desktop/interface/text-scaling-factor"
-        "1.25"
-        "desktop/interface/gtk-theme"
-        "'almalinux_themes'"
-        "desktop/interface/icon-theme"
-        "'almalinux_icons'"
-        "desktop/interface/cursor-theme"
-        "'almalinux_cursors'"
-        "desktop/interface/clock-show-date"
-        "true"
-        "desktop/interface/show-battery-percentage"
-        "true"
-        "desktop/interface/clock-show-seconds"
-        "true"
-        "desktop/interface/clock-show-weekday"
-        "true"
-        "desktop/interface/enable-hot-corners"
-        "false"
-        "desktop/interface/locate-pointer"
-        "true"
-        "desktop/peripherals/touchpad/tap-to-click"
-        "true"
-        "desktop/session/idle-delay"
-        "1800"
-        "desktop/sound/allow-volume-above-100-percent"
-        "true"
-        "desktop/input-sources/show-all-sources"
-        "true"
-        "desktop/input-sources/sources"
-        "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
-        "desktop/wm/preferences/button-layout"
-        "'close,minimize,maximize:appmenu'"
-        "settings-daemon/plugins/color/night-light-enabled"
-        "true"
-        "settings-daemon/plugins/color/night-light-temperature"
-        "3168"
-        "settings-daemon/plugins/color/night-light-schedule-from"
-        "0.0"
-        "settings-daemon/plugins/color/night-light-schedule-to"
-        "0.0"
-    )
-    for ((i = 0; i < ${#val[@]}; i += 2)); do
-        setting="${val[i]}"
-        value="${val[i + 1]}"
-        dconf write /org/gnome/${setting} "${value}"
-    done
+    gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
+    gsettings set org.gnome.desktop.interface gtk-theme 'almalinux_themes'
+    gsettings set org.gnome.desktop.interface icon-theme 'almalinux_icons'
+    gsettings set org.gnome.desktop.interface cursor-theme 'almalinux_cursors'
+    gsettings set org.gnome.desktop.interface clock-show-date true
+    gsettings set org.gnome.desktop.interface show-battery-percentage true
+    gsettings set org.gnome.desktop.interface clock-show-seconds true
+    gsettings set org.gnome.desktop.interface clock-show-weekday true
+    gsettings set org.gnome.desktop.interface enable-hot-corners false
+    gsettings set org.gnome.desktop.interface locate-pointer true
+    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+    gsettings set org.gnome.desktop.session idle-delay 1800
+    gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+    gsettings set org.gnome.desktop.input-sources show-all-sources true
+    gsettings set org.gnome.desktop.input-sources mru-sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
+    gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
     cd $REPO_DIR/
     mkdir -p $HOME/.local/share/backgrounds/
     cp -f Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds/Legion.png
