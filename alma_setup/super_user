@@ -157,7 +157,7 @@ else
         cd /usr/share/themes
         alma_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $alma_important /usr/share/themes/almalinux_themes
-        # rm -rf WoW*
+        rm -rf WoW*
         cd almalinux_themes
         rm -rf cinnamon plank gnome-shell
         cd "$REPO_DIR" || return
