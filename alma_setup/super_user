@@ -152,12 +152,12 @@ else
         done
         rm -rf /usr/share/themes/almalinux_themes
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
-        ./install.sh -n 'WoW' -o normal -i gnome -c Dark -a alt -t default -p 60 -P smaller -s default -b default -m -N mojave -HD --normal --round --right
+        ./install.sh -n 'WoW' -c Dark -a alt -t default -m -N mojave -HD --round --right --shell -i gnome -b default -h smaller -normal
         ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i gnome -b default
         cd /usr/share/themes
-        alma_important=$(ls -d /usr/share/themes/WoW*alt)
+        alma_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $alma_important /usr/share/themes/almalinux_themes
-        rm -rf WoW*
+        # rm -rf WoW*
         cd almalinux_themes
         rm -rf cinnamon plank gnome-shell
         cd "$REPO_DIR" || return
@@ -233,7 +233,7 @@ else
             )
             for i in "${gitarray[@]}"; do
                 echo $(git clone https://github.com/$i)
-            done         
+            done
             ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
             rm -rf $HOME/.oh-my-zsh/themes
         else

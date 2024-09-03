@@ -32,7 +32,6 @@ ohmyzsh_user() {
         ) >>$HOME/.zshrc
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
-    source $HOME/.zshrc
 }
 
 terminal() {
