@@ -1,0 +1,131 @@
+#!/bin/bash
+source $(pwd)/variables
+
+ohmyzsh_user() {
+    rm -rf $HOME/.zshrc.pre-oh-my-zsh*
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        declare -a gitarray
+        gitarray=(
+            'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
+            'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions''
+            'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
+            'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
+        )
+        for i in "${gitarray[@]}"; do
+            echo $(git clone https://github.com/$i)
+        done
+        ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+        rm -rf $HOME/.oh-my-zsh/themes
+    else
+        cd $HOME/.oh-my-zsh
+        git pull
+    fi
+    cd $REPO_DIR/
+    cp -f _user.zshrc $HOME/.zshrc
+    cp -f .user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+    if command -v /home/linuxbrew/.linuxbrew/bin/brew; then
+        (
+            echo
+            echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        ) >>$HOME/.zshrc
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+}
+
+terminal() {
+    id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ visible-name "'$user_current'"
+    gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ cursor-shape "'ibeam'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy "'<Ctrl>C'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-tab "'<Ctrl>T'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-window "'<Ctrl>N'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ save-contents "'<Ctrl>S'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-tab "'<Ctrl>W'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-window "'<Ctrl>Q'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy-html "'<Ctrl>X'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste "'<Ctrl>V'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ select-all "'<Ctrl>A'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ preferences "'<Ctrl>P'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find "'<Ctrl>F'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-next "'<Ctrl>G'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-previous "'<Ctrl>H'"
+    gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-clear "'<Ctrl>J'"
+    cd $REPO_DIR/
+    git clone https://github.com/dracula/gnome-terminal
+    cd gnome-terminal
+    ./install.sh -s Dracula -p $user_current --skip-dircolors
+    cd $REPO_DIR/
+    rm -rf gnome-terminal
+}
+
+accessibility() {
+    gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
+    gsettings set org.gnome.desktop.interface gtk-theme 'almalinux_themes'
+    gsettings set org.gnome.desktop.interface icon-theme 'almalinux_icons'
+    gsettings set org.gnome.desktop.interface cursor-theme 'almalinux_cursors'
+    gsettings set org.gnome.desktop.interface clock-show-date true
+    gsettings set org.gnome.desktop.interface show-battery-percentage true
+    gsettings set org.gnome.desktop.interface clock-show-seconds true
+    gsettings set org.gnome.desktop.interface clock-show-weekday true
+    gsettings set org.gnome.desktop.interface enable-hot-corners false
+    gsettings set org.gnome.desktop.interface locate-pointer true
+    gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+    gsettings set org.gnome.desktop.session idle-delay 1800
+    gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+    gsettings set org.gnome.desktop.input-sources show-all-sources true
+    gsettings set org.gnome.desktop.input-sources mru-sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
+    gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
+    cd $REPO_DIR/
+}
+
+gnome_extensions() {
+    cd $REPO_DIR/
+    wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
+    chmod +x install-gnome-extensions.sh
+    declare -a extensions
+    extensions=(
+        '3628'
+        '1160'
+        '3843'
+        '3010'
+        '4679'
+        '3733'
+        '6272'
+        '5219'
+        '3733'
+    )
+    for i in "${extensions[@]}"; do
+        echo $(./install-gnome-extensions.sh -e -o -u $i)
+    done
+    # sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+    cd $REPO_DIR
+    rm -rf install-gnome-extensions.sh
+}
+
+keybinding() {
+    KEY0_PATH="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding"
+    KEY_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
+        "['$KEY_PATH/custom0/']"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ name "GNOME Terminal"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ command "gnome-terminal"
+    gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
+}
+
+tasks=(
+    "ohmyzsh_user"
+    "terminal"
+    "accessibility"
+    "gnome_extensions"
+    "keybinding"
+)
+for task in "${tasks[@]}"; do
+    check_and_run "$task"
+done

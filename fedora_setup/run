@@ -1,0 +1,7 @@
+#!/bin/bash
+source $(pwd)/variables
+mkdir -p $REPO_DIR/logs
+cd $REPO_DIR
+sudo sh super_user
+sh normal_user
+rm -rf logs
