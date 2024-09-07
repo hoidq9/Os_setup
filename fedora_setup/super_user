@@ -18,7 +18,7 @@ else
         }
         shell() {
             chsh -s /bin/zsh $user_current
-            # chsh -s /bin/zsh $USER
+            chsh -s /bin/zsh $USER
         }
         run() {
             packages
@@ -183,7 +183,10 @@ else
     ohmyzsh_root() {
         rm -rf $HOME/.zshrc.pre-oh-my-zsh*
         if [ ! -d "$HOME/.oh-my-zsh" ]; then
-            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+            mkdir -p $REPO_DIR/ohmyzsh
+            cd $REPO_DIR/ohmyzsh
+            wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh 
+            sh install.sh --unattended
             declare -a gitarray
             gitarray=(
                 'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
@@ -204,6 +207,7 @@ else
             rm -rf $HOME/.zshrc
         fi
         cd $REPO_DIR/
+        rm -rf ohmyzsh
         cp -f _root.zshrc $HOME/.zshrc
         cp -f .root_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
     }

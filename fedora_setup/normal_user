@@ -4,7 +4,10 @@ source $(pwd)/variables
 ohmyzsh_user() {
     rm -rf $HOME/.zshrc.pre-oh-my-zsh*
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        mkdir -p $REPO_DIR/ohmyzsh
+        cd $REPO_DIR/ohmyzsh
+        wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        sh install.sh --unattended
         declare -a gitarray
         gitarray=(
             'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
@@ -22,6 +25,7 @@ ohmyzsh_user() {
         git pull
     fi
     cd $REPO_DIR/
+    rm -rf $REPO_DIR/ohmyzsh
     cp -f _user.zshrc $HOME/.zshrc
     cp -f .user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
     if command -v /home/linuxbrew/.linuxbrew/bin/brew; then
