@@ -95,15 +95,15 @@ else
         for target in background-default.png background-darken.png; do
             cp $REPO_DIR/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
         done
-        rm -rf /usr/share/themes/almalinux_themes
+        rm -rf /usr/share/themes/fedora_themes
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
         ./install.sh -n 'WoW' -c Dark -a alt -t default -m -N mojave -HD --round --right --shell -i fedora -b default -h smaller -normal
         ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i fedora -b default
         cd /usr/share/themes
-        alma_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
-        mv $alma_important /usr/share/themes/almalinux_themes
+        fedora_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
+        mv $fedora_important /usr/share/themes/fedora_themes
         rm -rf WoW*
-        cd almalinux_themes
+        cd fedora_themes
         rm -rf cinnamon plank gnome-shell
         cd "$REPO_DIR" || return
         rm -rf themes_custom
@@ -114,11 +114,11 @@ else
         mkdir -p icons_custom
         cd icons_custom
         mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
-        rm -rf /usr/share/icons/almalinux_icons
+        rm -rf /usr/share/icons/fedora_icons
         cd WhiteSur-icon-theme
-        ./install.sh -n 'almalinux_icons' -t default -a -b
+        ./install.sh -n 'fedora_icons' -t default -a -b
         cd /usr/share/icons
-        rm -rf almalinux_icons-{dark,light}
+        rm -rf fedora_icons-{dark,light}
         cd "$REPO_DIR" || return
         rm -rf icons_custom
     }
@@ -128,10 +128,10 @@ else
         mkdir -p cursors_custom
         cd cursors_custom
         wget $(curl -s https://api.github.com/repos/ful1e5/apple_cursor/releases/latest | grep "browser_download_url.*macOS.tar.xz" | cut -d '"' -f 4) && tar -xvf macOS.tar.xz
-        rm -rf /usr/share/icons/almalinux_cursors
+        rm -rf /usr/share/icons/fedora_cursors
         cp -r macOS /usr/share/icons/
         cd /usr/share/icons/
-        mv macOS almalinux_cursors
+        mv macOS fedora_cursors
         cd "$REPO_DIR" || return
         rm -rf cursors_custom
     }
@@ -147,7 +147,6 @@ else
         fc-cache -f -v
         dnf group install "Fonts" -y
         cd "$REPO_DIR" || return
-        dnf install redhat-mono-fonts -y
         # abattis-cantarell-fonts.noarch adobe-source-code-pro-fonts.noarch dejavu-sans-fonts.noarch dejavu-sans-mono-fonts.noarch dejavu-serif-fonts.noarch fontconfig.x86_64 fonts-filesystem.noarch ghostscript-tools-fonts.x86_64 google-droid-sans-fonts.noarch google-noto-cjk-fonts-common.noarch google-noto-emoji-color-fonts.noarch google-noto-fonts-common.noarch google-noto-sans-cjk-ttc-fonts.noarch google-noto-sans-gurmukhi-fonts.noarch google-noto-sans-sinhala-vf-fonts.noarch google-noto-serif-cjk-ttc-fonts.noarch jomolhari-fonts.noarch julietaula-montserrat-fonts.noarch khmer-os-system-fonts.noarch langpacks-core-font-en.noarch libXfont2.x86_64 liberation-fonts-common.noarch liberation-mono-fonts.noarch liberation-sans-fonts.noarch liberation-serif-fonts.noarch libfontenc.x86_64 lohit-assamese-fonts.noarch lohit-bengali-fonts.noarch lohit-devanagari-fonts.noarch lohit-gujarati-fonts.noarch lohit-kannada-fonts.noarch lohit-odia-fonts.noarch lohit-tamil-fonts.noarch lohit-telugu-fonts.noarch paktype-naskh-basic-fonts.noarch pt-sans-fonts.noarch sil-abyssinica-fonts.noarch sil-nuosu-fonts.noarch sil-padauk-fonts.noarch smc-meera-fonts.noarch stix-fonts.noarch thai-scalable-fonts-common.noarch thai-scalable-waree-fonts.noarch urw-base35-bookman-fonts.noarch urw-base35-c059-fonts.noarch urw-base35-d050000l-fonts.noarch urw-base35-fonts.noarch urw-base35-fonts-common.noarch urw-base35-gothic-fonts.noarch urw-base35-nimbus-mono-ps-fonts.noarch urw-base35-nimbus-roman-fonts.noarch urw-base35-nimbus-sans-fonts.noarch urw-base35-p052-fonts.noarch urw-base35-standard-symbols-ps-fonts.noarch urw-base35-z003-fonts.noarch google-noto-sans-fonts
         cd $REPO_DIR/
         rm -rf fonts_custom
@@ -157,9 +156,9 @@ else
         cd "$REPO_DIR" || return
         settings=(
             "org.gnome.desktop.interface text-scaling-factor 1.25"
-            "org.gnome.desktop.interface gtk-theme 'almalinux_themes'"
-            "org.gnome.desktop.interface icon-theme 'almalinux_icons'"
-            "org.gnome.desktop.interface cursor-theme 'almalinux_cursors'"
+            "org.gnome.desktop.interface gtk-theme 'fedora_themes'"
+            "org.gnome.desktop.interface icon-theme 'fedora_icons'"
+            "org.gnome.desktop.interface cursor-theme 'fedora_cursors'"
             "org.gnome.desktop.interface clock-show-date true"
             "org.gnome.desktop.interface show-battery-percentage true"
             "org.gnome.desktop.interface clock-show-seconds true"
@@ -167,10 +166,10 @@ else
             "org.gnome.settings-daemon.plugins.power power-button-action 'action'"
             "org.gnome.desktop.peripherals.touchpad tap-to-click true"
             "org.gnome.login-screen disable-user-list true"
-            "org.gnome.settings-daemon.plugins.color night-light-enabled true"
-            "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
-            "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
-            "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
+            # "org.gnome.settings-daemon.plugins.color night-light-enabled true"
+            # "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
+            # "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
+            # "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
             "org.gnome.login-screen banner-message-enable true"
             "org.gnome.login-screen banner-message-text 'LEADER'"
         )
@@ -213,7 +212,7 @@ else
     }
 
     remove_packages() {
-        dnf autoremove vim-common vim-enhanced vi -y # sassc glib2-devel ImageMagick dialog inkscape optipng
+        dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y 
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
