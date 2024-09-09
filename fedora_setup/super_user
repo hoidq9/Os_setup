@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 else
     system() {
         cd $REPO_DIR || return
-        cp fedora_custom.repo /etc/yum.repos.d/
+        cp fedora_repositories.repo /etc/yum.repos.d/
         commands() {
             cp rmkernel /usr/local/bin
             chmod +x /usr/local/bin/rmkernel
