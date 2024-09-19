@@ -12,7 +12,7 @@ else
             chmod +x /usr/local/bin/rmkernel
         }
         packages() {
-            dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks -y # conky eza fzf ykclient ykpers pam_yubico
+            dnf install keepassxc gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks -y # conky eza fzf ykclient ykpers pam_yubico
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
