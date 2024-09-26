@@ -1,5 +1,6 @@
 #!/bin/bash
 source $(pwd)/variables
+[ ! -d $HOME/Prj ] && mkdir -p $HOME/Prj
 mkdir -p $REPO_DIR/logs
 cd $REPO_DIR
 sudo sh super_user

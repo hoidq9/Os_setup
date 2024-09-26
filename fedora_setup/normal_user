@@ -1,6 +1,18 @@
 #!/bin/bash
 source $(pwd)/variables
 
+yubico() {
+    rm -rf $HOME/Prj/Yubico
+    cd "$HOME/Prj" || return
+    mkdir -p Yubico
+    cd Yubico
+    wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
+    yubico_compress=$(ls -d *.tar.gz)
+    dir_name=$(basename $yubico_compress .tar.gz)
+    mkdir "$dir_name"
+    tar -xzvf $yubico_compress -C "$dir_name" --strip-components=1
+}
+
 ohmyzsh_user() {
     if rpm -q zsh >/dev/null 2>&1; then
         rm -rf $HOME/.zshrc.pre-oh-my-zsh*
@@ -127,6 +139,7 @@ keybinding() {
 }
 
 tasks=(
+    "yubico"
     "ohmyzsh_user"
     "terminal"
     "accessibility"

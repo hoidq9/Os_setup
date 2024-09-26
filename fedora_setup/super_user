@@ -179,40 +179,8 @@ else
         cp custom.conf /etc/gdm
     }
 
-    ohmyzsh_root() {
-        rm -rf $HOME/.zshrc.pre-oh-my-zsh*
-        if [ ! -d "$HOME/.oh-my-zsh" ]; then
-            mkdir -p $REPO_DIR/ohmyzsh
-            cd $REPO_DIR/ohmyzsh
-            wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh 
-            sh install.sh --unattended
-            declare -a gitarray
-            gitarray=(
-                'zsh-users/zsh-syntax-highlighting.git '$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting''
-                'zsh-users/zsh-autosuggestions '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions''
-                'spaceship-prompt/spaceship-prompt.git '$HOME/.oh-my-zsh/custom/themes/spaceship-prompt''
-                'TamCore/autoupdate-oh-my-zsh-plugins '$HOME/.oh-my-zsh/custom/plugins/autoupdate''
-            )
-            for i in "${gitarray[@]}"; do
-                echo $(git clone https://github.com/$i)
-            done
-            ln -s $HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme
-            rm -rf $HOME/.oh-my-zsh/themes
-        else
-            cd $HOME/.oh-my-zsh
-            git pull
-        fi
-        if [ -f $HOME/.zshrc ]; then
-            rm -rf $HOME/.zshrc
-        fi
-        cd $REPO_DIR/
-        rm -rf ohmyzsh
-        cp -f _root.zshrc $HOME/.zshrc
-        cp -f .root_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
-    }
-
     remove_packages() {
-        dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y 
+        dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
@@ -225,7 +193,6 @@ else
         "cursors"
         "fonts"
         "gdms"
-        # "ohmyzsh_root"
         "remove_packages"
     )
     for task in "${tasks[@]}"; do

@@ -139,9 +139,9 @@ alias dinfo='sudo dnf info'
 alias ginfo='sudo dnf groupinfo'
 alias list='sudo dnf list installed'
 alias all='sudo dnf list all'
-alias lla='eza -l --icons --total-size --smart-group -a -A'
+# alias lla='eza -l --icons --total-size --smart-group -a -A'
 
-TMOUT=1
-TRAPALRM() {
-	zle reset-prompt
-}
+# TMOUT=1
+# TRAPALRM() {
+# 	zle reset-prompt
+# }
