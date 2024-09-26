@@ -12,13 +12,13 @@ else
             chmod +x /usr/local/bin/rmkernel
         }
         packages() {
-            dnf install keepassxc gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks -y # conky eza fzf ykclient ykpers pam_yubico
+            dnf install keepassxc gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pam_yubico -y # conky eza fzf cockpit
             systemctl set-default graphical.target
-            systemctl enable --now cockpit.socket
+            # systemctl enable --now cockpit.socket
         }
         shell() {
             chsh -s /bin/zsh $user_current
-            chsh -s /bin/zsh $USER
+            # chsh -s /bin/zsh $USER
         }
         run() {
             packages
@@ -225,7 +225,7 @@ else
         "cursors"
         "fonts"
         "gdms"
-        "ohmyzsh_root"
+        # "ohmyzsh_root"
         "remove_packages"
     )
     for task in "${tasks[@]}"; do
