@@ -12,7 +12,7 @@ else
             chmod +x /usr/local/bin/rmkernel
         }
         packages() {
-            dnf install keepassxc gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pam_yubico -y # conky eza fzf cockpit
+            dnf install keepassxc gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg -y # conky eza fzf cockpit pam_yubico
             systemctl set-default graphical.target
             # systemctl enable --now cockpit.socket
         }
@@ -184,6 +184,21 @@ else
         dnf install PackageKit-command-not-found gnome-software -y
     }
 
+    check_and_add_pam_u2f() {
+        local pam_line="auth    sufficient    pam_u2f.so cue"
+        local pam_files=(
+            "/etc/pam.d/sudo"
+            "/etc/pam.d/gdm-password"
+            "/etc/pam.d/system-auth"
+            "/etc/pam.d/sshd"
+        )
+        for pam_file in "${pam_files[@]}"; do
+            if ! grep -qF "$pam_line" "$pam_file"; then
+                echo "$pam_line" | cat - "$pam_file" >temp && mv temp "$pam_file"
+            fi
+        done
+    }
+
     tasks=(
         "system"
         "softwares"
@@ -194,7 +209,9 @@ else
         "fonts"
         "gdms"
         "remove_packages"
+        "check_and_add_pam_u2f"
     )
+    
     for task in "${tasks[@]}"; do
         check_and_run "$task"
     done
