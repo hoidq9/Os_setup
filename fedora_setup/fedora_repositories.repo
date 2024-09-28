@@ -23,7 +23,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [fedora_hyperdedic]
-name=Fedora HyperDedic $releasever - $basearch
+name=Fedora Hyperdedic $releasever - $basearch
 baseurl=https://mirror.hyperdedic.ru/fedora/linux/releases/$releasever/Everything/$basearch/os/
 enabled=1
 countme=1
@@ -35,7 +35,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [updates_hyperdedic]
-name=Fedora HyperDedic $releasever - $basearch - Updates
+name=Fedora Hyperdedic $releasever - $basearch - Updates
 baseurl=https://mirror.hyperdedic.ru/fedora/linux/updates/$releasever/Everything/$basearch/
 enabled=1
 countme=1
@@ -49,7 +49,7 @@ skip_if_unavailable=False
 [fedora_huawei]
 name=Fedora Huawei $releasever - $basearch
 baseurl=https://mirrors.huaweicloud.com/fedora/releases/$releasever/Everything/$basearch/os/
-enabled=1
+enabled=0
 countme=1
 metadata_expire=7d
 repo_gpgcheck=0
@@ -61,7 +61,7 @@ skip_if_unavailable=False
 [updates_huawei]
 name=Fedora Huawei $releasever - $basearch - Updates
 baseurl=https://mirrors.huaweicloud.com/fedora/updates/$releasever/Everything/$basearch/
-enabled=1
+enabled=0
 countme=1
 repo_gpgcheck=0
 type=rpm
@@ -95,7 +95,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [fedora_rhel]
-name=Fedora RHEL $releasever - $basearch
+name=Fedora Rhel $releasever - $basearch
 baseurl=https://download-cc-rdu01.fedoraproject.org/pub/fedora/linux/releases/$releasever/Everything/$basearch/os/
 enabled=1
 countme=1
@@ -107,7 +107,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [updates_rhel]
-name=Fedora RHEL $releasever - $basearch - Updates
+name=Fedora Rhel $releasever - $basearch - Updates
 baseurl=https://download-cc-rdu01.fedoraproject.org/pub/fedora/linux/updates/$releasever/Everything/$basearch/
 enabled=1
 countme=1
@@ -119,7 +119,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [fedora_redhat]
-name=Fedora RedHat $releasever - $basearch
+name=Fedora Redhat $releasever - $basearch
 baseurl=https://download-ib01.fedoraproject.org/pub/fedora/linux/releases/$releasever/Everything/$basearch/os/
 enabled=1
 countme=1
@@ -131,7 +131,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [updates_redhat]
-name=Fedora RedHat $releasever - $basearch - Updates
+name=Fedora Redhat $releasever - $basearch - Updates
 baseurl=https://download-ib01.fedoraproject.org/pub/fedora/linux/updates/$releasever/Everything/$basearch/
 enabled=1
 countme=1
@@ -191,7 +191,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [fedora_uvermont]
-name=Fedora UVermont $releasever - $basearch
+name=Fedora Uvermont $releasever - $basearch
 baseurl=https://uvermont.mm.fcix.net/fedora/linux/releases/$releasever/Everything/$basearch/os/
 enabled=1
 countme=1
@@ -203,7 +203,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$releasever-$basearch
 skip_if_unavailable=False
 
 [updates_uvermont]
-name=Fedora UVermont $releasever - $basearch - Updates
+name=Fedora Uvermont $releasever - $basearch - Updates
 baseurl=https://uvermont.mm.fcix.net/fedora/linux/updates/$releasever/Everything/$basearch/
 enabled=1
 countme=1
