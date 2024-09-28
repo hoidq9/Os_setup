@@ -14,7 +14,7 @@ else
         }
         packages() {
             dnf install keepassxc gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg -y # conky eza fzf cockpit pam_yubico
-            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y
+            dnf group install "Hardware Support" "Common NetworkManager Submodules" "Firefox Web Browser" -y
             systemctl set-default graphical.target
             # systemctl enable --now cockpit.socket
         }
@@ -101,6 +101,7 @@ else
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
         ./install.sh -n 'WoW' -c Dark -a alt -t default -m -N mojave -HD --round --right --shell -i fedora -b default -h smaller -normal
         ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i fedora -b default
+        ./tweaks.sh -f adaptive
         cd /usr/share/themes
         fedora_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $fedora_important /usr/share/themes/fedora_themes
@@ -173,7 +174,7 @@ else
             # "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
             # "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
             "org.gnome.login-screen banner-message-enable true"
-            "org.gnome.login-screen banner-message-text 'LEADER'"
+            "org.gnome.login-screen banner-message-text 'Leader_H'"
         )
         for setting in "${settings[@]}"; do
             sudo -u gdm dbus-launch gsettings set $setting
@@ -201,6 +202,22 @@ else
         done
     }
 
+    mount_windows_partition() {
+        local partition_name="Windows_H"
+        local mount_point="/home/$user_current/Prj/Windows_H"
+        local partition_uuid=$(blkid -o value -s UUID -t LABEL="$partition_name")
+
+        if [ -n "$partition_uuid" ]; then
+            mkdir -p "$mount_point"
+
+            if ! grep -q "$partition_uuid" /etc/fstab; then
+                echo "UUID=$partition_uuid  $mount_point  ntfs-3g  defaults,uid=$(id -u $user_current),gid=$(id -g $user_current),umask=022  0  0" >>/etc/fstab
+            fi
+
+            mount -a
+        fi
+    }
+
     tasks=(
         "system"
         "softwares"
@@ -211,6 +228,7 @@ else
         "fonts"
         "gdms"
         "check_and_add_pam_u2f"
+        "mount_windows_partition"
         "remove_packages"
     )
 
