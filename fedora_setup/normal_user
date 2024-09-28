@@ -138,6 +138,32 @@ keybinding() {
     gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
 }
 
+update_firefox_userChrome() {
+    local file_path="$HOME/.mozilla/firefox/firefox-themes/userChrome.css"
+    local new_code='#sidebar-header {
+        display: none;
+    }
+
+    #sidebar-box {
+        min-width: 100px !important;
+    }
+
+    #TabsToolbar {
+        visibility: collapse !important;
+    }'
+
+    if [ -f "$file_path" ]; then
+        if ! grep -qF -- "$new_code" "$file_path"; then
+            echo "$new_code" >>"$file_path"
+            echo "Đã thêm đoạn mã vào tệp userChrome.css."
+        else
+            echo "Đoạn mã đã tồn tại trong tệp userChrome.css."
+        fi
+    else
+        echo "Tệp userChrome.css không tồn tại."
+    fi
+}
+
 tasks=(
     "yubico"
     "ohmyzsh_user"
@@ -145,6 +171,7 @@ tasks=(
     "accessibility"
     "gnome_extensions"
     "keybinding"
+    "update_firefox_userChrome"
 )
 for task in "${tasks[@]}"; do
     check_and_run "$task"
