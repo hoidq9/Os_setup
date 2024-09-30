@@ -171,7 +171,7 @@ tasks=(
     "accessibility"
     "gnome_extensions"
     "keybinding"
-    "update_firefox_userChrome"
+    # "update_firefox_userChrome"
 )
 for task in "${tasks[@]}"; do
     check_and_run "$task"

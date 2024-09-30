@@ -13,10 +13,10 @@ else
             chmod +x /usr/local/bin/rmkernel
         }
         packages() {
-            dnf install keepassxc gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg -y # conky eza fzf cockpit pam_yubico
-            dnf group install "Hardware Support" "Common NetworkManager Submodules" "Firefox Web Browser" -y
+            dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks -y # conky eza fzf cockpit pam_yubico keepassxc pamu2fcfg
+            dnf group install "Firefox Web Browser" "Hardware Support" "Common NetworkManager Submodules" -y
             systemctl set-default graphical.target
-            # systemctl enable --now cockpit.socket
+            systemctl enable --now cockpit.socket
         }
         shell() {
             chsh -s /bin/zsh $user_current
@@ -101,7 +101,7 @@ else
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
         ./install.sh -n 'WoW' -c Dark -a alt -t default -m -N mojave -HD --round --right --shell -i fedora -b default -h smaller -normal
         ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i fedora -b default
-        ./tweaks.sh -f adaptive
+        # ./tweaks.sh -f adaptive
         cd /usr/share/themes
         fedora_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $fedora_important /usr/share/themes/fedora_themes
@@ -193,7 +193,7 @@ else
             "/etc/pam.d/sudo"
             "/etc/pam.d/gdm-password"
             "/etc/pam.d/system-auth"
-            "/etc/pam.d/sshd"
+            # "/etc/pam.d/sshd"
         )
         for pam_file in "${pam_files[@]}"; do
             if ! grep -qF "$pam_line" "$pam_file"; then
@@ -227,8 +227,8 @@ else
         "cursors"
         "fonts"
         "gdms"
-        "check_and_add_pam_u2f"
-        "mount_windows_partition"
+        # "check_and_add_pam_u2f"
+        # "mount_windows_partition"
         "remove_packages"
     )
 
