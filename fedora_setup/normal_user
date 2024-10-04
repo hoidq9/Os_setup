@@ -1,6 +1,14 @@
 #!/bin/bash
 source $(pwd)/variables
 
+cursor_editor() {
+    rm -rf $HOME/Prj/Cursor_AI
+    cd $HOME/Prj
+    mkdir -p Cursor_AI
+    cd Cursor_AI
+    curl -OJ https://downloader.cursor.sh/linux/appImage/x64
+}
+
 yubico() {
     rm -rf $HOME/Prj/Yubico
     cd "$HOME/Prj" || return
@@ -164,7 +172,31 @@ update_firefox_userChrome() {
     fi
 }
 
+bookmark_nautilus() {
+    bookmarks_file="/home/$user_current/.config/gtk-3.0/bookmarks"
+    folders=(
+        "/home/$user_current/Prj"
+        "/home/$user_current/Prj/Yubico"
+        "/home/$user_current/Prj/Cursor_AI"
+        "/home/$user_current/Prj/Windows_H"
+    )
+    check_and_add_bookmark() {
+        folder_path="$1"
+        if [ -d "$folder_path" ] && ! grep -q "file://$folder_path" "$bookmarks_file"; then
+            echo "file://$folder_path" >>"$bookmarks_file"
+            echo "Đã thêm $folder_path vào bookmark."
+        else
+            echo "$folder_path đã có hoặc thư mục không tồn tại."
+        fi
+    }
+
+    for folder in "${folders[@]}"; do
+        check_and_add_bookmark "$folder"
+    done
+}
+
 tasks=(
+    "cursor_editor"
     "yubico"
     "ohmyzsh_user"
     "terminal"
@@ -172,7 +204,9 @@ tasks=(
     "gnome_extensions"
     "keybinding"
     # "update_firefox_userChrome"
+    "bookmark_nautilus"
 )
+
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
