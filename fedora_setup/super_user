@@ -184,7 +184,7 @@ else
 
     remove_packages() {
         dnf autoremove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
-        dnf install PackageKit-command-not-found gnome-software -y
+        dnf install PackageKit-command-not-found gnome-software fuse -y
     }
 
     check_and_add_pam_u2f() {
