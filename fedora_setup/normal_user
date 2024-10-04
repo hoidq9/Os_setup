@@ -6,7 +6,8 @@ cursor_editor() {
     cd $HOME/Prj
     mkdir -p Cursor_AI
     cd Cursor_AI
-    curl -OJ https://downloader.cursor.sh/linux/appImage/x64
+    filename=$(curl -OJ -w '%{filename_effective}' https://downloader.cursor.sh/linux/appImage/x64)
+    chmod +x "$filename"
 }
 
 yubico() {
