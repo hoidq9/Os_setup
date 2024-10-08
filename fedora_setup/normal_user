@@ -20,6 +20,10 @@ yubico() {
     dir_name=$(basename $yubico_compress .tar.gz)
     mkdir "$dir_name"
     tar -xzvf $yubico_compress -C "$dir_name" --strip-components=1
+    cd $dir_name
+    ./desktop_integration.sh -i
+    cd ..
+    rm -rf *.tar.gz *.tar.gz.sig
 }
 
 ohmyzsh_user() {
