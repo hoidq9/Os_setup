@@ -37,8 +37,8 @@ else
     softwares() {
         cd $REPO_DIR || return
         microsoft() {
-            cp vscode.repo /etc/yum.repos.d/ # microsoft-edge.repo
-            dnf install code -y # microsoft-edge-stable
+            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ 
+            dnf install code microsoft-edge-stable -y 
         }
         gcm() {
             mkdir -p $REPO_DIR/gcm_install
