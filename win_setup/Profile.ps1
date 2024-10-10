@@ -1,4 +1,4 @@
-oh-my-posh init pwsh --config '"C:\Program Files (x86)\oh-my-posh\themes\iterm2.omp.json"' | Invoke-Expression
+oh-my-posh init pwsh --config '"C:\Program Files (x86)\oh-my-posh\themes\night-owl.omp.json"' | Invoke-Expression
 Import-Module Terminal-Icons
 # Add auto complete (requires PSReadline 2.2.0-beta1+ prerelease)
 Set-PSReadLineOption -PredictionSource History
