@@ -1,15 +1,6 @@
 #!/bin/bash
 source $(pwd)/variables
 
-cursor_editor() {
-    rm -rf $HOME/Prj/Cursor_AI
-    cd $HOME/Prj
-    mkdir -p Cursor_AI
-    cd Cursor_AI
-    filename=$(curl -OJ -w '%{filename_effective}' https://downloader.cursor.sh/linux/appImage/x64)
-    chmod +x "$filename"
-}
-
 yubico() {
     rm -rf $HOME/Prj/Yubico
     cd "$HOME/Prj" || return
@@ -182,7 +173,6 @@ bookmark_nautilus() {
     folders=(
         "/home/$user_current/Prj"
         "/home/$user_current/Prj/Yubico"
-        "/home/$user_current/Prj/Cursor_AI"
         "/home/$user_current/Prj/Windows_H"
     )
     check_and_add_bookmark() {
@@ -201,7 +191,6 @@ bookmark_nautilus() {
 }
 
 tasks=(
-    "cursor_editor"
     "yubico"
     "ohmyzsh_user"
     "terminal"
@@ -215,3 +204,4 @@ tasks=(
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
+

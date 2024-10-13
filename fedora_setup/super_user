@@ -37,8 +37,8 @@ else
     softwares() {
         cd $REPO_DIR || return
         microsoft() {
-            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ 
-            dnf install code microsoft-edge-stable -y 
+            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+            dnf install code microsoft-edge-stable -y
         }
         gcm() {
             mkdir -p $REPO_DIR/gcm_install
@@ -218,6 +218,17 @@ else
         fi
     }
 
+    cursor_editor() {
+        cd "$REPO_DIR" || return
+        filename=$(curl -OJ -w '%{filename_effective}' https://downloader.cursor.sh/linux/appImage/x64)
+        mv $filename /usr/local/bin/cursor_ai
+        chmod +x /usr/local/bin/cursor_ai
+        mkdir -p /usr/share/icons/cursor_ai
+        cp cursor_ai.svg /usr/share/icons/cursor_ai
+        cp cursor.desktop /usr/share/applications
+        cd "$REPO_DIR" || return
+    }
+
     tasks=(
         "system"
         "softwares"
@@ -229,6 +240,7 @@ else
         "gdms"
         # "check_and_add_pam_u2f"
         "mount_windows_partition"
+        "cursor_editor"
         "remove_packages"
     )
 
