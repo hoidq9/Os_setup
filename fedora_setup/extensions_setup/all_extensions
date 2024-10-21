@@ -1,5 +1,5 @@
 [add-custom-text-to-workspace-indicators]
-custom-text='username'
+custom-text='Đào Quốc Hội '
 hide-pills=true
 logo-color='#26a269'
 show-custom-indicator=false
@@ -212,7 +212,16 @@ freq-style='both'
 gpu-display=false
 memory-display=false
 move-clock=false
-net-display=false
+net-collisions-color='#ffffffff'
+net-display=true
+net-down-color='#8ff0a4ff'
+net-downerrors-color='#f66151ff'
+net-graph-width=80
+net-refresh-time=100
+net-speed-in-bits=true
+net-style='graph'
+net-up-color='#f9f06bff'
+net-uperrors-color='#99c1f1ff'
 rotate-labels=false
 show-tooltip=true
 thermal-display=false
