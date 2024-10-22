@@ -191,6 +191,10 @@ window-maximized-on-create=false
 workspace-switcher-should-show=true
 workspace-wrap-around=true
 
+[rclone-manager]
+hiddenkey012-profile-registry='{"GoogleDrive_hoidq9@gmail.com":{"syncType":"MOUNTED"},"OneDrive_hoidq9@outlook.com":{"syncType":"MOUNTED"}}'
+prefkey010-rclone-mount='rclone --password-command %pcmd mount %profile: %source --volname %profile --file-perms 0777 --write-back-cache --no-modtime --daemon --daemon-timeout 30s --vfs-cache-mode full --allow-non-empty --dir-perms 0777'
+
 [system-monitor]
 center-display=true
 compact-display=false
