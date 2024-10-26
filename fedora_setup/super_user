@@ -15,7 +15,7 @@ else
         }
         packages() {
             dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc -y # conky eza fzf cockpit pam_yubico
-            dnf group install "Firefox Web Browser" "Hardware Support" "Common NetworkManager Submodules" -y
+            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y # "Firefox Web Browser"
             systemctl set-default graphical.target
             # systemctl enable --now cockpit.socket
         }
