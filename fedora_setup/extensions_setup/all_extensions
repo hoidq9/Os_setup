@@ -58,7 +58,7 @@ power-display-style='Default'
 power-options=[(0, true), (1, true), (2, true), (3, true), (4, true), (5, true), (6, true), (7, true)]
 prefs-visible-page=0
 quicklinks-item-icon-size='Small'
-recently-installed-apps=['graal.desktop', 'xpat.desktop', 'xfsm.desktop', 'magic.desktop', 'xsch.desktop', 'gpsim.desktop', 'xgra.desktop', 'xvpn.desktop', 'dreal.desktop', 'cgnsplot.desktop', 'xcircuit.desktop', 'gtkwave.desktop', 'org.sigrok.PulseView.desktop', 'org.kicad.pcbcalculator.desktop', 'cgnsnodes.desktop', 'netgen.desktop', 'unitconv.desktop', 'cgnscalc.desktop', 'GNUSim8085.desktop', 'gsim85.desktop', 'org.kicad.kicad.desktop', 'org.kicad.bitmap2component.desktop', 'linsmith.desktop', 'org.kicad.pcbnew.desktop', 'cgnsview.desktop', 'qucs.desktop', 'org.kde.labplot2.desktop', 'org.kde.ktechlab.desktop', 'org.bleachbit.BleachBit.desktop', 'org.gnome.baobab.desktop']
+recently-installed-apps=['graal.desktop', 'xpat.desktop', 'xfsm.desktop', 'magic.desktop', 'xsch.desktop', 'gpsim.desktop', 'xgra.desktop', 'xvpn.desktop', 'dreal.desktop', 'cgnsplot.desktop', 'xcircuit.desktop', 'gtkwave.desktop', 'org.sigrok.PulseView.desktop', 'org.kicad.pcbcalculator.desktop', 'cgnsnodes.desktop', 'netgen.desktop', 'unitconv.desktop', 'cgnscalc.desktop', 'GNUSim8085.desktop', 'gsim85.desktop', 'org.kicad.kicad.desktop', 'org.kicad.bitmap2component.desktop', 'linsmith.desktop', 'org.kicad.pcbnew.desktop', 'cgnsview.desktop', 'qucs.desktop', 'org.kde.labplot2.desktop', 'org.kde.ktechlab.desktop']
 right-panel-width=350
 search-entry-border-radius=(true, 25)
 search-provider-open-windows=true
@@ -285,3 +285,15 @@ refresh-rate='fast'
 show-disk=false
 show-mem=false
 show-net=false
+
+[vitals]
+hide-zeros=false
+hot-sensors=['_memory_usage_', '_system_load_1m_', '_storage_free_']
+icon-style=0
+include-static-gpu-info=true
+menu-centered=true
+position-in-panel=1
+show-battery=true
+show-gpu=true
+update-time=1
+use-higher-precision=false

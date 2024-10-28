@@ -14,8 +14,8 @@ else
             rmkernel
         }
         packages() {
-            dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc -y # conky eza fzf cockpit pam_yubico
-            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y # "Firefox Web Browser"
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc msr_tools conky -y # eza fzf cockpit pam_yubico
+            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y                                                                                                                                                                                    # "Firefox Web Browser"
             systemctl set-default graphical.target
             # systemctl enable --now cockpit.socket
         }
@@ -23,14 +23,37 @@ else
             chsh -s /bin/zsh $user_current
             # chsh -s /bin/zsh $USER
         }
+        cmd_without_sudo() {
+            if groups $user_current | grep -q wheel; then
+                if ! grep -q "rdmsr" /etc/sudoers; then
+                    echo "$user_current ALL=(ALL) NOPASSWD: /usr/sbin/rdmsr" >>/etc/sudoers
+                fi
+            fi
+        }
+        intel_rapl() {
+            if [ -f /sys/class/powercap/intel-rapl:0/energy_uj ]; then
+                if ! getent group $user_current &>/dev/null; then
+                    groupadd $user_current
+                fi
+                if ! groups $user_current | grep -q $user_current; then
+                    usermod -aG $user_current $user_current
+                fi
+                if groups $user_current | grep -q wheel; then
+                    chown root:$user_current /sys/class/powercap/
+                fi
+            fi
+        }
         run() {
             packages
             commands
             shell
+            cmd_without_sudo
+            intel_rapl
         }
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
         find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
         run >>$REPO_DIR/logs/system.log 2>&1
+        cmd_without_sudo >>$REPO_DIR/logs/cmd_without_sudo.log 2>&1
         cd $REPO_DIR || return
     }
 
