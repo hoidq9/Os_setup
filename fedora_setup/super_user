@@ -235,14 +235,15 @@ else
     conky_setup() {
         cd "$REPO_DIR" || return
         cd system/
-        rsync -av --exclude=conky.desktop conky /home/$user_current/Prj/
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/.conkyrc
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/cpu_power.sh
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/cpu_voltage.sh
+        rsync -av --exclude=conky.desktop conky_conf /home/$user_current/Prj/
+        mv /home/$user_current/Prj/conky_conf/conkyrc_conf /home/$user_current/Prj/conky_conf/.conkyrc
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/.conkyrc
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_power.sh
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_voltage.sh
         cd conky/
         cp conky.desktop /home/$user_current/.config/autostart/
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/.config/autostart/conky.desktop
-        chown -R $user_current:$user_current /home/$user_current/Prj/conky
+        chown -R $user_current:$user_current /home/$user_current/Prj/conky_conf
         chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         cd "$REPO_DIR" || return
     }

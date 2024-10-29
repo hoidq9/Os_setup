@@ -3,7 +3,7 @@ Description=Run cpu_voltage.sh on startup
 
 [Service]
 Type=simple
-ExecStart=sh $_HOME/Prj/conky/cpu_voltage.sh
+ExecStart=sh $_HOME/Prj/conky_conf/cpu_voltage.sh
 
 [Install]
 WantedBy=multi-user.target

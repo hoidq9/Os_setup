@@ -3,7 +3,7 @@ Description=Run cpu_power.sh on startup
 
 [Service]
 Type=simple
-ExecStart=sh $_HOME/Prj/conky/cpu_power.sh
+ExecStart=sh $_HOME/Prj/conky_conf/cpu_power.sh
 
 [Install]
 WantedBy=multi-user.target
