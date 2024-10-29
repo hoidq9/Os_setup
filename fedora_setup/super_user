@@ -13,7 +13,7 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc msr_tools conky -y # eza fzf cockpit pam_yubico
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc msr-tools conky -y # eza fzf cockpit pam_yubico
             dnf group install "Hardware Support" "Common NetworkManager Submodules" -y                                                                                                                                                                                                     # "Firefox Web Browser"
             dnf upgrade -y
             systemctl set-default graphical.target
@@ -235,11 +235,20 @@ else
     conky_setup() {
         cd "$REPO_DIR" || return
         cd system/
-        rsync -av --exclude={conky.desktop,cpu_power.sh,cpu_voltage.sh} conky /home/$user_current/Prj/
+        rsync -av --exclude=conky.desktop conky /home/$user_current/Prj/
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/.conkyrc
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/cpu_power.sh
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/cpu_voltage.sh
+        cd conky/
+        cp conky.desktop /home/$user_current/.config/autostart/
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/.config/autostart/conky.desktop
+        chown -R $user_current:$user_current /home/$user_current/Prj/conky
+        chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
+        cd "$REPO_DIR" || return
     }
     service() {
         cd "$REPO_DIR" || return
+        rm -rf /etc/systemd/system/cpu_power.service /etc/systemd/system/cpu_voltage.service
         cd system/service
         cp * /etc/systemd/system/
         sed -i "s|\$_HOME|/home/$user_current|g" /etc/systemd/system/cpu_power.service
@@ -249,6 +258,7 @@ else
         systemctl start cpu_power.service
         systemctl start cpu_voltage.service
         systemctl daemon-reload
+        cd "$REPO_DIR" || return
     }
 
     tasks=(
@@ -261,6 +271,7 @@ else
         "fonts"
         "gdms"
         # "check_and_add_pam_u2f"
+        "conky_setup"
         "mount_windows_partition"
         "cursor_editor"
         "service"
@@ -271,4 +282,6 @@ else
         check_and_run "$task"
     done
     chmod -R 777 $REPO_DIR/logs
+    systemctl restart cpu_power.service &>/dev/null
+    systemctl restart cpu_voltage.service &>/dev/null
 fi

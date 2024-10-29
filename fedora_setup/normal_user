@@ -17,13 +17,6 @@ yubico() {
     rm -rf *.tar.gz *.tar.gz.sig
 }
 
-conky_config() {
-    cp -f $REPO_DIR/.conkyrc $HOME/.conkyrc
-    cp -f $REPO_DIR/conky.lua $HOME/conky.lua
-    cp -f $REPO_DIR/get_power.sh $HOME/get_power.sh
-    chmod +x $HOME/get_power.sh
-}
-
 ohmyzsh_user() {
     if rpm -q zsh >/dev/null 2>&1; then
         rm -rf $HOME/.zshrc.pre-oh-my-zsh*
@@ -205,7 +198,6 @@ tasks=(
     "accessibility"
     "gnome_extensions"
     "keybinding"
-    "conky_config"
     # "update_firefox_userChrome"
     "bookmark_nautilus"
 )
