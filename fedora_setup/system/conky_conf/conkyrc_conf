@@ -60,7 +60,7 @@ ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scal
 ${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_voltage.txt} V
 ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
 ${color gold}Power${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_power.txt} W
-${color gold}User CPU Usage${color}: ${lua conky_cpu_user_usage}
+${color gold}User CPU Usage${color}: ${execi 0.5 sh $_HOME/Prj/conky_conf/user_cpu.sh}
 
 ${cpugraph cpu1 50,158}${cpugraph cpu2 50,158}${voffset -9}
 ${cpugraph cpu3 50,158}${cpugraph cpu4 50,158}
