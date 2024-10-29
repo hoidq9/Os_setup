@@ -240,7 +240,7 @@ else
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/.conkyrc
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_power.sh
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_voltage.sh
-        cd conky/
+        cd conky_conf/
         cp conky.desktop /home/$user_current/.config/autostart/
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/.config/autostart/conky.desktop
         chown -R $user_current:$user_current /home/$user_current/Prj/conky_conf
