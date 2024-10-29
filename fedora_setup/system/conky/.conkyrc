@@ -1,1 +1,103 @@
-/home/hoidq/conkyrc/conky_seamod
+conky.config = {
+      update_interval = 0.5,
+      alignment = 'top_left',
+      background = true,
+      border_width = 1,
+      cpu_avg_samples = 2,
+      default_color = 'white',
+      default_outline_color = 'white',
+      default_shade_color = 'white',
+      double_buffer = true,
+      draw_borders = false,
+      draw_graph_borders = true,
+      draw_outline = false,
+      draw_shades = false,
+      extra_newline = false,
+      font = 'DejaVu Sans Mono:bold:size=10',
+      gap_x = 0,
+      gap_y = 29,
+      minimum_width = 200,
+      net_avg_samples = 2,
+      no_buffers = true,
+      out_to_console = false,
+      out_to_ncurses = false,
+      out_to_stderr = false,
+      out_to_x = true,
+      own_window = true,
+      own_window_class = 'Conky',
+      own_window_type = 'panel',
+      show_graph_range = false,
+      show_graph_scale = false,
+      stippled_borders = 0,
+      uppercase = false,
+      use_spacer = 'none',
+      use_xft = true,
+      net_avg_samples = 2,
+	out_to_console = false,
+	override_utf8_locale = true,
+      text_buffer_size = 32768,
+	imlib_cache_size = 0,
+      own_window_argb_visual = true,
+	own_window_argb_value = 150,
+	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager,above',
+	border_inner_margin = 2,
+	border_outer_margin = 0,
+	draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_graph_borders = false,
+	use_xft = true,
+	xftalpha = 0.8,
+      default_color = 'white',
+	own_window_colour = '#000000',
+	lua_load = '$_HOME/Prj/conky/conky.lua',
+      lua_draw_hook_post = 'conky_main',
+}
+conky.text = [[
+${color Tan1}CPU:${color} ${execi 1000 cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
+${color gold}Usage${color}: ${cpu cpu0}% ${alignr}
+${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
+${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky/cpu_voltage.txt} V
+${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
+${color gold}Power${color}: ${exec cat $_HOME/Prj/conky/cpu_power.txt} W
+${color gold}User CPU Usage${color}: ${lua conky_cpu_user_usage}
+
+${cpugraph cpu1 50,158}${cpugraph cpu2 50,158}${voffset -9}
+${cpugraph cpu3 50,158}${cpugraph cpu4 50,158}
+${voffset -105}${color Tan1}${goto 10}1 ${goto 170}2 ${goto 0} ${voffset 50} ${goto 10}3 ${goto 170}4
+${voffset -64}${color Tan1}${goto 108}${freq_g (1)}GHz ${goto 258}${freq_g (2)}GHz ${goto 0}${voffset 50}${goto 108}${freq_g (3)}GHz ${goto 258}${freq_g (4)}GHz
+
+
+CPU1: ${cpu cpu1}% $alignr ${freq_g 1} GHz ${cpugraph cpu1 8,60}
+CPU2: ${cpu cpu2}% $alignr ${freq_g 2} GHz ${cpugraph cpu2 8,60}
+CPU3: ${cpu cpu3}% $alignr ${freq_g 3} GHz ${cpugraph cpu3 8,60}
+CPU4: ${cpu cpu4}% $alignr ${freq_g 4} GHz ${cpugraph cpu4 8,60}
+CPU5: ${cpu cpu5}% $alignr ${freq_g 5} GHz ${cpugraph cpu5 8,60}
+CPU6: ${cpu cpu6}% $alignr ${freq_g 6} GHz ${cpugraph cpu6 8,60}
+CPU7: ${cpu cpu7}% $alignr ${freq_g 7} GHz ${cpugraph cpu7 8,60}
+CPU8: ${cpu cpu8}% $alignr ${freq_g 8} GHz ${cpugraph cpu8 8,60}
+CPU9: ${cpu cpu9}% $alignr ${freq_g 9} GHz ${cpugraph cpu9 8,60}
+CPU10: ${cpu cpu10}% $alignr ${freq_g 10} GHz ${cpugraph cpu10 8,60}
+CPU11: ${cpu cpu11}% $alignr ${freq_g 11} GHz ${cpugraph cpu11 8,60}
+CPU12: ${cpu cpu12}% $alignr ${freq_g 12} GHz ${cpugraph cpu12 8,60}
+CPU13: ${cpu cpu13}% $alignr ${freq_g 13} GHz ${cpugraph cpu13 8,60}
+CPU14: ${cpu cpu14}% $alignr ${freq_g 14} GHz ${cpugraph cpu14 8,60}
+CPU15: ${cpu cpu15}% $alignr ${freq_g 15} GHz ${cpugraph cpu15 8,60}
+CPU16: ${cpu cpu16}% $alignr ${freq_g 16} GHz ${cpugraph cpu16 8,60}
+CPU17: ${cpu cpu17}% $alignr ${freq_g 17} GHz ${cpugraph cpu17 8,60}
+CPU18: ${cpu cpu18}% $alignr ${freq_g 18} GHz ${cpugraph cpu18 8,60}
+CPU19: ${cpu cpu19}% $alignr ${freq_g 19} GHz ${cpugraph cpu19 8,60}
+CPU20: ${cpu cpu20}% $alignr ${freq_g 20} GHz ${cpugraph cpu20 8,60}
+CPU21: ${cpu cpu21}% $alignr ${freq_g 21} GHz ${cpugraph cpu21 8,60}
+CPU22: ${cpu cpu22}% $alignr ${freq_g 22} GHz ${cpugraph cpu22 8,60}
+CPU23: ${cpu cpu23}% $alignr ${freq_g 23} GHz ${cpugraph cpu23 8,60}
+CPU24: ${cpu cpu24}% $alignr ${freq_g 24} GHz ${cpugraph cpu24 8,60}
+CPU25: ${cpu cpu25}% $alignr ${freq_g 25} GHz ${cpugraph cpu25 8,60}
+CPU26: ${cpu cpu26}% $alignr ${freq_g 26} GHz ${cpugraph cpu26 8,60}
+CPU27: ${cpu cpu27}% $alignr ${freq_g 27} GHz ${cpugraph cpu27 8,60}
+CPU28: ${cpu cpu28}% $alignr ${freq_g 28} GHz ${cpugraph cpu28 8,60}
+CPU29: ${cpu cpu29}% $alignr ${freq_g 29} GHz ${cpugraph cpu29 8,60}
+CPU30: ${cpu cpu30}% $alignr ${freq_g 30} GHz ${cpugraph cpu30 8,60}
+CPU31: ${cpu cpu31}% $alignr ${freq_g 31} GHz ${cpugraph cpu31 8,60}
+CPU32: ${cpu cpu32}% $alignr ${freq_g 32} GHz ${cpugring cpu32 8,60}
+]]
