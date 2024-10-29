@@ -59,7 +59,7 @@ ${color gold}Usage${color}: ${cpu cpu0}% ${alignr}
 ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
 ${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky/cpu_voltage.txt} V
 ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
-${color gold}Power${color}: ${exec cat $_HOME/Prj/conky/cpu_power.txt} W
+${color gold}Power (CPU + iGPU + Chipset)${color}: ${exec cat $_HOME/Prj/conky/cpu_power.txt} W
 ${color gold}User CPU Usage${color}: ${lua conky_cpu_user_usage}
 
 ${cpugraph cpu1 50,158}${cpugraph cpu2 50,158}${voffset -9}
