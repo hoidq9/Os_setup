@@ -5,17 +5,17 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 else
     system() {
-        dnf upgrade -y
         cd $REPO_DIR || return
-        cp fedora_repositories.repo /etc/yum.repos.d/
+        cp repo/fedora_repositories.repo /etc/yum.repos.d/
         commands() {
-            cp rmkernel /usr/local/bin
+            cp system/cmd/rmkernel /usr/local/bin
             chmod +x /usr/local/bin/rmkernel
             rmkernel
         }
         packages() {
             dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc msr_tools conky -y # eza fzf cockpit pam_yubico
-            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y                                                                                                                                                                                    # "Firefox Web Browser"
+            dnf group install "Hardware Support" "Common NetworkManager Submodules" -y                                                                                                                                                                                                     # "Firefox Web Browser"
+            dnf upgrade -y
             systemctl set-default graphical.target
             # systemctl enable --now cockpit.socket
         }
@@ -23,45 +23,24 @@ else
             chsh -s /bin/zsh $user_current
             # chsh -s /bin/zsh $USER
         }
-        cmd_without_sudo() {
-            if groups $user_current | grep -q wheel; then
-                if ! grep -q "rdmsr" /etc/sudoers; then
-                    echo "$user_current ALL=(ALL) NOPASSWD: /usr/sbin/rdmsr" >>/etc/sudoers
-                fi
-            fi
-        }
-        intel_rapl() {
-            if [ -f /sys/class/powercap/intel-rapl:0/energy_uj ]; then
-                if ! getent group $user_current &>/dev/null; then
-                    groupadd $user_current
-                fi
-                if ! groups $user_current | grep -q $user_current; then
-                    usermod -aG $user_current $user_current
-                fi
-                if groups $user_current | grep -q wheel; then
-                    chown root:$user_current /sys/class/powercap/
-                fi
-            fi
-        }
         run() {
             packages
             commands
             shell
-            cmd_without_sudo
-            intel_rapl
         }
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
         find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
         run >>$REPO_DIR/logs/system.log 2>&1
-        cmd_without_sudo >>$REPO_DIR/logs/cmd_without_sudo.log 2>&1
         cd $REPO_DIR || return
     }
 
     softwares() {
         cd $REPO_DIR || return
         microsoft() {
+            cd repo
             cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
             dnf install code microsoft-edge-stable -y
+            cd $REPO_DIR || return
         }
         gcm() {
             mkdir -p $REPO_DIR/gcm_install
@@ -100,8 +79,8 @@ else
         cd "$REPO_DIR" || return
         [ ! -d /boot/grub2/themes ] && mkdir -p /boot/grub2/themes
         rm -rf /boot/grub2/themes/*
-        cp -f 30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
-        cp -r dedsec /boot/grub2/themes
+        cp -f bootloader/30_uefi-firmware /etc/grub.d && chmod 755 /etc/grub.d/30_uefi-firmware
+        cp -r bootloader/dedsec /boot/grub2/themes
         sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=99/; s/^\(GRUB_TERMINAL\w*=.*\)/#\1; /g' /etc/default/grub
         grep -q "/boot/grub2/themes/dedsec/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/dedsec/theme.txt\"" >>/etc/default/grub
         if ! grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub; then
@@ -119,7 +98,7 @@ else
         mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
         cd WhiteSur-gtk-theme
         for target in background-default.png background-darken.png; do
-            cp $REPO_DIR/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
+            cp $REPO_DIR/backgrounds/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
         done
         rm -rf /usr/share/themes/fedora_themes
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
@@ -202,7 +181,8 @@ else
         for setting in "${settings[@]}"; do
             sudo -u gdm dbus-launch gsettings set $setting
         done
-        cp custom.conf /etc/gdm
+        cp system/cmd/custom.conf /etc/gdm
+        cd $REPO_DIR || return
     }
 
     remove_packages() {
@@ -247,9 +227,28 @@ else
         mv $filename /usr/local/bin/cursor_ai
         chmod +x /usr/local/bin/cursor_ai
         mkdir -p /usr/share/icons/cursor_ai
-        cp cursor_ai.svg /usr/share/icons/cursor_ai
-        cp cursor.desktop /usr/share/applications
+        cp cursor_editor/cursor_ai.svg /usr/share/icons/cursor_ai
+        cp cursor_editor/cursor.desktop /usr/share/applications
         cd "$REPO_DIR" || return
+    }
+
+    conky_setup() {
+        cd "$REPO_DIR" || return
+        cd system/
+        rsync -av --exclude={conky.desktop,cpu_power.sh,cpu_voltage.sh} conky /home/$user_current/Prj/
+        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky/.conkyrc
+    }
+    service() {
+        cd "$REPO_DIR" || return
+        cd system/service
+        cp * /etc/systemd/system/
+        sed -i "s|\$_HOME|/home/$user_current|g" /etc/systemd/system/cpu_power.service
+        sed -i "s|\$_HOME|/home/$user_current|g" /etc/systemd/system/cpu_voltage.service
+        systemctl enable cpu_power.service
+        systemctl enable cpu_voltage.service
+        systemctl start cpu_power.service
+        systemctl start cpu_voltage.service
+        systemctl daemon-reload
     }
 
     tasks=(
@@ -264,6 +263,7 @@ else
         # "check_and_add_pam_u2f"
         "mount_windows_partition"
         "cursor_editor"
+        "service"
         "remove_packages"
     )
 

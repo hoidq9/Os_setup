@@ -50,8 +50,8 @@ ohmyzsh_user() {
         fi
         cd $REPO_DIR/
         rm -rf $REPO_DIR/ohmyzsh
-        cp -f _user.zshrc $HOME/.zshrc
-        cp -f .user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+        cp -f zsh_shell/_user.zshrc $HOME/.zshrc
+        cp -f zsh_shell/.user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
     fi
 }
 
@@ -92,7 +92,7 @@ accessibility() {
         gsettings set org.gnome.desktop.interface cursor-theme 'fedora_cursors'
     fi
     mkdir -p $HOME/.local/share/backgrounds
-    cp $REPO_DIR/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
+    cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
     cd $REPO_DIR/icons_extensions
     mkdir -p $HOME/.icons
     cp -r * $HOME/.icons
