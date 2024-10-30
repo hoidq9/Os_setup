@@ -1,9 +1,0 @@
-[Unit]
-Description=Start Conky at boot
-
-[Service]
-Type=simple
-ExecStart=sh /cpuH/conky_run.sh
-
-[Install]
-WantedBy=multi-user.target

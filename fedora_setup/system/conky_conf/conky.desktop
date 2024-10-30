@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=conky -c /home/hoidq/Prj/conky_conf/.conkyrc
+Exec=conky
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true

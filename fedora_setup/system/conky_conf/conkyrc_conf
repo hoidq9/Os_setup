@@ -61,16 +61,19 @@ ${color gold}EC Release: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/ec
 ${color gold}OS: ${color}${execi 6000 cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 | sed 's/"//g'}
 ${color gold}Kernel: ${color}${execi 6000 uname -r}
 $hr
-${color grey}Uptime:$color $uptime
-${color grey}Processes:$color $processes
+${color Tan1}System: $sysname
+${color gold}Uptime:$color $uptime
+${color gold}Processes:$color $processes
 ${color grey}Name               PID     CPU%   
 ${color lightgrey}${top name 1} ${top pid 1} ${top cpu 1}
 ${color lightgrey}${top name 2} ${top pid 2} ${top cpu 2}
 ${color lightgrey}${top name 3} ${top pid 3} ${top cpu 3}
 ${color lightgrey}${top name 4} ${top pid 4} ${top cpu 4}
+${color gold}Load: ${loadavg}
 $hr
 ${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
-${color gold}Total usage${color}: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,120 7fff00 ff0000 -t}
+${color gold}Total usage${color}: ${cpu cpu0}%
+${cpugraph cpu0 60,220 7fff00 ff0000 -t}
 ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
 ${color gold}Voltage${color}: ${exec cat /cpuH/cpu_voltage.txt} V
 ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
@@ -111,9 +114,9 @@ CPU30: ${cpu cpu30}% $alignr ${freq_g 30} GHz ${cpubar cpu30 8,60}
 CPU31: ${cpu cpu31}% $alignr ${freq_g 31} GHz ${cpubar cpu31 8,60}
 CPU32: ${cpu cpu32}% $alignr ${freq_g 32} GHz ${cpubar cpu32 8,60}
 $hr
-${color Tan1}RAM: ${exec "dmidecode -t memory | grep "Manufacturer:" | sort | uniq"}
-${color gold}Usage${color}: $mem/$memmax - $memperc% ${alignr}${membar 8,120 7fff00 ff0000 -t}
+${color Tan1}RAM: ${exec cat /cpuH/ram_manufacturer.txt}
+${color gold}Usage${color}: $mem/$memmax - $memperc% 
 $hr
-${color grey}File systems:
- / $color${fs_used /}/${fs_size /} ${fs_bar 2 /}
+${color Tan1}File systems:
+ / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
 ]]

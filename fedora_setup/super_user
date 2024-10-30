@@ -237,21 +237,21 @@ else
         cd "$REPO_DIR" || return
         cd system/conky_conf/
         rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf} * /cpuH
+        cp conky.desktop /home/$user_current/.config/autostart
+        chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         cp conkyrc_conf /etc/conky/conky.conf
         cd "$REPO_DIR" || return
     }
 
     service() {
         cd "$REPO_DIR" || return
-        rm -rf /etc/systemd/system/cpu_power.service /etc/systemd/system/cpu_voltage.service /etc/systemd/system/conky_boot.service
+        rm -rf /etc/systemd/system/cpu_power.service /etc/systemd/system/cpu_voltage.service
         cd system/service
         cp * /etc/systemd/system/
         systemctl enable cpu_power.service
         systemctl enable cpu_voltage.service
-        systemctl enable conky_boot.service
         systemctl start cpu_power.service
         systemctl start cpu_voltage.service
-        systemctl start conky_boot.service
         systemctl daemon-reload
         cd "$REPO_DIR" || return
     }
