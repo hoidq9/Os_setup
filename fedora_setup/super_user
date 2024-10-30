@@ -274,7 +274,7 @@ else
         # "check_and_add_pam_u2f"
         "conky_setup"
         "mount_windows_partition"
-        "cursor_editor"
+        # "cursor_editor"
         "service"
         "remove_packages"
     )
