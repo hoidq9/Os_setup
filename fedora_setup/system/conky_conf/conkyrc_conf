@@ -14,7 +14,7 @@ conky.config = {
       draw_outline = true,
       draw_shades = true,
       extra_newline = false,
-      font = 'DejaVu Sans Mono:bold:size=10',
+      font = 'DejaVu Sans Mono:bold:size=8',
       gap_x = 0,
       gap_y = 29,
       minimum_width = 200,
@@ -70,13 +70,13 @@ ${color lightgrey}${top name 3} ${top pid 3} ${top cpu 3}
 ${color lightgrey}${top name 4} ${top pid 4} ${top cpu 4}
 $hr
 ${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
-${color gold}Usage${color}: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,120 7fff00 ff0000 -t}
+${color gold}Total usage${color}: ${cpu cpu0}% ${alignr}${cpubar cpu0 8,120 7fff00 ff0000 -t}
 ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
-${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_voltage.txt} V
+${color gold}Voltage${color}: ${exec cat /cpuH/cpu_voltage.txt} V
 ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
-${color gold}Power${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_power.txt} W
-${color gold}User CPU Usage${color}: ${execi 0.3 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" user}
-${color gold}System CPU Usage${color}: ${execi 0.3 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" system}
+${color gold}Power${color}: ${exec cat /cpuH/cpu_power.txt} W
+${color gold}User usage${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" user}
+${color gold}System usage${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" system}
 
 CPU1:  ${cpu cpu1}% $alignr ${freq_g 1} GHz ${cpubar cpu1 8,60}
 CPU2:  ${cpu cpu2}% $alignr ${freq_g 2} GHz ${cpubar cpu2 8,60}
@@ -111,8 +111,9 @@ CPU30: ${cpu cpu30}% $alignr ${freq_g 30} GHz ${cpubar cpu30 8,60}
 CPU31: ${cpu cpu31}% $alignr ${freq_g 31} GHz ${cpubar cpu31 8,60}
 CPU32: ${cpu cpu32}% $alignr ${freq_g 32} GHz ${cpubar cpu32 8,60}
 $hr
-${color grey}RAM Usage:$color $mem/$memmax - $memperc%
+${color Tan1}RAM: ${exec "dmidecode -t memory | grep "Manufacturer:" | sort | uniq"}
+${color gold}Usage${color}: $mem/$memmax - $memperc% ${alignr}${membar 8,120 7fff00 ff0000 -t}
 $hr
 ${color grey}File systems:
- / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
+ / $color${fs_used /}/${fs_size /} ${fs_bar 2 /}
 ]]

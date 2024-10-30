@@ -6,6 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 else
     system() {
         cd $REPO_DIR || return
+        [ ! -d /cpuH ] && mkdir -p /cpuH
         cp repo/fedora_repositories.repo /etc/yum.repos.d/
         commands() {
             cp system/cmd/rmkernel /usr/local/bin
@@ -234,31 +235,23 @@ else
 
     conky_setup() {
         cd "$REPO_DIR" || return
-        cd system/
-        rm -rf /home/$user_current/Prj/conky_conf
-        rsync -av --exclude=conky.desktop conky_conf /home/$user_current/Prj/
-        mv /home/$user_current/Prj/conky_conf/conkyrc_conf /home/$user_current/Prj/conky_conf/.conkyrc
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/.conkyrc
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_power.sh
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/cpu_voltage.sh
-        cd conky_conf/
-        cp conky.desktop /home/$user_current/.config/autostart/
-        sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/.config/autostart/conky.desktop
-        chown -R $user_current:$user_current /home/$user_current/Prj/conky_conf
-        chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
+        cd system/conky_conf/
+        rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf} * /cpuH
+        cp conkyrc_conf /etc/conky/conky.conf
         cd "$REPO_DIR" || return
     }
+
     service() {
         cd "$REPO_DIR" || return
-        rm -rf /etc/systemd/system/cpu_power.service /etc/systemd/system/cpu_voltage.service
+        rm -rf /etc/systemd/system/cpu_power.service /etc/systemd/system/cpu_voltage.service /etc/systemd/system/conky_boot.service
         cd system/service
         cp * /etc/systemd/system/
-        sed -i "s|\$_HOME|/home/$user_current|g" /etc/systemd/system/cpu_power.service
-        sed -i "s|\$_HOME|/home/$user_current|g" /etc/systemd/system/cpu_voltage.service
         systemctl enable cpu_power.service
         systemctl enable cpu_voltage.service
+        systemctl enable conky_boot.service
         systemctl start cpu_power.service
         systemctl start cpu_voltage.service
+        systemctl start conky_boot.service
         systemctl daemon-reload
         cd "$REPO_DIR" || return
     }
