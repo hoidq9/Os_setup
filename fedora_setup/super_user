@@ -17,7 +17,7 @@ else
             dnf group install "Hardware Support" "Common NetworkManager Submodules" -y                                                                                                                                                                                                     # "Firefox Web Browser"
             dnf upgrade -y
             systemctl set-default graphical.target
-            # systemctl enable --now cockpit.socket
+            systemctl enable --now cockpit.socket
         }
         shell() {
             chsh -s /bin/zsh $user_current
