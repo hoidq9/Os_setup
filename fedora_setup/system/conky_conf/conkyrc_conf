@@ -1,5 +1,5 @@
 conky.config = {
-      update_interval = 0.5,
+      update_interval = 1,
       alignment = 'top_left',
       background = true,
       border_width = 1,
@@ -13,7 +13,7 @@ conky.config = {
       draw_outline = false,
       draw_shades = false,
       extra_newline = false,
-      font = 'DejaVu Sans Mono:bold:size=10',
+      font = 'DejaVu Sans Mono:bold:size=8',
       gap_x = 0,
       gap_y = 29,
       minimum_width = 200,
@@ -54,15 +54,15 @@ conky.config = {
       lua_draw_hook_post = 'conky_main',
 }
 conky.text = [[
-${color Tan1}CPU:${color} ${execi 0.5 cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
+${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
 ${color gold}Usage${color}: ${cpu cpu0}% ${alignr}
 ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
-${color gold}Voltage${color}: ${execi 0.5 cat $_HOME/Prj/conky_conf/cpu_voltage.txt} V
-${color gold}Temp${color}: ${execi 0.5 for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
-${color gold}Power${color}: ${execi 0.5 cat $_HOME/Prj/conky_conf/cpu_power.txt} W
-${color gold}User CPU Usage${color}: ${execi 0.5 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" user}
-${color gold}System CPU Usage${color}: ${execi 0.5 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" system}
-${color gold}Nice CPU Usage${color}: ${execi 0.5 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" nice}
+${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_voltage.txt} V
+${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
+${color gold}Power${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_power.txt} W
+${color gold}User CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" user}
+${color gold}System CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" system}
+${color gold}Nice CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" nice}
 
 ${cpugraph cpu1 50,158}${cpugraph cpu2 50,158}${voffset -9}
 ${cpugraph cpu3 50,158}${cpugraph cpu4 50,158}
