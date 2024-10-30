@@ -22,7 +22,7 @@ s1=$(awk -v cpu="$cpu" '$1 == cpu {for (i=2; i<=8; i++) sum+=$i; print sum}' /pr
 m1=$(awk -v cpu="$cpu" -v col=$column '$1 == cpu {print $col}' /proc/stat)
 
 # Chờ 1 giây
-sleep 1
+sleep 0.3
 
 # Lấy giá trị mới cho metric và tổng
 s2=$(awk -v cpu="$cpu" '$1 == cpu {for (i=2; i<=8; i++) sum+=$i; print sum}' /proc/stat)

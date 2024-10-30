@@ -235,6 +235,7 @@ else
     conky_setup() {
         cd "$REPO_DIR" || return
         cd system/
+        rm -rf /home/$user_current/Prj/conky_conf
         rsync -av --exclude=conky.desktop conky_conf /home/$user_current/Prj/
         mv /home/$user_current/Prj/conky_conf/conkyrc_conf /home/$user_current/Prj/conky_conf/.conkyrc
         sed -i "s|\$_HOME|/home/$user_current|g" /home/$user_current/Prj/conky_conf/.conkyrc

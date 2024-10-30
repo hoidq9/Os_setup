@@ -1,5 +1,5 @@
 conky.config = {
-      update_interval = 1,
+      update_interval = 0.3,
       alignment = 'top_left',
       background = true,
       border_width = 1,
@@ -13,7 +13,7 @@ conky.config = {
       draw_outline = false,
       draw_shades = false,
       extra_newline = false,
-      font = 'DejaVu Sans Mono:bold:size=8',
+      font = 'DejaVu Sans Mono:bold:size=9',
       gap_x = 0,
       gap_y = 29,
       minimum_width = 200,
@@ -50,8 +50,6 @@ conky.config = {
 	xftalpha = 0.8,
       default_color = 'white',
 	own_window_colour = '#000000',
-	lua_load = '$_HOME/Prj/conky_conf/conky.lua',
-      lua_draw_hook_post = 'conky_main',
 }
 conky.text = [[
 ${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
@@ -60,15 +58,8 @@ ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scal
 ${color gold}Voltage${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_voltage.txt} V
 ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
 ${color gold}Power${color}: ${exec cat $_HOME/Prj/conky_conf/cpu_power.txt} W
-${color gold}User CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" user}
-${color gold}System CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" system}
-${color gold}Nice CPU Usage${color}: ${execi 1 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" nice}
-
-${cpugraph cpu1 50,158}${cpugraph cpu2 50,158}${voffset -9}
-${cpugraph cpu3 50,158}${cpugraph cpu4 50,158}
-${voffset -105}${color Tan1}${goto 10}1 ${goto 170}2 ${goto 0} ${voffset 50} ${goto 10}3 ${goto 170}4
-${voffset -64}${color Tan1}${goto 108}${freq_g (1)}GHz ${goto 258}${freq_g (2)}GHz ${goto 0}${voffset 50}${goto 108}${freq_g (3)}GHz ${goto 258}${freq_g (4)}GHz
-
+${color gold}User CPU Usage${color}: ${execi 0.3 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" user}
+${color gold}System CPU Usage${color}: ${execi 0.3 sh $_HOME/Prj/conky_conf/cpu_usage.sh "" system}
 
 CPU1: ${cpu cpu1}% $alignr ${freq_g 1} GHz ${cpugraph cpu1 8,60}
 CPU2: ${cpu cpu2}% $alignr ${freq_g 2} GHz ${cpugraph cpu2 8,60}
