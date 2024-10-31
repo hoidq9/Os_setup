@@ -33,5 +33,10 @@ dm=$((m2 - m1))
 dt=$((s2 - s1))
 usage=$(awk "BEGIN {printf \"%.1f\", ($dm*100/$dt)}")
 
-# In kết quả
-echo "$usage %"
+if (($(echo "$usage < 10" | bc -l))); then
+    printf "%.3f\n" "$usage"
+elif (($(echo "$usage >= 10 && $usage < 100" | bc -l))); then
+    printf "%.2f\n" "$usage"
+else
+    printf "%.1f\n" "$usage"
+fi

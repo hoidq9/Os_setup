@@ -1,6 +1,6 @@
 conky.config = {
       border_inner_margin = 10,
-      update_interval = 0.3,
+      update_interval = 0.5,
       alignment = 'top_left',
       background = false,
       border_width = 1,
@@ -14,7 +14,7 @@ conky.config = {
       draw_outline = true,
       draw_shades = true,
       extra_newline = false,
-      font = 'DejaVu Sans Mono:bold:size=8',
+      font = 'DejaVu Sans Mono:bold:size=9',
       gap_x = 0,
       gap_y = 29,
       minimum_width = 200,
@@ -51,72 +51,116 @@ conky.config = {
       default_color = 'white',
 }
 conky.text = [[
-${color gold}Manufacturer: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/board_vendor}
-${color gold}Hardware: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/product_version}
-${color gold}BIOS Release: ${color}${execi 6000 cat /sys/class/dmi/id/bios_release}
-${color gold}BIOS Version: ${color}${execi 6000 cat /sys/class/dmi/id/bios_version}
-${color gold}BIOS Date: ${color}${execi 6000 cat /sys/class/dmi/id/bios_date}
-${color gold}BIOS Vendor: ${color}${execi 6000 cat /sys/class/dmi/id/bios_vendor}
-${color gold}EC Release: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/ec_firmware_release}
-${color gold}OS: ${color}${execi 6000 cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 | sed 's/"//g'}
-${color gold}Kernel: ${color}${execi 6000 uname -r}
-$hr
-${color Tan1}System: $sysname
-${color gold}Uptime:$color $uptime
-${color gold}Processes:$color $processes
-${color grey}Name               PID     CPU%   
-${color lightgrey}${top name 1} ${top pid 1} ${top cpu 1}
-${color lightgrey}${top name 2} ${top pid 2} ${top cpu 2}
-${color lightgrey}${top name 3} ${top pid 3} ${top cpu 3}
-${color lightgrey}${top name 4} ${top pid 4} ${top cpu 4}
-${color gold}Load: ${loadavg}
-$hr
-${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
-${color gold}Total usage${color}: ${cpu cpu0}%
-${cpugraph cpu0 60,220 7fff00 ff0000 -t}
-${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz
-${color gold}Voltage${color}: ${exec cat /cpuH/cpu_voltage.txt} V
-${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
-${color gold}Power${color}: ${exec cat /cpuH/cpu_power.txt} W
-${color gold}User usage${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" user}
-${color gold}System usage${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" system}
+ ${color gold}Hardware: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/product_version}
+ ${color gold}BIOS Release: ${color}${execi 6000 cat /sys/class/dmi/id/bios_release}
+ ${color gold}BIOS Version: ${color}${execi 6000 cat /sys/class/dmi/id/bios_version}
+ ${color gold}BIOS Date: ${color}${execi 6000 cat /sys/class/dmi/id/bios_date}
+ ${color gold}BIOS Vendor: ${color}${execi 6000 cat /sys/class/dmi/id/bios_vendor}
+ ${color gold}OS: ${color}${execi 6000 cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 | sed 's/"//g'}
+ ${color gold}Kernel: ${color}${execi 6000 uname -r}
+ $hr
+ ${color Tan1}System: $sysname ${goto 139} ${color gold}ACPI Temp: ${color}${acpitemp}°C
+ ${color gold}Uptime:$color $uptime
+ ${color gold}Processes:$color $processes
+ ${color grey}Name                PID    CPU%   
+ ${color lightgrey}${top name 1} ${top pid 1} ${top cpu 1}
+ ${color lightgrey}${top name 2} ${top pid 2} ${top cpu 2}
+ ${color lightgrey}${top name 3} ${top pid 3} ${top cpu 3}
+ ${color gold}Load: ${loadavg} ${goto 155} ${color gold}  
+ $hr
+ ${color Tan1}CPU:${color} ${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
+ ${color gold}Total${color}: ${cpu cpu0}% ${goto 130} ${color gold}Freq${color}: ${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz 
+ ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${exec cat /cpuH/cpu_power.txt} W
+ ${color gold}Voltage${color}: ${exec cat /cpuH/cpu_voltage.txt} V ${goto 130} ${color gold}Temp${color}: ${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
+ ${color gold}User${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" user}% ${goto 130} ${color gold}System${color}: ${execi 0.3 sh /cpuH/cpu_usage.sh "" system}%
+ $hr
 
-CPU1:  ${cpu cpu1}% $alignr ${freq_g 1} GHz ${cpubar cpu1 8,60}
-CPU2:  ${cpu cpu2}% $alignr ${freq_g 2} GHz ${cpubar cpu2 8,60}
-CPU3:  ${cpu cpu3}% $alignr ${freq_g 3} GHz ${cpubar cpu3 8,60}
-CPU4:  ${cpu cpu4}% $alignr ${freq_g 4} GHz ${cpubar cpu4 8,60}
-CPU5:  ${cpu cpu5}% $alignr ${freq_g 5} GHz ${cpubar cpu5 8,60}
-CPU6:  ${cpu cpu6}% $alignr ${freq_g 6} GHz ${cpubar cpu6 8,60}
-CPU7:  ${cpu cpu7}% $alignr ${freq_g 7} GHz ${cpubar cpu7 8,60}
-CPU8:  ${cpu cpu8}% $alignr ${freq_g 8} GHz ${cpubar cpu8 8,60}
-CPU9:  ${cpu cpu9}% $alignr ${freq_g 9} GHz ${cpubar cpu9 8,60}
-CPU10: ${cpu cpu10}% $alignr ${freq_g 10} GHz ${cpubar cpu10 8,60}
-CPU11: ${cpu cpu11}% $alignr ${freq_g 11} GHz ${cpubar cpu11 8,60}
-CPU12: ${cpu cpu12}% $alignr ${freq_g 12} GHz ${cpubar cpu12 8,60}
-CPU13: ${cpu cpu13}% $alignr ${freq_g 13} GHz ${cpubar cpu13 8,60}
-CPU14: ${cpu cpu14}% $alignr ${freq_g 14} GHz ${cpubar cpu14 8,60}
-CPU15: ${cpu cpu15}% $alignr ${freq_g 15} GHz ${cpubar cpu15 8,60}
-CPU16: ${cpu cpu16}% $alignr ${freq_g 16} GHz ${cpubar cpu16 8,60}
-CPU17: ${cpu cpu17}% $alignr ${freq_g 17} GHz ${cpubar cpu17 8,60}
-CPU18: ${cpu cpu18}% $alignr ${freq_g 18} GHz ${cpubar cpu18 8,60}
-CPU19: ${cpu cpu19}% $alignr ${freq_g 19} GHz ${cpubar cpu19 8,60}
-CPU20: ${cpu cpu20}% $alignr ${freq_g 20} GHz ${cpubar cpu20 8,60}
-CPU21: ${cpu cpu21}% $alignr ${freq_g 21} GHz ${cpubar cpu21 8,60}
-CPU22: ${cpu cpu22}% $alignr ${freq_g 22} GHz ${cpubar cpu22 8,60}
-CPU23: ${cpu cpu23}% $alignr ${freq_g 23} GHz ${cpubar cpu23 8,60}
-CPU24: ${cpu cpu24}% $alignr ${freq_g 24} GHz ${cpubar cpu24 8,60}
-CPU25: ${cpu cpu25}% $alignr ${freq_g 25} GHz ${cpubar cpu25 8,60}
-CPU26: ${cpu cpu26}% $alignr ${freq_g 26} GHz ${cpubar cpu26 8,60}
-CPU27: ${cpu cpu27}% $alignr ${freq_g 27} GHz ${cpubar cpu27 8,60}
-CPU28: ${cpu cpu28}% $alignr ${freq_g 28} GHz ${cpubar cpu28 8,60}
-CPU29: ${cpu cpu29}% $alignr ${freq_g 29} GHz ${cpubar cpu29 8,60}
-CPU30: ${cpu cpu30}% $alignr ${freq_g 30} GHz ${cpubar cpu30 8,60}
-CPU31: ${cpu cpu31}% $alignr ${freq_g 31} GHz ${cpubar cpu31 8,60}
-CPU32: ${cpu cpu32}% $alignr ${freq_g 32} GHz ${cpubar cpu32 8,60}
-$hr
-${color Tan1}RAM: ${exec cat /cpuH/ram_manufacturer.txt}
-${color gold}Usage${color}: $mem/$memmax - $memperc% 
-$hr
-${color Tan1}File systems:
- / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
+ ${goto 55}${cpugraph cpu1 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu2 12,50 7fff00 ff0000 -t}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu1}% ${goto 150}${cpu cpu2}%
+ ${voffset -39}${goto 55}${freq_g 1}GHz ${goto 186}${freq_g 2}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color gold}P1: ${goto 150}${color gold}P2: 
+
+
+
+ ${goto 55}${cpugraph cpu3 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu4 12,50 7fff00 ff0000 -t}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu3}% ${goto 150}${cpu cpu4}%
+ ${voffset -39}${goto 55}${freq_g 3}GHz ${goto 186}${freq_g 4}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color gold}P3: ${goto 150}${color gold}P4:
+
+
+ ${goto 55}${cpugraph cpu5 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu6 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu5}% ${goto 150}${cpu cpu6}%
+ ${voffset -39}${goto 55}${freq_g 5}GHz ${goto 186}${freq_g 6}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu7 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu8 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu7}% ${goto 150}${cpu cpu8}%
+ ${voffset -39}${goto 55}${freq_g 7}GHz ${goto 186}${freq_g 8}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu9 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu10 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu9}% ${goto 150}${cpu cpu10}%
+ ${voffset -39}${goto 55}${freq_g 9}GHz ${goto 186}${freq_g 10}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu11 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu12 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu11}% ${goto 150}${cpu cpu12}%
+ ${voffset -39}${goto 55}${freq_g 11}GHz ${goto 186}${freq_g 12}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu13 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu14 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu13}% ${goto 150}${cpu cpu14}%
+ ${voffset -39}${goto 55}${freq_g 13}GHz ${goto 186}${freq_g 14}GHz${voffset 6}
+
+ 
+ ${goto 55}${cpugraph cpu15 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu16 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu15}% ${goto 150}${cpu cpu16}%
+ ${voffset -39}${goto 55}${freq_g 15}GHz ${goto 186}${freq_g 16}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu17 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu18 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu17}% ${goto 150}${cpu cpu18}%
+ ${voffset -39}${goto 55}${freq_g 17}GHz ${goto 186}${freq_g 18}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu19 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu20 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu19}% ${goto 150}${cpu cpu20}%
+ ${voffset -39}${goto 55}${freq_g 19}GHz ${goto 186}${freq_g 20}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu21 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu22 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu21}% ${goto 150}${cpu cpu22}%
+ ${voffset -39}${goto 55}${freq_g 21}GHz ${goto 186}${freq_g 22}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu23 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu24 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu23}% ${goto 150}${cpu cpu24}%
+ ${voffset -39}${goto 55}${freq_g 23}GHz ${goto 186}${freq_g 24}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu25 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu26 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu25}% ${goto 150}${cpu cpu26}%
+ ${voffset -39}${goto 55}${freq_g 25}GHz ${goto 186}${freq_g 26}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu27 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu28 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu27}% ${goto 150}${cpu cpu28}%
+ ${voffset -39}${goto 55}${freq_g 27}GHz ${goto 186}${freq_g 28}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu29 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu30 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu29}% ${goto 150}${cpu cpu30}%
+ ${voffset -39}${goto 55}${freq_g 29}GHz ${goto 186}${freq_g 30}GHz${voffset 6}
+
+
+ ${goto 55}${cpugraph cpu31 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu32 12,50}${voffset 6}
+ ${voffset -25}${goto 19}${cpu cpu31}% ${goto 150}${cpu cpu32}%
+ ${voffset -39}${goto 55}${freq_g 31}GHz ${goto 186}${freq_g 32}GHz${voffset 6}
+
+ $hr
+ ${color Tan1}RAM: ${exec cat /cpuH/ram_manufacturer.txt}
+ ${color gold}Usage${color}: $mem/$memmax - $memperc% 
+ $hr
+ ${color Tan1}File systems:
+  / $color${fs_used /}/${fs_size /} ${fs_bar 6 /}
 ]]
