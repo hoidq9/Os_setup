@@ -76,117 +76,117 @@ conky.text = [[
  $hr
 
  ${goto 55}${cpugraph cpu1 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu2 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu1}% ${goto 150}${cpu cpu2}%
- ${voffset -39}${goto 55}${freq_g 1}GHz ${goto 186}${freq_g 2}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P1: ${goto 150}${color gold}P2: 
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu1}% ${goto 150}${color #00FF00}${cpu cpu2}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 1}GHz ${goto 186}${color #00FF00}${freq_g 2}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P1: ${goto 150}${color #00FF00}P2: 
 
 
 
  ${goto 55}${cpugraph cpu3 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu4 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu3}% ${goto 150}${cpu cpu4}%
- ${voffset -39}${goto 55}${freq_g 3}GHz ${goto 186}${freq_g 4}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P3: ${goto 150}${color gold}P4:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu3}% ${goto 150}${color #00FF00}${cpu cpu4}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 3}GHz ${goto 186}${color #00FF00}${freq_g 4}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P3: ${goto 150}${color #00FF00}P4:
 
 
 
  ${goto 55}${cpugraph cpu5 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu6 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu5}% ${goto 150}${cpu cpu6}%
- ${voffset -39}${goto 55}${freq_g 5}GHz ${goto 186}${freq_g 6}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P5: ${goto 150}${color gold}P6:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu5}% ${goto 150}${color #00FF00}${cpu cpu6}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 5}GHz ${goto 186}${color #00FF00}${freq_g 6}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P5: ${goto 150}${color #00FF00}P6:
 
 
 
  ${goto 55}${cpugraph cpu7 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu8 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu7}% ${goto 150}${cpu cpu8}%
- ${voffset -39}${goto 55}${freq_g 7}GHz ${goto 186}${freq_g 8}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P7: ${goto 150}${color gold}P8:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu7}% ${goto 150}${color #00FF00}${cpu cpu8}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 7}GHz ${goto 186}${color #00FF00}${freq_g 8}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P7: ${goto 150}${color #00FF00}P8:
 
 
 
  ${goto 55}${cpugraph cpu9 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu10 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu9}% ${goto 150}${cpu cpu10}%
- ${voffset -39}${goto 55}${freq_g 9}GHz ${goto 186}${freq_g 10}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P9: ${goto 150}${color gold}P10:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu9}% ${goto 150}${color #00FF00}${cpu cpu10}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 9}GHz ${goto 186}${color #00FF00}${freq_g 10}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P9: ${goto 150}${color #00FF00}P10:
 
 
 
  ${goto 55}${cpugraph cpu11 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu12 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu11}% ${goto 150}${cpu cpu12}%
- ${voffset -39}${goto 55}${freq_g 11}GHz ${goto 186}${freq_g 12}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P11: ${goto 150}${color gold}P12:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu11}% ${goto 150}${color #00FF00}${cpu cpu12}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 11}GHz ${goto 186}${color #00FF00}${freq_g 12}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P11: ${goto 150}${color #00FF00}P12:
 
 
 
  ${goto 55}${cpugraph cpu13 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu14 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu13}% ${goto 150}${cpu cpu14}%
- ${voffset -39}${goto 55}${freq_g 13}GHz ${goto 186}${freq_g 14}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P13: ${goto 150}${color gold}P14:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu13}% ${goto 150}${color #00FF00}${cpu cpu14}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 13}GHz ${goto 186}${color #00FF00}${freq_g 14}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P13: ${goto 150}${color #00FF00}P14:
 
- 
+
 
  ${goto 55}${cpugraph cpu15 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu16 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu15}% ${goto 150}${cpu cpu16}%
- ${voffset -39}${goto 55}${freq_g 15}GHz ${goto 186}${freq_g 16}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}P15: ${goto 150}${color gold}P16:
+ ${voffset -25}${goto 19}${color #00FF00}${cpu cpu15}% ${goto 150}${color #00FF00}${cpu cpu16}%
+ ${voffset -39}${goto 55}${color #00FF00}${freq_g 15}GHz ${goto 186}${color #00FF00}${freq_g 16}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #00FF00}P15: ${goto 150}${color #00FF00}P16:
 
 
 
  ${goto 55}${cpugraph cpu17 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu18 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu17}% ${goto 150}${cpu cpu18}%
- ${voffset -39}${goto 55}${freq_g 17}GHz ${goto 186}${freq_g 18}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E1: ${goto 150}${color gold}E2:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu17}% ${goto 150}${color #FF0000}${cpu cpu18}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 17}GHz ${goto 186}${color #FF0000}${freq_g 18}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E1: ${goto 150}${color #FF0000}E2:
 
 
 
  ${goto 55}${cpugraph cpu19 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu20 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu19}% ${goto 150}${cpu cpu20}%
- ${voffset -39}${goto 55}${freq_g 19}GHz ${goto 186}${freq_g 20}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E3: ${goto 150}${color gold}E4:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu19}% ${goto 150}${color #FF0000}${cpu cpu20}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 19}GHz ${goto 186}${color #FF0000}${freq_g 20}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E3: ${goto 150}${color #FF0000}E4:
 
 
 
  ${goto 55}${cpugraph cpu21 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu22 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu21}% ${goto 150}${cpu cpu22}%
- ${voffset -39}${goto 55}${freq_g 21}GHz ${goto 186}${freq_g 22}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E5: ${goto 150}${color gold}E6:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu21}% ${goto 150}${color #FF0000}${cpu cpu22}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 21}GHz ${goto 186}${color #FF0000}${freq_g 22}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E5: ${goto 150}${color #FF0000}E6:
 
 
 
  ${goto 55}${cpugraph cpu23 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu24 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu23}% ${goto 150}${cpu cpu24}%
- ${voffset -39}${goto 55}${freq_g 23}GHz ${goto 186}${freq_g 24}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E7: ${goto 150}${color gold}E8:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu23}% ${goto 150}${color #FF0000}${cpu cpu24}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 23}GHz ${goto 186}${color #FF0000}${freq_g 24}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E7: ${goto 150}${color #FF0000}E8:
 
 
 
  ${goto 55}${cpugraph cpu25 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu26 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu25}% ${goto 150}${cpu cpu26}%
- ${voffset -39}${goto 55}${freq_g 25}GHz ${goto 186}${freq_g 26}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E9: ${goto 150}${color gold}E10:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu25}% ${goto 150}${color #FF0000}${cpu cpu26}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 25}GHz ${goto 186}${color #FF0000}${freq_g 26}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E9: ${goto 150}${color #FF0000}E10:
 
 
 
  ${goto 55}${cpugraph cpu27 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu28 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu27}% ${goto 150}${cpu cpu28}%
- ${voffset -39}${goto 55}${freq_g 27}GHz ${goto 186}${freq_g 28}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E11: ${goto 150}${color gold}E12:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu27}% ${goto 150}${color #FF0000}${cpu cpu28}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 27}GHz ${goto 186}${color #FF0000}${freq_g 28}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E11: ${goto 150}${color #FF0000}E12:
 
 
 
  ${goto 55}${cpugraph cpu29 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu30 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu29}% ${goto 150}${cpu cpu30}%
- ${voffset -39}${goto 55}${freq_g 29}GHz ${goto 186}${freq_g 30}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E13: ${goto 150}${color gold}E14:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu29}% ${goto 150}${color #FF0000}${cpu cpu30}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 29}GHz ${goto 186}${color #FF0000}${freq_g 30}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E13: ${goto 150}${color #FF0000}E14:
 
 
 
  ${goto 55}${cpugraph cpu31 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu32 12,50 7fff00 ff0000 -t}${voffset 6}
- ${voffset -25}${goto 19}${cpu cpu31}% ${goto 150}${cpu cpu32}%
- ${voffset -39}${goto 55}${freq_g 31}GHz ${goto 186}${freq_g 32}GHz${voffset 6}
- ${voffset -25}${goto 19}${color gold}E15: ${goto 150}${color gold}E16:
+ ${voffset -25}${goto 19}${color #FF0000}${cpu cpu31}% ${goto 150}${color #FF0000}${cpu cpu32}%
+ ${voffset -39}${goto 55}${color #FF0000}${freq_g 31}GHz ${goto 186}${color #FF0000}${freq_g 32}GHz${voffset 6}
+ ${voffset -25}${goto 19}${color #FF0000}E15: ${goto 150}${color #FF0000}E16:
 
 
- $hr
+ ${color}$hr
  ${color Tan1}RAM: ${exec cat /cpuH/ram_manufacturer.txt}
  ${color gold}Usage${color}: $mem/$memmax - $memperc% 
  $hr
