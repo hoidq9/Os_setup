@@ -121,14 +121,11 @@ gnome_extensions() {
         '4679'
         '3733'
         '6272'
-        '5219'
-        '3733'
-        '5006'
     )
     for i in "${extensions[@]}"; do
         echo $(./install-gnome-extensions.sh -e -o -u $i)
     done
-    # sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+    sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
     cd $REPO_DIR
     rm -rf install-gnome-extensions.sh
 }
