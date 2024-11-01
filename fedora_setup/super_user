@@ -232,7 +232,7 @@ else
         cp cursor_editor/cursor.desktop /usr/share/applications
         cd "$REPO_DIR" || return
     }
-
+    
     conky_setup() {
         cd "$REPO_DIR" || return
         cd system/conky_conf/
