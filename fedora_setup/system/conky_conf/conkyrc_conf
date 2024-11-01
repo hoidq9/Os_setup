@@ -73,7 +73,7 @@ conky.text = [[
  ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${color #FF5733}${exec cat /cpuH/cpu_power.txt} W
  ${color gold}Voltage${color}: ${color #57FFB5}${exec cat /cpuH/cpu_voltage.txt} V ${goto 130} ${color gold}Temp${color}: ${color #FF3357}${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
  ${color gold}User${color}: ${color #D1FF33}${execi 0.3 sh /cpuH/cpu_usage.sh "" user}% ${goto 130} ${color gold}System${color}: ${color #57FF33}${execi 0.3 sh /cpuH/cpu_usage.sh "" system}%
- $hr
+ ${color}$hr
 
  ${goto 55}${cpugraph cpu1 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu2 12,50 7fff00 ff0000 -t}${voffset 6}
  ${voffset -25}${goto 19}${color #00FF00}${cpu cpu1}% ${goto 150}${color #00FF00}${cpu cpu2}%
