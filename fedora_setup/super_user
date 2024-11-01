@@ -88,7 +88,7 @@ else
             sh -c 'echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >> /etc/default/grub'
         fi
         dnf reinstall grub2-efi -y
-        grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+        grub2-mkconfig -o /boot/grub2/grub.cfg
         cd "$REPO_DIR" || return
     }
 
