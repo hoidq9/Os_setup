@@ -5,15 +5,10 @@ yubico() {
     rm -rf $HOME/Prj/Yubico
     cd "$HOME/Prj" || return
     mkdir -p Yubico
-    cd Yubico
     wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
     yubico_compress=$(ls -d *.tar.gz)
-    dir_name=$(basename $yubico_compress .tar.gz)
-    mkdir "$dir_name"
-    tar -xzvf $yubico_compress -C "$dir_name" --strip-components=1
-    cd $dir_name
-    ./desktop_integration.sh -i
-    cd ..
+    # dir_name=$(basename $yubico_compress .tar.gz)
+    tar -xzvf $yubico_compress -C $HOME/Prj/Yubico --strip-components=1
     rm -rf *.tar.gz *.tar.gz.sig
 }
 
@@ -188,6 +183,10 @@ bookmark_nautilus() {
     done
 }
 
+docker_rootless() {
+    dockerd-rootless-setuptool.sh install
+}
+
 tasks=(
     "yubico"
     "ohmyzsh_user"
@@ -196,10 +195,10 @@ tasks=(
     "gnome_extensions"
     "keybinding"
     # "update_firefox_userChrome"
+    "docker_rootless"
     "bookmark_nautilus"
 )
 
 for task in "${tasks[@]}"; do
     check_and_run "$task"
 done
-
