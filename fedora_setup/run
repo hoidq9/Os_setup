@@ -3,6 +3,6 @@ source $(pwd)/variables
 [ ! -d $HOME/Prj ] && mkdir -p $HOME/Prj
 mkdir -p $REPO_DIR/logs
 cd $REPO_DIR
+rm -rf logs
 sudo sh super_user
 sh normal_user
-# rm -rf logs
