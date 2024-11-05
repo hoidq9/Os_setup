@@ -156,6 +156,15 @@ else
 
     gdms() {
         cd "$REPO_DIR" || return
+        cp ~/.config/monitors.xml ~gdm/.config/monitors.xml
+        chown gdm:gdm ~gdm/.config/monitors.xml
+
+        if $session_current == "wayland"; then
+            sudo -u gdm gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+        elif $session_current == "x11"; then
+            sudo -u gdm gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
+        fi
+
         settings=(
             "org.gnome.desktop.interface text-scaling-factor 1.25"
             "org.gnome.desktop.interface gtk-theme 'fedora_themes'"
