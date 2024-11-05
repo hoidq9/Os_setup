@@ -16,15 +16,14 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg keepassxc msr-tools conky -y # eza fzf cockpit pam_yubico
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                            # "Firefox Web Browser"
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky -y # eza fzf cockpit pam_yubico dbus-x11 keepassxc
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                         # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
             systemctl enable --now cockpit.socket
         }
         shell() {
             chsh -s /bin/zsh $user_current
-            # chsh -s /bin/zsh $USER
         }
         run() {
             packages
@@ -67,13 +66,8 @@ else
             fi
             git config --global credential.credentialStore secretservice
         }
-        warp() {
-            curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
-            dnf install cloudflare-warp -y
-        }
         microsoft
         gcm
-        # warp
         cd $REPO_DIR || return
         rm -rf gcm_install
     }
@@ -174,17 +168,16 @@ else
             "org.gnome.settings-daemon.plugins.power power-button-action 'action'"
             "org.gnome.desktop.peripherals.touchpad tap-to-click true"
             "org.gnome.login-screen disable-user-list true"
-            # "org.gnome.settings-daemon.plugins.color night-light-enabled true"
-            # "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
-            # "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
-            # "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
+            "org.gnome.settings-daemon.plugins.color night-light-enabled true"
+            "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
+            "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
+            "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
             "org.gnome.login-screen banner-message-enable true"
             "org.gnome.login-screen banner-message-text 'Leader_H'"
         )
         for setting in "${settings[@]}"; do
-            sudo -u gdm dbus-launch gsettings set $setting
+            sudo -u gdm gsettings set $setting
         done
-        cp system/cmd/custom.conf /etc/gdm
         cd $REPO_DIR || return
     }
 
@@ -200,7 +193,7 @@ else
             "/etc/pam.d/sudo"
             "/etc/pam.d/gdm-password"
             "/etc/pam.d/system-auth"
-            # "/etc/pam.d/sshd"
+            "/etc/pam.d/sshd"
         )
 
         for pam_file in "${pam_files[@]}"; do
@@ -272,18 +265,16 @@ else
         cd "$REPO_DIR" || return
         cd yubico
         cp yubico_authenticator.desktop /usr/share/applications
-        # replace @EXEC_PATH to /home/$user_current/Prj
         sed -i "s|@EXEC_PATH|$(echo /home/$user_current/Prj/Yubico)|g" /usr/share/applications/yubico_authenticator.desktop
     }
 
-    docker_install() {
+    enpass_install() {
         cd "$REPO_DIR" || return
-        dnf -y install dnf-plugins-core
-        dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
-        dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-        dnf install -y iptables
-        modprobe ip_tables
+        cd /etc/yum.repos.d/
+        wget https://yum.enpass.io/enpass-yum.repo
+        dnf install enpass -y
     }
+
     tasks=(
         "system"
         "softwares"
@@ -296,10 +287,10 @@ else
         "check_and_add_pam_u2f"
         "conky_setup"
         "mount_windows_partition"
-        "docker_install"
         # "cursor_editor"
         "service"
         "yubico_desktop"
+        "enpass_install"
         "remove_packages"
     )
 

@@ -92,14 +92,14 @@ accessibility() {
     gsettings set org.gnome.desktop.interface enable-hot-corners false
     gsettings set org.gnome.desktop.interface locate-pointer true
     gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-    # gsettings set org.gnome.desktop.session idle-delay 1800
+    gsettings set org.gnome.desktop.session idle-delay 0
     gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
     gsettings set org.gnome.desktop.input-sources show-all-sources true
     gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
-    # gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
-    # gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
-    # gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
-    # gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
     cd $REPO_DIR/
 }
 
@@ -183,10 +183,6 @@ bookmark_nautilus() {
     done
 }
 
-docker_rootless() {
-    dockerd-rootless-setuptool.sh install
-}
-
 tasks=(
     "yubico"
     "ohmyzsh_user"
@@ -195,7 +191,6 @@ tasks=(
     "gnome_extensions"
     "keybinding"
     # "update_firefox_userChrome"
-    "docker_rootless"
     "bookmark_nautilus"
 )
 
