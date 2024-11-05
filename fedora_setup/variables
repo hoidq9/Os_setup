@@ -6,7 +6,6 @@ YELLOW='\033[1;33m'
 GREEN='\033[1;32m'
 RED='\033[0;31m'
 NC='\033[0m' # Không màu
-session_current=$(echo $XDG_SESSION_TYPE)
 
 check_and_run() {
     local task_name="$1"

@@ -16,11 +16,10 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky -y # eza fzf cockpit pam_yubico dbus-x11 keepassxc
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                         # "firefox"
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico keepassxc
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                       # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
-            systemctl enable --now cockpit.socket
         }
         shell() {
             chsh -s /bin/zsh $user_current
@@ -156,13 +155,13 @@ else
 
     gdms() {
         cd "$REPO_DIR" || return
-        cp ~/.config/monitors.xml ~gdm/.config/monitors.xml
+        cp /home/$user_current/.config/monitors.xml ~gdm/.config/monitors.xml
         chown gdm:gdm ~gdm/.config/monitors.xml
 
-        if $session_current == "wayland"; then
-            sudo -u gdm gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
-        elif $session_current == "x11"; then
-            sudo -u gdm gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
+        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
+            sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
+            sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
         fi
 
         settings=(
@@ -185,13 +184,13 @@ else
             "org.gnome.login-screen banner-message-text 'Leader_H'"
         )
         for setting in "${settings[@]}"; do
-            sudo -u gdm gsettings set $setting
+            sudo -u gdm dbus-launch gsettings set $setting
         done
         cd $REPO_DIR || return
     }
 
     remove_packages() {
-        dnf remove vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng -y
+        dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 -y
         dnf install PackageKit-command-not-found gnome-software fuse -y
         dnf autoremove -y
     }
@@ -249,9 +248,9 @@ else
         rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /cpuH
         cp conky.desktop /home/$user_current/.config/autostart
         chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
-        if [ "$session_current" == "wayland" ]; then
+        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
             cp conkyrc_conf_wayland /etc/conky/conky.conf
-        elif [ "$session_current" == "x11" ]; then
+        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
             cp conkyrc_conf_xorg /etc/conky/conky.conf
         fi
         cd "$REPO_DIR" || return
