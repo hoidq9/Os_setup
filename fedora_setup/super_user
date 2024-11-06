@@ -16,7 +16,7 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico keepassxc
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil libXScrnSaver keepassxc -y # eza fzf cockpit pam_yubico 
             dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                       # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
@@ -191,8 +191,8 @@ else
 
     remove_packages() {
         dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 -y
-        dnf install PackageKit-command-not-found gnome-software fuse -y
         dnf autoremove -y
+        dnf install PackageKit-command-not-found gnome-software fuse fuse-libs -y
     }
 
     check_and_add_pam_u2f() {
@@ -277,8 +277,11 @@ else
     }
 
     enpass_install() {
+        # enpass portable
+        # curl -s https://www.enpass.io/downloads/ | grep "stable/portable/linux" | grep "https" | sed -n 's/.*\(https[^"]*\).*/\1/p'
         cd "$REPO_DIR" || return
         cd /etc/yum.repos.d/
+        rm -rf enpass-yum.repo
         wget https://yum.enpass.io/enpass-yum.repo
         dnf install enpass -y
     }
