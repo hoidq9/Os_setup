@@ -7,17 +7,15 @@ else
     system() {
         cd $REPO_DIR || return
         [ ! -d /cpuH ] && mkdir -p /cpuH
-        if [ ! -f /etc/yum.repos.d/fedora_repositories.repo ]; then
-            cp repo/fedora_repositories.repo /etc/yum.repos.d/
-        fi
+        cp repo/fedora_repositories.repo /etc/yum.repos.d/
         commands() {
             cp system/cmd/rmkernel /usr/local/bin
             chmod +x /usr/local/bin/rmkernel
             rmkernel
         }
         packages() {
-            dnf install gparted baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil libXScrnSaver -y # eza fzf cockpit pam_yubico keepassxc
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                       # "firefox"
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil libXScrnSaver -y # eza fzf cockpit pam_yubico keepassxc gparted
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                                     # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
@@ -246,7 +244,7 @@ else
         cd "$REPO_DIR" || return
         cd system/conky_conf/
         rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /cpuH
-        cp conky.desktop /home/$user_current/.config/autostart
+        # cp conky.desktop /home/$user_current/.config/autostart
         chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
             cp conkyrc_conf_wayland /etc/conky/conky.conf
