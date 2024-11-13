@@ -14,8 +14,8 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil libXScrnSaver -y # eza fzf cockpit pam_yubico keepassxc gparted
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                                     # "firefox"
+            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 keepassxc -y # eza fzf cockpit pam_yubico gparted xcb-util-keysyms xcb-util-renderutil libXScrnSaver
+            dnf group install "hardware-support" "networkmanager-submodules" -y # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
@@ -292,14 +292,14 @@ else
         "icons"
         "cursors"
         "fonts"
-        "gdms"
+        # "gdms"
         "check_and_add_pam_u2f"
         "conky_setup"
         # "mount_windows_partition"
         # "cursor_editor"
         "service"
         "yubico_desktop"
-        "enpass_install"
+        # "enpass_install"
         "remove_packages"
     )
 
