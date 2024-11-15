@@ -116,6 +116,7 @@ gnome_extensions() {
         '4679'
         '3733'
         '6272'
+        '5006'
     )
     for i in "${extensions[@]}"; do
         echo $(./install-gnome-extensions.sh -e -o -u $i)

@@ -14,8 +14,8 @@ else
             rmkernel
         }
         packages() {
-            dnf install baobab bleachbit gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 keepassxc -y # eza fzf cockpit pam_yubico gparted xcb-util-keysyms xcb-util-renderutil libXScrnSaver
-            dnf group install "hardware-support" "networkmanager-submodules" -y # "firefox"
+            dnf install baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil keepassxc rclone -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                       # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
@@ -153,8 +153,10 @@ else
 
     gdms() {
         cd "$REPO_DIR" || return
-        cp /home/$user_current/.config/monitors.xml ~gdm/.config/monitors.xml
-        chown gdm:gdm ~gdm/.config/monitors.xml
+        if [ -f /home/$user_current/.config/monitors.xml ]; then
+            cp /home/$user_current/.config/monitors.xml ~gdm/.config/monitors.xml
+            chown gdm:gdm ~gdm/.config/monitors.xml
+        fi
 
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
             sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
@@ -214,13 +216,18 @@ else
         local mount_point="/home/$user_current/Prj/Windows_H"
         local partition_uuid=$(blkid -o value -s UUID -t LABEL="$partition_name")
 
-        if [ -n "$partition_uuid" ]; then
-            mkdir -p "$mount_point"
+        # Check if the partition is already mounted and exit if it is already mounted or if the partition is not found
+        if mount | grep -q "$partition_name"; then
+            echo "The partition is already mounted."
+            return
+        fi
 
+        # Check type of the partition is ntfs or ntfs-3g and not encrypted and not mounted then mount it
+        if blkid -o value -s TYPE -t LABEL="$partition_name" | grep -q "ntfs"; then
+            mkdir -p "$mount_point"
             if ! grep -q "$partition_uuid" /etc/fstab; then
                 echo "UUID=$partition_uuid  $mount_point  ntfs-3g  defaults,uid=$(id -u $user_current),gid=$(id -g $user_current),umask=022  0  0" >>/etc/fstab
             fi
-
             mount -a
         fi
     }
@@ -292,14 +299,14 @@ else
         "icons"
         "cursors"
         "fonts"
-        # "gdms"
+        "gdms"
         "check_and_add_pam_u2f"
         "conky_setup"
-        # "mount_windows_partition"
+        "mount_windows_partition"
         # "cursor_editor"
         "service"
         "yubico_desktop"
-        # "enpass_install"
+        "enpass_install"
         "remove_packages"
     )
 
