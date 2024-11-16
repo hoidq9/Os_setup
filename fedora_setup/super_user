@@ -21,7 +21,7 @@ else
         }
 
         packages() {
-            dnf install baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone
+            dnf install gnome-session-xsession xapps baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone
             dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                              # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
@@ -194,6 +194,7 @@ else
         for setting in "${settings[@]}"; do
             sudo -u gdm dbus-launch gsettings set $setting
         done
+        cp $REPO_DIR/gdms/custom.conf /etc/gdm
         cd $REPO_DIR || return
     }
 
@@ -252,10 +253,10 @@ else
     }
 
     conky_setup() {
-        if [ ! -d /home/$user_current/.config/autostart ]; then
-            mkdir -p /home/$user_current/.config/autostart
-            chown -R $user_current:$user_current /home/$user_current/.config/autostart
-        fi
+        # if [ ! -d /home/$user_current/.config/autostart ]; then
+        #     mkdir -p /home/$user_current/.config/autostart
+        #     chown -R $user_current:$user_current /home/$user_current/.config/autostart
+        # fi
         cd "$REPO_DIR" || return
         cd system/conky_conf/
         rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /cpuH
