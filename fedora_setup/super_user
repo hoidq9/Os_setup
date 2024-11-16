@@ -7,26 +7,36 @@ else
     system() {
         cd $REPO_DIR || return
         [ ! -d /cpuH ] && mkdir -p /cpuH
-        cp repo/fedora_repositories.repo /etc/yum.repos.d/
+
+        repo_setup() {
+            cd repo || return
+            cp * /etc/yum.repos.d/
+        }
+
         commands() {
             cp system/cmd/rmkernel /usr/local/bin
             chmod +x /usr/local/bin/rmkernel
             rmkernel
         }
+
         packages() {
-            dnf install baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil keepassxc rclone -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                       # "firefox"
+            dnf install baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                              # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
+
         shell() {
             chsh -s /bin/zsh $user_current
         }
+
         run() {
+            repo_setup
             packages
             commands
             shell
         }
+
         grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
         find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix --
         run >>$REPO_DIR/logs/system.log 2>&1
@@ -35,10 +45,8 @@ else
 
     softwares() {
         cd $REPO_DIR || return
-        microsoft() {
-            cd repo
-            cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
-            dnf install code microsoft-edge-stable -y
+        packages_repo() {
+            dnf install code microsoft-edge-stable google-chrome-stable -y
             cd $REPO_DIR || return
         }
         gcm() {
@@ -63,7 +71,7 @@ else
             fi
             git config --global credential.credentialStore secretservice
         }
-        microsoft
+        packages_repo
         gcm
         cd $REPO_DIR || return
         rm -rf gcm_install
@@ -80,7 +88,6 @@ else
         if ! grep -q "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" /etc/default/grub; then
             sh -c 'echo -e "GRUB_FONT=/boot/grub2/fonts/unicode.pf2" >> /etc/default/grub'
         fi
-        dnf reinstall grub2-efi -y
         grub2-mkconfig -o /boot/grub2/grub.cfg
         cd "$REPO_DIR" || return
     }
