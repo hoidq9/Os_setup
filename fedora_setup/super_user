@@ -21,7 +21,7 @@ else
         }
 
         packages() {
-            dnf install gnome-session-xsession xapps baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone
+            dnf install podman gnome-session-xsession xapps baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 xcb-util-keysyms xcb-util-renderutil -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone
             dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                              # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
