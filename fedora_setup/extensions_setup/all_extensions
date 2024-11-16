@@ -75,7 +75,7 @@ vert-separator=true
 active-profile='/home/hoidq/.config/burn-my-windows/profiles/1731569210517871.conf'
 last-extension-version=43
 last-prefs-version=44
-prefs-open-count=5
+prefs-open-count=7
 preview-effect=''
 
 [dash-to-panel]
@@ -257,6 +257,44 @@ thermal-style='digit'
 thermal-threshold=0
 thermal-tz0-color='#f2002e'
 tooltip-delay-ms=0
+
+[system-monitor]
+center-display=false
+compact-display=false
+cpu-graph-width=125
+cpu-individual-cores=false
+cpu-iowait-color='#f9f06bff'
+cpu-nice-color='#ffbe6fff'
+cpu-other-color='#99c1f1ff'
+cpu-refresh-time=50
+cpu-style='graph'
+cpu-system-color='#f66151ff'
+cpu-user-color='#8ff0a4ff'
+freq-display=false
+freq-freq-color='#f66151ff'
+freq-refresh-time=50
+freq-show-menu=true
+freq-show-text=true
+freq-style='both'
+gpu-display=false
+memory-display=false
+move-clock=false
+net-collisions-color='#ffffffff'
+net-display=true
+net-down-color='#8ff0a4ff'
+net-downerrors-color='#f66151ff'
+net-graph-width=95
+net-refresh-time=50
+net-speed-in-bits=true
+net-style='graph'
+net-up-color='#f9f06bff'
+net-uperrors-color='#99c1f1ff'
+rotate-labels=false
+show-tooltip=false
+thermal-display=false
+thermal-refresh-time=100
+thermal-sensor-label='coretemp - Package id 0'
+thermal-style='digit'
 
 [tiling-assistant]
 activate-layout0=@as []

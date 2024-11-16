@@ -11,6 +11,7 @@ else
         repo_setup() {
             cd repo || return
             cp * /etc/yum.repos.d/
+            cd $REPO_DIR || return
         }
 
         commands() {
