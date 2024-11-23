@@ -165,8 +165,9 @@ bookmark_nautilus() {
     bookmarks_file="/home/$user_current/.config/gtk-3.0/bookmarks"
     folders=(
         "/home/$user_current/Prj"
-        "/home/$user_current/Prj/Yubico"
         "/home/$user_current/Prj/Windows_H"
+        # "/Yubico"
+        "/"
     )
     check_and_add_bookmark() {
         folder_path="$1"
@@ -184,7 +185,7 @@ bookmark_nautilus() {
 }
 
 tasks=(
-    "yubico"
+    # "yubico"
     "ohmyzsh_user"
     "terminal"
     "accessibility"

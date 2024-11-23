@@ -10,7 +10,7 @@ else
 
         repo_setup() {
             cd repo || return
-            cp * /etc/yum.repos.d/
+            cp fedora_repositories.repo microsoft-edge.repo vscode.repo /etc/yum.repos.d/ # google-chrome.repo
             cd $REPO_DIR || return
         }
 
@@ -22,7 +22,7 @@ else
 
         packages() {
             dnf install podman gnome-session-xsession xapps baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                                              # "firefox"
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                            # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
@@ -47,7 +47,7 @@ else
     softwares() {
         cd $REPO_DIR || return
         packages_repo() {
-            dnf install code microsoft-edge-stable google-chrome-stable -y
+            dnf install code microsoft-edge-stable -y # google-chrome-stable
             cd $REPO_DIR || return
         }
         gcm() {
@@ -283,11 +283,22 @@ else
         cd "$REPO_DIR" || return
     }
 
-    yubico_desktop() {
+    yubico() {
         cd "$REPO_DIR" || return
+        if [ ! -d /Yubico ]; then
+            mkdir -p /Yubico
+        fi
         cd yubico
         cp yubico_authenticator.desktop /usr/share/applications
-        sed -i "s|@EXEC_PATH|$(echo /home/$user_current/Prj/Yubico)|g" /usr/share/applications/yubico_authenticator.desktop
+        cp yubico_icon.png /Yubico
+        rm -rf /Yubico/*
+        cd /Yubico
+        wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
+        yubico_compress=$(ls -d *.tar.gz)
+        # dir_name=$(basename $yubico_compress .tar.gz)
+        tar -xzvf $yubico_compress -C /Yubico --strip-components=1
+        rm -rf *.tar.gz *.tar.gz.sig
+        cd "$REPO_DIR" || return
     }
 
     enpass_install() {
@@ -314,7 +325,7 @@ else
         "mount_windows_partition"
         # "cursor_editor"
         "service"
-        "yubico_desktop"
+        # "yubico"
         # "enpass_install"
         "remove_packages"
     )
