@@ -161,16 +161,17 @@ else
 
     gdms() {
         cd "$REPO_DIR" || return
-        if [ -f /home/$user_current/.config/monitors.xml ]; then
-            cp /home/$user_current/.config/monitors.xml ~gdm/.config/monitors.xml
-            chown gdm:gdm ~gdm/.config/monitors.xml
-        fi
 
-        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-            sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
-        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-            sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
-        fi
+        # if [ -f /home/$user_current/.config/monitors.xml ]; then
+        #     cp /home/$user_current/.config/monitors.xml ~gdm/.config/monitors.xml
+        #     chown gdm:gdm ~gdm/.config/monitors.xml
+        # fi
+
+        # if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
+        #     sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+        # elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
+        #     sudo -u gdm dbus-launch gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
+        # fi
 
         settings=(
             "org.gnome.desktop.interface text-scaling-factor 1.25"
