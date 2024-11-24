@@ -4,11 +4,11 @@ source $(pwd)/variables
 yubico() {
     rm -rf $HOME/Prj/Yubico
     cd "$HOME/Prj" || return
-    mkdir -p Yubico
     wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
     yubico_compress=$(ls -d *.tar.gz)
-    # dir_name=$(basename $yubico_compress .tar.gz)
-    tar -xzvf $yubico_compress -C $HOME/Prj/Yubico --strip-components=1
+    dir_name=$(basename $yubico_compress .tar.gz)
+    mkdir -p Yubico/$dir_name
+    tar -xzvf $yubico_compress -C Yubico/$dir_name --strip-components=1
     rm -rf *.tar.gz *.tar.gz.sig
 }
 
@@ -166,7 +166,7 @@ bookmark_nautilus() {
     folders=(
         "/home/$user_current/Prj"
         "/home/$user_current/Prj/Windows_H"
-        # "/Yubico"
+        "/home/$user_current/Prj/Yubico"
         "/"
     )
     check_and_add_bookmark() {
@@ -185,7 +185,7 @@ bookmark_nautilus() {
 }
 
 tasks=(
-    # "yubico"
+    "yubico"
     "ohmyzsh_user"
     "terminal"
     "accessibility"

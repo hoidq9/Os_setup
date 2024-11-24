@@ -99,13 +99,14 @@ else
         cd themes_custom
         mkdir -p WhiteSur-gtk-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-gtk-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-gtk-theme --strip-components=1
         cd WhiteSur-gtk-theme
-        for target in background-default.png background-darken.png; do
+        rm -rf src/assets/gnome-shell/backgrounds/*
+        for target in background-default.png background-darken.png background-blank.png background-blur-darken.png background-blur.png; do
             cp $REPO_DIR/backgrounds/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
         done
         rm -rf /usr/share/themes/fedora_themes
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
-        ./install.sh -n 'WoW' -c Dark -a alt -t default -m -N mojave -HD --round --right --shell -i fedora -b default -h smaller -normal
-        ./tweaks.sh -g default -o solid -c Dark -t default -p 60 -P smaller -n -i fedora -b default
+        ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 60 -h smaller -normal -sf
+        ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 60 -h smaller -sf
         cd /usr/share/themes
         fedora_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $fedora_important /usr/share/themes/fedora_themes
@@ -262,7 +263,7 @@ else
         cd system/conky_conf/
         rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /cpuH
         # cp conky.desktop /home/$user_current/.config/autostart
-        chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
+        # chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
             cp conkyrc_conf_wayland /etc/conky/conky.conf
         elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
