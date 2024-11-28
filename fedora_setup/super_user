@@ -11,6 +11,7 @@ else
         repo_setup() {
             cd repo || return
             cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo
+            rm -rf /etc/yum.repos.d/google-chrome.repo
             cd $REPO_DIR || return
         }
 
@@ -47,7 +48,7 @@ else
     softwares() {
         cd $REPO_DIR || return
         packages_repo() {
-            dnf install code microsoft-edge-stable google-chrome-stable -y
+            dnf install code microsoft-edge-stable -y # google-chrome-stable
             cd $REPO_DIR || return
         }
         gcm() {
@@ -105,8 +106,8 @@ else
         done
         rm -rf /usr/share/themes/fedora_themes
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
-        ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 60 -h smaller -normal -sf
-        ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 60 -h smaller -sf
+        ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h smaller -normal -sf
+        ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 30 -h smaller -sf
         cd /usr/share/themes
         fedora_important=$(ls -d /usr/share/themes/WoW-Dark-alt)
         mv $fedora_important /usr/share/themes/fedora_themes
