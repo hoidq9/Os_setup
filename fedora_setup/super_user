@@ -10,8 +10,7 @@ else
 
         repo_setup() {
             cd repo || return
-            cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo
-            rm -rf /etc/yum.repos.d/google-chrome.repo
+            cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo yandex-browser.repo
             cd $REPO_DIR || return
         }
 
@@ -48,7 +47,7 @@ else
     softwares() {
         cd $REPO_DIR || return
         packages_repo() {
-            dnf install code microsoft-edge-stable -y # google-chrome-stable
+            dnf install code microsoft-edge-stable google-chrome-stable yandex-browser-stable -y
             cd $REPO_DIR || return
         }
         gcm() {
