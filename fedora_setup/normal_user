@@ -2,8 +2,11 @@
 source $(pwd)/variables
 
 yubico() {
-    rm -rf $HOME/Prj/Yubico
-    cd "$HOME/Prj" || return
+    rm -rf $HOME/Yubico
+    if [ ! -d $HOME/Drive ]; then
+        mkdir -p $HOME/Drive
+    fi
+    cd "$HOME/Drive" || return
     wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
     yubico_compress=$(ls -d *.tar.gz)
     dir_name=$(basename $yubico_compress .tar.gz)
@@ -100,6 +103,7 @@ accessibility() {
     gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
     gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
     gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
+    gsettings set org.gnome.desktop.input-sources sources "[('ibus', 'm17n:vi:telex'), ('xkb', 'us')]"
     cd $REPO_DIR/
 }
 
@@ -165,8 +169,8 @@ bookmark_nautilus() {
     bookmarks_file="/home/$user_current/.config/gtk-3.0/bookmarks"
     folders=(
         "/home/$user_current/Prj"
-        "/home/$user_current/Prj/Windows_H"
-        "/home/$user_current/Prj/Yubico"
+        "/home/$user_current/Drive/Windows_H"
+        "/home/$user_current/Drive/Yubico"
         "/"
     )
     check_and_add_bookmark() {
@@ -183,6 +187,8 @@ bookmark_nautilus() {
         check_and_add_bookmark "$folder"
     done
 }
+
+
 
 tasks=(
     "yubico"

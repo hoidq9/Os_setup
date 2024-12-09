@@ -11,6 +11,7 @@ else
         repo_setup() {
             cd repo || return
             cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo yandex-browser.repo
+            rm -rf /etc/yum.repos.d/microsoft-edge.repo /etc/yum.repos.d/yandex-browser.repo
             cd $REPO_DIR || return
         }
 
@@ -47,7 +48,7 @@ else
     softwares() {
         cd $REPO_DIR || return
         packages_repo() {
-            dnf install code microsoft-edge-stable google-chrome-stable yandex-browser-stable -y
+            dnf install code google-chrome-stable -y # microsoft-edge-stable yandex-browser-stable
             cd $REPO_DIR || return
         }
         gcm() {
@@ -224,7 +225,7 @@ else
 
     mount_windows_partition() {
         local partition_name="Windows_H"
-        local mount_point="/home/$user_current/Prj/Windows_H"
+        local mount_point="/home/$user_current/Drive/Windows_H"
         local partition_uuid=$(blkid -o value -s UUID -t LABEL="$partition_name")
 
         # Check if the partition is already mounted and exit if it is already mounted or if the partition is not found
