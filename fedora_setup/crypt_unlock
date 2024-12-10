@@ -80,9 +80,11 @@ if [[ "$enroll_fido2" == "y" ]]; then
     echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
     systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no $luks2_disk_path
     dracut -f
+    dnf remove yubikey-manager -y &>/dev/null
+    dnf autoremove -y &>/dev/null
     echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
 else
     dnf remove yubikey-manager -y &>/dev/null
-    dnf autoremove -y
+    dnf autoremove -y &>/dev/null
     echo -e "${RED}yubikey-manager removed successfully.${NC}"
 fi

@@ -127,6 +127,9 @@ gnome_extensions() {
     sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
     cd $REPO_DIR
     rm -rf install-gnome-extensions.sh
+    if [ -d "$HOME/.config/burn-my-windows/profiles"]; then
+        cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+    fi
 }
 
 keybinding() {
@@ -187,8 +190,6 @@ bookmark_nautilus() {
         check_and_add_bookmark "$folder"
     done
 }
-
-
 
 tasks=(
     "yubico"
