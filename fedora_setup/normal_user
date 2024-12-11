@@ -3,10 +3,10 @@ source $(pwd)/variables
 
 yubico() {
     rm -rf $HOME/Yubico
-    if [ ! -d $HOME/Drive ]; then
-        mkdir -p $HOME/Drive
+    if [ ! -d $HOME/Prj ]; then
+        mkdir -p $HOME/Prj
     fi
-    cd "$HOME/Drive" || return
+    cd "$HOME/Prj" || return
     wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
     yubico_compress=$(ls -d *.tar.gz)
     dir_name=$(basename $yubico_compress .tar.gz)
@@ -126,9 +126,17 @@ gnome_extensions() {
     done
     sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
     cd $REPO_DIR
-    rm -rf install-gnome-extensions.sh
-    if [ -d "$HOME/.config/burn-my-windows/profiles"]; then
-        cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+    rm -rf install-gnome-extensions.sh $HOME/.config/burn-my-windows/profiles
+    mkdir -p $HOME/.config/burn-my-windows/profiles
+    cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+
+    if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+        cp -r $REPO_DIR/extensions_setup/all_extensions $REPO_DIR/extensions_setup/all_extensions_backup
+        sed -i "s/name_user_h/$user_current/g" $REPO_DIR/extensions_setup/all_extensions_backup
+        dconf load /org/gnome/shell/extensions/ < $REPO_DIR/extensions_setup/all_extensions_backup
+        rm -rf $REPO_DIR/extensions_setup/all_extensions_backup
+    else
+        echo "Thư mục /org/gnome/shell/extensions/ không tồn tại."
     fi
 }
 
@@ -169,12 +177,11 @@ update_firefox_userChrome() {
 }
 
 bookmark_nautilus() {
-    bookmarks_file="/home/$user_current/.config/gtk-3.0/bookmarks"
+    bookmarks_file="$HOME/.config/gtk-3.0/bookmarks"
     folders=(
-        "/home/$user_current/Prj"
-        "/home/$user_current/Drive/Windows_H"
-        "/home/$user_current/Drive/Yubico"
-        "/"
+        "$HOME/Prj"
+        "/Os_H/Windows_H"
+        "$HOME/Prj/Yubico"
     )
     check_and_add_bookmark() {
         folder_path="$1"

@@ -6,7 +6,7 @@ show-custom-indicator=false
 show-logo=true
 
 [arcmenu]
-application-shortcuts=[{'id': 'org.gnome.tweaks.desktop'}, {'id': 'ArcMenu_ActivitiesOverview', 'name': 'Activities Overview', 'icon': 'view-fullscreen-symbolic'}, {'name': 'Run Command...', 'icon': 'system-run-symbolic', 'id': 'ArcMenu_RunCommand'}, {'name': 'Show All Apps', 'icon': 'view-app-grid-symbolic', 'id': 'ArcMenu_ShowAllApplications'}, {'id': 'org.gnome.Nautilus.desktop'}, {'id': 'ArcMenu_Software', 'name': 'Software', 'icon': '/usr/share/icons/fedora_icons/apps/scalable/Appstore.svg'}, {'id': 'org.gnome.Terminal.desktop'}, {'id': 'org.gnome.Settings.desktop'}, {'name': 'Reboot to Firmware UEFI/BIOS', 'icon': '/usr/share/icons/fedora_icons/apps/scalable/indicator-cpufreq.svg', 'id': 'systemctl reboot --firmware-setup'}, {'name': 'ArcMenu Settings', 'icon': '/home/hoidq/.local/share/gnome-shell/extensions/arcmenu@arcmenu.com//icons/arcmenu-logo-symbolic.svg', 'id': 'gnome-extensions prefs arcmenu@arcmenu.com'}]
+application-shortcuts=[{'id': 'org.gnome.tweaks.desktop'}, {'id': 'ArcMenu_ActivitiesOverview', 'name': 'Activities Overview', 'icon': 'view-fullscreen-symbolic'}, {'name': 'Run Command...', 'icon': 'system-run-symbolic', 'id': 'ArcMenu_RunCommand'}, {'name': 'Show All Apps', 'icon': 'view-app-grid-symbolic', 'id': 'ArcMenu_ShowAllApplications'}, {'id': 'org.gnome.Nautilus.desktop'}, {'id': 'ArcMenu_Software', 'name': 'Software', 'icon': '/usr/share/icons/fedora_icons/apps/scalable/Appstore.svg'}, {'id': 'org.gnome.Terminal.desktop'}, {'id': 'org.gnome.Settings.desktop'}, {'name': 'Reboot to Firmware UEFI/BIOS', 'icon': '/usr/share/icons/fedora_icons/apps/scalable/indicator-cpufreq.svg', 'id': 'systemctl reboot --firmware-setup'}, {'name': 'ArcMenu Settings', 'icon': '/home/name_user_h/.local/share/gnome-shell/extensions/arcmenu@arcmenu.com//icons/arcmenu-logo-symbolic.svg', 'id': 'gnome-extensions prefs arcmenu@arcmenu.com'}]
 apps-show-extra-details=true
 arc-menu-icon=18
 avatar-style='Round'
@@ -78,11 +78,12 @@ show-search-result-details=true
 vert-separator=true
 
 [burn-my-windows]
-active-profile='/home/hoidq/.config/burn-my-windows/profiles/burn-my-windows-profile.conf'
+active-profile='/home/name_user_h/.config/burn-my-windows/profiles/burn-my-windows-profile.conf'
 last-extension-version=43
 last-prefs-version=44
-prefs-open-count=7
+prefs-open-count=10
 preview-effect=''
+show-support-dialog=false
 
 [dash-to-panel]
 animate-appicon-hover=false
@@ -116,7 +117,7 @@ panel-positions='{"0":"TOP"}'
 panel-sizes='{"0":32}'
 primary-monitor=0
 secondarymenu-contains-showdetails=true
-show-apps-icon-file='/home/hoidq/.icons/fedora-logo-icon.png'
+show-apps-icon-file='/home/name_user_h/.icons/fedora-logo-icon.png'
 show-favorites-all-monitors=true
 show-showdesktop-hover=true
 status-icon-padding=3

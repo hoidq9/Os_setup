@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 else
     system() {
         cd $REPO_DIR || return
-        [ ! -d /cpuH ] && mkdir -p /cpuH
+        [ ! -d /Os_H ] && mkdir -p /Os_H
 
         repo_setup() {
             cd repo || return
@@ -208,9 +208,8 @@ else
     }
 
     check_and_add_pam_u2f() {
-        local pam_line="auth    sufficient    pam_u2f.so    cue"
-        local pam_files=(
-            "/etc/pam.d/sudo"
+        pam_line="auth  sufficient  pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]"
+        pam_files=(
             "/etc/pam.d/gdm-password"
             "/etc/pam.d/system-auth"
             "/etc/pam.d/sshd"
@@ -225,7 +224,7 @@ else
 
     mount_windows_partition() {
         local partition_name="Windows_H"
-        local mount_point="/home/$user_current/Drive/Windows_H"
+        local mount_point="/Os_H/Windows_H"
         local partition_uuid=$(blkid -o value -s UUID -t LABEL="$partition_name")
 
         # Check if the partition is already mounted and exit if it is already mounted or if the partition is not found
@@ -262,7 +261,7 @@ else
         # fi
         cd "$REPO_DIR" || return
         cd system/conky_conf/
-        rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /cpuH
+        rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /Os_H
         # cp conky.desktop /home/$user_current/.config/autostart
         # chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then

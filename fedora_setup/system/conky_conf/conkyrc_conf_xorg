@@ -70,9 +70,9 @@ conky.text = [[
  ${color}$hr
  ${color Tan1}CPU: ${color #33D1FF}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
  ${color gold}Total${color}: ${color #33FFB5}${cpu cpu0}% ${goto 130} ${color gold}Freq${color}: ${color #F5FF33}${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz 
- ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${color #FF5733}${exec cat /cpuH/cpu_power.txt} W
- ${color gold}Voltage${color}: ${color #57FFB5}${exec cat /cpuH/cpu_voltage.txt} V ${goto 130} ${color gold}Temp${color}: ${color #FF3357}${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
- ${color gold}User${color}: ${color #D1FF33}${execi 0.3 sh /cpuH/cpu_usage.sh "" user}% ${goto 130} ${color gold}System: ${color #57FF33}${execi 0.3 sh /cpuH/cpu_usage.sh "" system}%
+ ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${color #FF5733}${exec cat /Os_H/cpu_power.txt} W
+ ${color gold}Voltage${color}: ${color #57FFB5}${exec cat /Os_H/cpu_voltage.txt} V ${goto 130} ${color gold}Temp${color}: ${color #FF3357}${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
+ ${color gold}User${color}: ${color #D1FF33}${execi 0.3 sh /Os_H/cpu_usage.sh "" user}% ${goto 130} ${color gold}System: ${color #57FF33}${execi 0.3 sh /Os_H/cpu_usage.sh "" system}%
  ${color}$hr
 
  ${goto 55}${cpugraph cpu1 12,50 7fff00 ff0000 -t} ${goto 186}${cpugraph cpu2 12,50 7fff00 ff0000 -t}${voffset 6}
@@ -187,7 +187,7 @@ conky.text = [[
 
 
  ${color}$hr
- ${color Tan1}RAM: ${exec cat /cpuH/ram_manufacturer.txt}
+ ${color Tan1}RAM: ${exec cat /Os_H/ram_manufacturer.txt}
  ${color gold}Usage${color}: $mem/$memmax - $memperc% 
  $hr
  /  ${color #8CFF33}${fs_used /}/${color #A5FF33}${fs_size /} ${color #FF33E6}${fs_bar 6 /}

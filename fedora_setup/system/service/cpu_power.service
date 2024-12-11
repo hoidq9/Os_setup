@@ -3,7 +3,7 @@ Description=Run cpu_power.sh on startup
 
 [Service]
 Type=simple
-ExecStart=sh /cpuH/cpu_power.sh
+ExecStart=sh /Os_H/cpu_power.sh
 
 [Install]
 WantedBy=multi-user.target
