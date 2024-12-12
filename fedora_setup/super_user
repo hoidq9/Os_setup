@@ -22,8 +22,8 @@ else
         }
 
         packages() {
-            dnf install podman gnome-session-xsession xapps baobab gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks pamu2fcfg msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                                            # "firefox"
+            dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                           # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
         }
@@ -188,11 +188,22 @@ else
             "org.gnome.desktop.peripherals.touchpad tap-to-click true"
             "org.gnome.login-screen disable-user-list true"
             "org.gnome.settings-daemon.plugins.color night-light-enabled true"
-            "org.gnome.settings-daemon.plugins.color night-light-temperature 3168"
+            "org.gnome.settings-daemon.plugins.color night-light-temperature 2595"
             "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
             "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
             "org.gnome.login-screen banner-message-enable true"
             "org.gnome.login-screen banner-message-text 'Leader_H'"
+            "org.gnome.desktop.sound allow-volume-above-100-percent true"
+            "org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'"
+            "org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'"
+            "org.gnome.settings-daemon.plugins.power idle-dim false"
+            "org.gnome.desktop.screensaver lock-delay 0"
+            "org.gnome.desktop.screensaver lock-enabled true"
+            "org.gnome.desktop.datetime automatic-timezone true"
+            "org.gnome.desktop.calendar show-weekdate true"
+            "org.gnome.desktop.interface clock-format '24h'"
+            "org.gnome.system.location enabled true"
+            "org.gnome.desktop.interface color-scheme 'prefer-dark'"
         )
         for setting in "${settings[@]}"; do
             sudo -u gdm dbus-launch gsettings set $setting
@@ -205,21 +216,6 @@ else
         dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 -y
         dnf autoremove -y
         dnf install PackageKit-command-not-found gnome-software fuse fuse-libs -y
-    }
-
-    check_and_add_pam_u2f() {
-        pam_line="auth  sufficient  pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]"
-        pam_files=(
-            "/etc/pam.d/gdm-password"
-            "/etc/pam.d/system-auth"
-            "/etc/pam.d/sshd"
-        )
-
-        for pam_file in "${pam_files[@]}"; do
-            if ! grep -qF "$pam_line" "$pam_file"; then
-                sed -i "1s/^/$pam_line\n/" "$pam_file"
-            fi
-        done
     }
 
     mount_windows_partition() {
@@ -322,7 +318,6 @@ else
         "cursors"
         "fonts"
         "gdms"
-        "check_and_add_pam_u2f"
         "conky_setup"
         "mount_windows_partition"
         # "cursor_editor"

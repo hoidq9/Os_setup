@@ -13,13 +13,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Cài đặt yubikey-manager nếu chưa có
-echo -e "\n${YELLOW}--- Installing yubikey-manager... ---${NC}"
-dnf install yubikey-manager -y &>/dev/null
-echo -e "${GREEN}yubikey-manager installed successfully.${NC}"
-
-# Thêm một dòng trống để cách biệt
-echo ""
+echo
 
 # Kiểm tra các phân vùng được mã hóa bằng LUKS
 encrypted_partitions=()
@@ -39,20 +33,7 @@ if [[ ${#encrypted_partitions[@]} -gt 0 ]]; then
     done
 else
     echo -e "${RED}Không tìm thấy phân vùng mã hóa LUKS.${NC}"
-fi
-
-# Thêm một dòng trống để cách biệt
-echo ""
-
-# Liệt kê tất cả các phương thức mở khóa LUKS2
-echo -e "${BLUE}--- Listing all methods to unlock LUKS2 partitions... ---${NC}"
-if [[ ${#encrypted_partitions[@]} -gt 0 ]]; then
-    for partition in "${encrypted_partitions[@]}"; do
-        echo -e "${YELLOW}Phân vùng: $partition${NC}"
-        cryptsetup luksDump "$partition"
-    done
-else
-    echo -e "${RED}Không có phân vùng nào để liệt kê phương thức mở khóa.${NC}"
+    exit 0
 fi
 
 # Thêm một dòng trống để cách biệt
@@ -61,12 +42,6 @@ echo ""
 # Hiển thị thông tin FIDO2 và YubiKey
 echo -e "${BLUE}--- Listing FIDO2 devices... ---${NC}"
 systemd-cryptenroll --fido2-device=list
-
-# Thêm một dòng trống để cách biệt
-echo ""
-
-echo -e "${BLUE}--- Listing YubiKey devices... ---${NC}"
-ykman list
 
 echo ""
 
@@ -80,11 +55,9 @@ if [[ "$enroll_fido2" == "y" ]]; then
     echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
     systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no $luks2_disk_path
     dracut -f
-    dnf remove yubikey-manager -y &>/dev/null
     dnf autoremove -y &>/dev/null
     echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
 else
-    dnf remove yubikey-manager -y &>/dev/null
     dnf autoremove -y &>/dev/null
-    echo -e "${RED}yubikey-manager removed successfully.${NC}"
+    echo
 fi
