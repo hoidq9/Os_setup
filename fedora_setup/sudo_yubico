@@ -40,6 +40,7 @@ if [[ -n "$devices" ]]; then
         check_and_add_pam_u2f
         sudo dnf remove pamu2fcfg -y &>/dev/null
         sudo dnf autoremove -y &>/dev/null
+        sudo dnf install pam-u2f -y &>/dev/null
         ;;
     *)
         echo "Thoát chương trình."

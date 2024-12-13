@@ -116,7 +116,7 @@ accessibility() {
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     gsettings set org.gnome.nautilus.window-state initial-size '(2082, 1256)'
     gsettings set org.gnome.nautilus.window-state initial-size-file-chooser '(890, 550)'
-    gsettings set org.gnome.nautilus.preferences always-use-location-entry true
+    gsettings set org.gnome.nautilus.preferences always-use-location-entry false
     gsettings set org.gnome.nautilus.preferences date-time-format 'detailed'
     gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
     gsettings set org.gnome.nautilus.preferences migrated-gtk-settings true
@@ -125,7 +125,7 @@ accessibility() {
     gsettings set org.gnome.nautilus.preferences show-delete-permanently true
     gsettings set org.gnome.nautilus.list-view default-column-order "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
     gsettings set org.gnome.nautilus.list-view default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
-    gsettings set org.gnome.nautilus.list-view use-tree-view true
+    gsettings set org.gnome.nautilus.list-view use-tree-view false
     gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
     gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
     cd $REPO_DIR/
@@ -209,8 +209,8 @@ bookmark_nautilus() {
     )
     check_and_add_bookmark() {
         folder_path="$1"
-        if ! grep -Fxq "file:///" "$bookmarks_file"; then
-            echo "file:///" >>"$bookmarks_file"
+        if ! grep -q "^file:/// /$" "$bookmarks_file" 2>/dev/null; then
+            echo "file:/// /" >>"$bookmarks_file"
         else
             echo "Đã tồn tại / trong $bookmarks_file."
         fi

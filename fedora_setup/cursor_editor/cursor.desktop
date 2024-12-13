@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Cursor
-Exec=/usr/local/bin/cursor_ai
+Exec=/usr/local/bin/cursor
 Terminal=false
 Type=Application
 Icon=/usr/share/icons/cursor_ai/cursor_ai.svg

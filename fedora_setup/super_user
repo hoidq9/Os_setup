@@ -15,17 +15,12 @@ else
             cd $REPO_DIR || return
         }
 
-        commands() {
-            cp system/cmd/rmkernel /usr/local/bin
-            chmod +x /usr/local/bin/rmkernel
-            rmkernel
-        }
-
         packages() {
             dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
             dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                           # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
+            sh system/cmd/rmkernel
         }
 
         shell() {
@@ -35,7 +30,6 @@ else
         run() {
             repo_setup
             packages
-            commands
             shell
         }
 
@@ -242,8 +236,8 @@ else
     cursor_editor() {
         cd "$REPO_DIR" || return
         filename=$(curl -OJ -w '%{filename_effective}' https://downloader.cursor.sh/linux/appImage/x64)
-        mv $filename /usr/local/bin/cursor_ai
-        chmod +x /usr/local/bin/cursor_ai
+        mv $filename /usr/local/bin/cursor
+        chmod +x /usr/local/bin/cursor
         mkdir -p /usr/share/icons/cursor_ai
         cp cursor_editor/cursor_ai.svg /usr/share/icons/cursor_ai
         cp cursor_editor/cursor.desktop /usr/share/applications
@@ -320,7 +314,7 @@ else
         "gdms"
         "conky_setup"
         "mount_windows_partition"
-        # "cursor_editor"
+        "cursor_editor"
         "service"
         # "yubico"
         # "enpass_install"
