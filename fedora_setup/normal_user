@@ -227,6 +227,13 @@ bookmark_nautilus() {
     done
 }
 
+startup_apps() {
+    if [ ! -d "$HOME/.config/autostart" ]; then
+        mkdir "$HOME/.config/autostart"
+    fi
+    cp -r $REPO_DIR/system/conky_conf/conky.desktop $HOME/.config/autostart
+}
+
 tasks=(
     # "yubico"
     "ohmyzsh_user"
@@ -236,6 +243,7 @@ tasks=(
     "keybinding"
     # "update_firefox_userChrome"
     "bookmark_nautilus"
+    "startup_apps"
 )
 
 for task in "${tasks[@]}"; do

@@ -16,7 +16,7 @@ else
         }
 
         packages() {
-            dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq gnome-extensions-app.x86_64 zsh gnome-tweaks msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
+            dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq zsh msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
             dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                           # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
@@ -207,7 +207,7 @@ else
     }
 
     remove_packages() {
-        dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 -y
+        dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 jq -y
         dnf autoremove -y
         dnf install PackageKit-command-not-found gnome-software fuse fuse-libs -y
     }
