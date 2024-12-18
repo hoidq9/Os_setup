@@ -180,10 +180,4 @@ conky.text = [[
  ${voffset -39}${goto 55}${color #FF0000}${freq_g 31}GHz ${goto 186}${color #FF0000}${freq_g 32}GHz${voffset 6}
  ${voffset -25}${goto 19}${color #FF0000}E15: ${goto 150}${color #FF0000}E16:
 
-
- ${color}$hr
- ${color Tan1}RAM: ${exec cat /Os_H/ram_manufacturer.txt}
- ${color gold}Usage${color}: $mem/$memmax - $memperc% 
- $hr
- /  ${color #8CFF33}${fs_used /}/${color #A5FF33}${fs_size /} ${color #FF33E6}${fs_bar 6 /}
 ]]

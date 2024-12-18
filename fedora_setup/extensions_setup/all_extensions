@@ -371,3 +371,14 @@ tile-topright-quarter=['<Super>KP_9']
 tile-topright-quarter-ignore-ta=@as []
 toggle-always-on-top=@as []
 toggle-tiling-popup=@as []
+
+[vitals]
+hot-sensors=['_memory_usage_', '_memory_allocated_', '_storage_used_', '_storage_free_']
+icon-style=0
+include-static-gpu-info=true
+include-static-info=true
+menu-centered=true
+show-battery=true
+show-gpu=true
+update-time=1
+use-higher-precision=true

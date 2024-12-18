@@ -64,6 +64,8 @@ else
     dnf autoremove -y &>/dev/null
 fi
 
+echo 
+
 echo -ne "${YELLOW}Do you want to enroll a new TPM2 device to unlock LUKS2? (y/n): ${NC}"
 read -r enroll_tpm2
 if [[ "$enroll_tpm2" == "y" ]]; then
@@ -72,7 +74,8 @@ if [[ "$enroll_tpm2" == "y" ]]; then
     echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (ex: /dev/nvme0n1p?): ${NC}"
     read -r luks2_disk_path
     echo "add_dracutmodules+=\" tpm2-tss \"" | sudo tee /etc/dracut.conf.d/tpm2.conf
-    systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" $luks2_disk_path
+    systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
+    systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" $luks2_disk_path
     dracut -f
     dnf autoremove -y &>/dev/null
     echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"

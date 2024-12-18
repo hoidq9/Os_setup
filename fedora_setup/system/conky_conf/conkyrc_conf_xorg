@@ -8,12 +8,12 @@ conky.config = {
       default_color = 'white',
       default_outline_color = 'white',
       default_shade_color = 'white',
-      double_buffer = true,
-      draw_borders = true,
-      draw_graph_borders = true,
-      draw_outline = true,
-      draw_shades = true,
+      double_buffer = true,      
       extra_newline = false,
+      draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_graph_borders = false,
       font = 'DejaVu Sans Mono:bold:size=9',
       gap_x = 0,
       gap_y = 29,
@@ -42,11 +42,6 @@ conky.config = {
 	own_window_argb_value = 222,
 	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager,above',
 	border_outer_margin = 0,
-	draw_shades = false,
-	draw_outline = false,
-	draw_borders = false,
-	draw_graph_borders = false,
-	use_xft = true,
 	xftalpha = 0.8,
       default_color = 'white',
 }
@@ -185,10 +180,4 @@ conky.text = [[
  ${voffset -39}${goto 55}${color #FF0000}${freq_g 31}GHz ${goto 186}${color #FF0000}${freq_g 32}GHz${voffset 6}
  ${voffset -25}${goto 19}${color #FF0000}E15: ${goto 150}${color #FF0000}E16:
 
-
- ${color}$hr
- ${color Tan1}RAM: ${exec cat /Os_H/ram_manufacturer.txt}
- ${color gold}Usage${color}: $mem/$memmax - $memperc% 
- $hr
- /  ${color #8CFF33}${fs_used /}/${color #A5FF33}${fs_size /} ${color #FF33E6}${fs_bar 6 /}
 ]]
