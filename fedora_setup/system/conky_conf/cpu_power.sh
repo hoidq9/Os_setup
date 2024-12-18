@@ -12,4 +12,5 @@ while true; do
     else
         printf "%.1f\n" "$res" >/Os_H/cpu_power.txt
     fi
+    echo $(dmidecode -t memory | grep "Manufacturer:" | sort | uniq | awk '{print $2" "$3}') >/Os_H/ram_manufacturer.txt
 done
