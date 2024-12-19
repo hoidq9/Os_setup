@@ -16,7 +16,7 @@ conky.config = {
 	draw_graph_borders = false,
       font = 'DejaVu Sans Mono:bold:size=9',
       gap_x = 0,
-      gap_y = 38,
+      gap_y = 36,
       minimum_width = 200,
       net_avg_samples = 2,
       no_buffers = true,
