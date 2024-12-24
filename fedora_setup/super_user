@@ -11,7 +11,7 @@ else
         repo_setup() {
             cd repo || return
             cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo yandex-browser.repo
-            rm -rf /etc/yum.repos.d/yandex-browser.repo # /etc/yum.repos.d/microsoft-edge.repo /etc/yum.repos.d/google-chrome.repo
+            rm -rf /etc/yum.repos.d/yandex-browser.repo /etc/yum.repos.d/google-chrome.repo # /etc/yum.repos.d/microsoft-edge.repo 
             cd $REPO_DIR || return
         }
 
