@@ -10,14 +10,14 @@ else
 
         repo_setup() {
             cd repo || return
-            cp * /etc/yum.repos.d/ # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo yandex-browser.repo
-            rm -rf /etc/yum.repos.d/yandex-browser.repo /etc/yum.repos.d/google-chrome.repo # /etc/yum.repos.d/microsoft-edge.repo 
+            cp * /etc/yum.repos.d/                                                          # google-chrome.repo fedora_repositories.repo microsoft-edge.repo vscode.repo yandex-browser.repo
+            rm -rf /etc/yum.repos.d/yandex-browser.repo /etc/yum.repos.d/google-chrome.repo # /etc/yum.repos.d/microsoft-edge.repo
             cd $REPO_DIR || return
         }
 
         packages() {
             dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n jq zsh msr-tools conky dbus-x11 -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
-            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                                                           # "firefox"
+            dnf group install "hardware-support" "networkmanager-submodules" -y                                                                                                                                                                  # "firefox"
             dnf upgrade -y
             systemctl set-default graphical.target
             sh system/cmd/rmkernel
@@ -207,7 +207,7 @@ else
     }
 
     remove_packages() {
-        dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 -y
+        dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 jq -y
         dnf autoremove -y
         dnf install PackageKit-command-not-found gnome-software fuse fuse-libs -y
     }
@@ -251,7 +251,7 @@ else
         # fi
         cd "$REPO_DIR" || return
         cd system/conky_conf/
-        rsync -av --exclude={conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /Os_H
+        rsync -av --exclude={conky1.conf,conky2.conf,conky3.conf,conky4.conf,conky5.conf,conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /Os_H
         # cp conky.desktop /home/$user_current/.config/autostart
         # chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
@@ -303,6 +303,44 @@ else
         dnf install enpass -y
     }
 
+    gnome_extensions() {
+
+        declare -a extensions
+        extensions=(
+            '3628'
+            '1160'
+            '3843'
+            '3010'
+            '4679'
+            '3733'
+            '6272'
+            '6682'
+        )
+
+        download_extension() {
+            request_url="https://extensions.gnome.org/extension-info/?pk=$1&shell_version=$(gnome-shell --version | cut --delimiter=' ' --fields=3 | cut --delimiter='.' --fields=1,2)"
+            http_response="$(curl -s -o /dev/null -I -w "%{http_code}" "$request_url")"
+            if [ "$http_response" = 404 ]; then
+                continue
+            fi
+            ext_info="$(curl -s "$request_url")"
+            direct_dload_url="$(echo "$ext_info" | jq -r '.download_url')"
+            download_url="https://extensions.gnome.org"$direct_dload_url
+            filename="$(basename "$download_url")"
+            wget "$download_url"
+        }
+
+        if [ ! -d $REPO_DIR/extensions_setup/gnome_extensions_list ]; then
+            mkdir -p $REPO_DIR/extensions_setup/gnome_extensions_list
+        fi
+
+        cd $REPO_DIR/extensions_setup/gnome_extensions_list
+        for i in "${extensions[@]}"; do
+            download_extension "$i"
+        done
+        chown -R $user_current:$user_current $REPO_DIR/extensions_setup/gnome_extensions_list
+    }
+
     tasks=(
         "system"
         "softwares"
@@ -318,6 +356,7 @@ else
         "service"
         # "yubico"
         # "enpass_install"
+        "gnome_extensions"
         "remove_packages"
     )
 

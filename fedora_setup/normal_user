@@ -2,7 +2,7 @@
 source $(pwd)/variables
 
 yubico() {
-    rm -rf $HOME/Yubico
+    rm -rf $HOME/Prj/Yubico
     if [ ! -d $HOME/Prj ]; then
         mkdir -p $HOME/Prj
     fi
@@ -12,6 +12,9 @@ yubico() {
     dir_name=$(basename $yubico_compress .tar.gz)
     mkdir -p Yubico/$dir_name
     tar -xzvf $yubico_compress -C Yubico/$dir_name --strip-components=1
+    cd "$HOME/Prj/Yubico/$dir_name" || return
+    ./desktop_integration.sh -i
+    cd "$HOME/Prj" || return
     rm -rf *.tar.gz *.tar.gz.sig
 }
 
@@ -131,39 +134,6 @@ accessibility() {
     cd $REPO_DIR/
 }
 
-gnome_extensions() {
-    cd $REPO_DIR/
-    wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
-    chmod +x install-gnome-extensions.sh
-    declare -a extensions
-    extensions=(
-        '3628'
-        '1160'
-        '3843'
-        '3010'
-        '4679'
-        '3733'
-        '6272'
-    )
-    for i in "${extensions[@]}"; do
-        echo $(./install-gnome-extensions.sh -e -o -u $i)
-    done
-    sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
-    cd $REPO_DIR
-    rm -rf install-gnome-extensions.sh $HOME/.config/burn-my-windows/profiles
-    mkdir -p $HOME/.config/burn-my-windows/profiles
-    cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
-
-    if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
-        cp -r $REPO_DIR/extensions_setup/all_extensions $REPO_DIR/extensions_setup/all_extensions_backup
-        sed -i "s/name_user_h/$user_current/g" $REPO_DIR/extensions_setup/all_extensions_backup
-        dconf load /org/gnome/shell/extensions/ <$REPO_DIR/extensions_setup/all_extensions_backup
-        rm -rf $REPO_DIR/extensions_setup/all_extensions_backup
-    else
-        echo "Thư mục /org/gnome/shell/extensions/ không tồn tại."
-    fi
-}
-
 keybinding() {
     KEY0_PATH="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding"
     KEY_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
@@ -234,12 +204,47 @@ startup_apps() {
     cp -r $REPO_DIR/system/conky_conf/conky.desktop $HOME/.config/autostart
 }
 
+gnome_extensions_normal() {
+    # wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
+    
+    for zip_extensions in $REPO_DIR/extensions_setup/gnome_extensions_list/*.zip*; do
+        gnome-extensions install "$zip_extensions" -f
+    done
+
+    for extension_uuid in $HOME/.local/share/gnome-shell/extensions/*; do
+        gnome-extensions enable "$(basename "$extension_uuid")"
+    done
+
+    if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
+        sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+    fi
+
+    if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
+        rm -rf $HOME/.config/burn-my-windows/profiles
+        mkdir -p $HOME/.config/burn-my-windows/profiles
+        cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+    fi
+
+    if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+        cp -r $REPO_DIR/extensions_setup/all_extensions.conf $REPO_DIR/extensions_setup/all_extensions_backup
+        sed -i "s/name_user_h/$user_current/g" $REPO_DIR/extensions_setup/all_extensions_backup
+        dconf load /org/gnome/shell/extensions/ <$REPO_DIR/extensions_setup/all_extensions_backup
+        rm -rf $REPO_DIR/extensions_setup/all_extensions_backup
+    else
+        echo "Thư mục /org/gnome/shell/extensions/ không tồn tại."
+    fi
+
+    rm -rf $REPO_DIR/extensions_setup/gnome_extensions_list
+
+    dconf write /org/gnome/shell/disable-user-extensions false
+}
+
 tasks=(
-    # "yubico"
+    "yubico"
     "ohmyzsh_user"
     "terminal"
     "accessibility"
-    "gnome_extensions"
+    "gnome_extensions_normal"
     "keybinding"
     # "update_firefox_userChrome"
     "bookmark_nautilus"

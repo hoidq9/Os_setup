@@ -6,5 +6,3 @@ mkdir -p $REPO_DIR/logs
 cd $REPO_DIR
 sudo sh super_user
 sh normal_user
-sudo dnf remove jq -y
-sudo dnf autoremove -y
