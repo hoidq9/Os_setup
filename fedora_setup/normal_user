@@ -175,7 +175,7 @@ bookmark_nautilus() {
     folders=(
         "$HOME/Prj"
         "/Os_H/Windows_H"
-        # "$HOME/Prj/Yubico"
+        "$HOME/Prj/Yubico"
     )
     check_and_add_bookmark() {
         folder_path="$1"
