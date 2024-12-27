@@ -6,5 +6,6 @@ rm -rf logs
 [ ! -d $HOME/Prj ] && mkdir -p $HOME/Prj
 mkdir -p $REPO_DIR/logs
 sudo sh list_super.sh
-sh setup_user/user_config.sh
-
+cd setup_user
+sh user_config.sh
+cd $REPO_DIR

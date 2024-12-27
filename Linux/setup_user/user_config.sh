@@ -1,7 +1,7 @@
 #!/bin/bash
 source ../variables.sh
 
-main_user_config() {
+Main_user_config() {
     yubico() {
         rm -rf $HOME/Prj/Yubico
         cd "$HOME/Prj" || return
@@ -133,6 +133,9 @@ main_user_config() {
         gsettings set org.gnome.nautilus.list-view use-tree-view false
         gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
         gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+        gsettings set org.gnome.desktop.privacy remove-old-temp-files true
+        gsettings set org.gnome.desktop.privacy remove-old-trash-files true
+        gsettings set org.gnome.desktop.privacy report-technical-problems true
         cd $REPO_DIR/
     }
 
@@ -210,7 +213,7 @@ main_user_config() {
             gnome-extensions enable "$(basename "$extension_uuid")"
         done
 
-        if [ "$os_id" == "fedora"]; then
+        if [ "$os_id" == "fedora" ]; then
             if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
                 sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
             fi
@@ -231,7 +234,7 @@ main_user_config() {
 
             rm -rf gnome_extensions_list
 
-        elif [ "$os_id" == "rhel"]; then
+        elif [ "$os_id" == "rhel" ]; then
             sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
             sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
             sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
@@ -255,9 +258,9 @@ main_user_config() {
     )
 
     for task in "${tasks[@]}"; do
-        check_and_run "$task"
+        "$task"
     done
 
 }
 
-check_and_run main_user_config
+check_and_run Main_user_config

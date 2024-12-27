@@ -1,7 +1,7 @@
 #/bin/bash
 source ../variables.sh
 
-main_extensions() {
+Main_extensions() {
     download_extension() {
         request_url="https://extensions.gnome.org/extension-info/?pk=$1&shell_version=$(gnome-shell --version | cut --delimiter=' ' --fields=3 | cut --delimiter='.' --fields=1,2)"
         http_response="$(curl -s -o /dev/null -I -w "%{http_code}" "$request_url")"
@@ -24,7 +24,7 @@ main_extensions() {
         extensions=('3628' '1160' '3843' '3010' '4679' '3733' '6272' '6682')
     elif [ "$os_id" == "rhel" ]; then
         extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
-
+    fi
     for i in "${extensions[@]}"; do
         download_extension "$i"
     done
@@ -32,4 +32,4 @@ main_extensions() {
     chown -R $user_current:$user_current $REPO_DIR/gnome_extensions_list
 }
 
-check_and_run main_extensions
+check_and_run Main_extensions

@@ -12,7 +12,7 @@
 # fi
 source ../variables.sh
 
-main_gdms() {
+Main_gdms() {
     settings=(
         "org.gnome.desktop.interface text-scaling-factor 1.25"
         "org.gnome.desktop.interface gtk-theme 'fedora_themes'"
@@ -49,4 +49,4 @@ main_gdms() {
     cp $REPO_DIR/custom.conf /etc/gdm
 }
 
-check_and_run main_gdms
+check_and_run Main_gdms

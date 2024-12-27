@@ -38,5 +38,11 @@ wifi_packages() {
     fi
 }
 
-cd $REPO_DIR/"$os_id"
-check_and_run wifi_packages
+Main_wifi_packages() {
+    if [ "$os_id" = "almalinux" ] || [ "$os_id" = "rhel" ]; then
+        cd $REPO_DIR/"$os_id"
+        wifi_packages
+    fi
+}
+
+check_and_run Main_wifi_packages

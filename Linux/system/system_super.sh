@@ -88,7 +88,7 @@ mount_windows_partition() {
 	local partition_name="Windows_H"
 	local mount_point="/Os_H/Windows_H"
 	local partition_uuid=$(blkid -o value -s UUID -t LABEL="$partition_name")
-	
+
 	if mount | grep -q "$partition_name"; then
 		echo "The partition is already mounted."
 		return
@@ -125,7 +125,7 @@ fedora_system() {
 		repo_setup
 		run
 	}
-	main >>$REPO_DIR/../logs/fedora_system.log 2>&1
+	main
 }
 rhel_system() {
 	epel_check() {
@@ -140,7 +140,11 @@ rhel_system() {
 		epel_check
 		run
 	}
-	main >>$REPO_DIR/../logs/rhel_system.log 2>&1
+	main
 }
 
-check_and_run "$os_id"_system
+Main_system() {
+	"$os_id"_system
+}
+
+check_and_run Main_system

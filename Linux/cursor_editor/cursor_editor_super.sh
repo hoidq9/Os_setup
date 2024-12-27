@@ -1,7 +1,7 @@
 #!/bin/bash
 source ../variables.sh
 
-main_cursor_editor() {
+Main_cursor_editor() {
     cd "$REPO_DIR" || return
     filename=$(curl -OJ -w '%{filename_effective}' https://downloader.cursor.sh/linux/appImage/x64)
     mv $filename /usr/local/bin/cursor
@@ -11,4 +11,4 @@ main_cursor_editor() {
     cp cursor.desktop /usr/share/applications
 }
 
-check_and_run main_cursor_editor
+# check_and_run Main_cursor_editor

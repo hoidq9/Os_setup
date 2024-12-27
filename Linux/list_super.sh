@@ -1,5 +1,5 @@
 #!/bin/bash
-source $(pwd)/variables
+source $(pwd)/variables.sh
 
 tasks=(
     'wifi_packages'

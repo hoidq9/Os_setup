@@ -15,8 +15,8 @@ cursors() {
 	rm -rf cursors_os
 }
 
-main_cursors() {
+Main_cursors() {
 	cursors "$os_id"
 }
 
-check_and_run main_cursors
+check_and_run Main_cursors

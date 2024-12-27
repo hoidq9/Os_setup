@@ -22,8 +22,8 @@ rhel_bootloader() {
 	sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
 }
 
-main_bootloader() {
+Main_bootloader() {
 	"$os_id"_bootloader
 }
 
-check_and_run main_bootloader
+check_and_run Main_bootloader

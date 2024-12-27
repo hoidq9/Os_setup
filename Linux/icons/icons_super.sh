@@ -15,8 +15,8 @@ icons() {
 	rm -rf icons_os
 }
 
-main_icons() {
+Main_icons() {
 	icons "$os_id"
 }
 
-check_and_run main_icons
+check_and_run Main_icons

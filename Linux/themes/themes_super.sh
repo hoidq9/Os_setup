@@ -15,9 +15,9 @@ dependencies() {
     ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h smaller -normal -sf
     ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 30 -h smaller -sf
 }
-dependencies &>$REPO_DIR/../logs/main_themes.log
 
-os_thems() {
+os_themes() {
+    dependencies
     local os_name="$1"
     local theme_path="/usr/share/themes/WoW-Dark-alt"
     rm -rf /usr/share/themes/"${os_name}_themes"
@@ -32,8 +32,8 @@ os_thems() {
     rm -rf themes_os
 }
 
-main_themes() {
+Main_themes() {
     os_themes "$os_id"
 }
 
-check_and_run main_themes
+check_and_run Main_themes

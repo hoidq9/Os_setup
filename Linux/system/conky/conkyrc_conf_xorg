@@ -46,23 +46,6 @@ conky.config = {
       default_color = 'white',
 }
 conky.text = [[
- ${voffset -12}${color gold}Hardware: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/product_version}
- ${color gold}BIOS Release: ${color}${execi 6000 cat /sys/class/dmi/id/bios_release}
- ${color gold}BIOS Version: ${color}${execi 6000 cat /sys/class/dmi/id/bios_version}
- ${color gold}BIOS Date: ${color}${execi 6000 cat /sys/class/dmi/id/bios_date}
- ${color gold}BIOS Vendor: ${color}${execi 6000 cat /sys/class/dmi/id/bios_vendor}
- ${color gold}OS: ${color}${execi 6000 cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 | sed 's/"//g'}
- ${color gold}Kernel: ${color}${execi 6000 uname -r}
- $hr
- ${color Tan1}System: ${color #FF5733}$sysname ${goto 139} ${color gold}ACPI Temp: ${color #FF8C33}${acpitemp}°C
- ${color gold}Uptime:$color $uptime
- ${color gold}Processes:$color $processes
- ${color lightgrey}Name                PID    CPU%   
- ${color yellow}${top name 1} ${top pid 1} ${top cpu 1}
- ${color purple}${top name 2} ${top pid 2} ${top cpu 2}
- ${color lightgreen}${top name 3} ${top pid 3} ${top cpu 3}
- ${color gold}Load: ${color #33FFA5}${loadavg}
- ${color}$hr
  ${color Tan1}CPU: ${color #33D1FF}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
  ${color gold}Total${color}: ${color #33FFB5}${cpu cpu0}% ${goto 130} ${color gold}Freq${color}: ${color #F5FF33}${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz 
  ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${color #FF5733}${exec cat /Os_H/cpu_power.txt} W
@@ -181,6 +164,23 @@ conky.text = [[
  ${voffset -25}${goto 19}${color #FF0000}E15: ${goto 150}${color #FF0000}E16:
 
  
+ ${color}$hr
+ ${color gold}Hardware: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/product_version}
+ ${color gold}BIOS Release: ${color}${execi 6000 cat /sys/class/dmi/id/bios_release}
+ ${color gold}BIOS Version: ${color}${execi 6000 cat /sys/class/dmi/id/bios_version}
+ ${color gold}BIOS Date: ${color}${execi 6000 cat /sys/class/dmi/id/bios_date}
+ ${color gold}BIOS Vendor: ${color}${execi 6000 cat /sys/class/dmi/id/bios_vendor}
+ ${color gold}OS: ${color}${execi 6000 cat /etc/os-release | grep PRETTY_NAME | cut -d '=' -f2 | sed 's/"//g'}
+ ${color gold}Kernel: ${color}${execi 6000 uname -r}
+ $hr
+ ${color Tan1}System: ${color #FF5733}$sysname ${goto 139} ${color gold}ACPI Temp: ${color #FF8C33}${acpitemp}°C
+ ${color gold}Uptime:$color $uptime
+ ${color gold}Processes:$color $processes
+ ${color lightgrey}Name                PID    CPU%   
+ ${color yellow}${top name 1} ${top pid 1} ${top cpu 1}
+ ${color purple}${top name 2} ${top pid 2} ${top cpu 2}
+ ${color lightgreen}${top name 3} ${top pid 3} ${top cpu 3}
+ ${color gold}Load: ${color #33FFA5}${loadavg}
  ${color}$hr
  ${color Tan1}RAM: ${exec cat /Os_H/ram_manufacturer.txt}
  ${color gold}Usage${color}: $mem/$memmax - $memperc% 

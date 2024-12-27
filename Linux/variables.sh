@@ -19,7 +19,7 @@ check_and_run() {
         echo -e "${YELLOW}Task $task_name: Start${NC}"
         sleep 3
         echo -e "\033[A\033[K${RED}Task $task_name: Running${NC}"
-        if $task_name &>>"$log_file"; then
+        if $task_name &>"$log_file"; then
             echo -e "\033[A\033[K${GREEN}Task $task_name: Done${NC}"
             echo "Task completed" >>"$log_file"
         else
