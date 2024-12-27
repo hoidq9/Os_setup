@@ -20,4 +20,4 @@ for task in "${tasks[@]}"; do
     sh "$task"_super.sh
 done
 
-chmod -R 777 $(pwd)/logs
+chmod -R 777 $REPO_DIR/logs
