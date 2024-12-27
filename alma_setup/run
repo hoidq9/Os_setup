@@ -1,6 +1,0 @@
-#!/bin/bash
-source $(pwd)/variables
-cd $REPO_DIR
-sudo sh super_user
-sh normal_user
-rm -rf {data_prepared,logs}
