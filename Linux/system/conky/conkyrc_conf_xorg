@@ -46,7 +46,7 @@ conky.config = {
       default_color = 'white',
 }
 conky.text = [[
- ${color Tan1}CPU: ${color #33D1FF}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
+ ${voffset -12}${color Tan1}CPU: ${color #33D1FF}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq}
  ${color gold}Total${color}: ${color #33FFB5}${cpu cpu0}% ${goto 130} ${color gold}Freq${color}: ${color #F5FF33}${exec FREQ=$(find /sys/devices/system/cpu -name scaling_cur_freq -exec cat {} + | awk '{sum += $1; count++} END {if (count > 0) printf "%.1f", sum / (count * 1000000); else print "no cpufreq"}'); echo -n "${FREQ}"} GHz 
  ${cpugraph cpu0 16,66 7fff00 ff0000 -t} ${goto 130} ${color gold}Power${color}: ${color #FF5733}${exec cat /Os_H/cpu_power.txt} W
  ${color gold}Voltage${color}: ${color #57FFB5}${exec cat /Os_H/cpu_voltage.txt} V ${goto 130} ${color gold}Temp${color}: ${color #FF3357}${exec for dir in /sys/class/thermal/*; do if [ -f "$dir/type" ] && [ "$(cat "$dir/type")" = "x86_pkg_temp" ]; then temp=$(cat "$dir/temp"); echo "$((temp / 1000))°C"; fi; done}
@@ -163,7 +163,6 @@ conky.text = [[
  ${voffset -39}${goto 55}${color #FF0000}${freq_g 31}GHz ${goto 186}${color #FF0000}${freq_g 32}GHz${voffset 6}
  ${voffset -25}${goto 19}${color #FF0000}E15: ${goto 150}${color #FF0000}E16:
 
- 
  ${color}$hr
  ${color gold}Hardware: ${color}${execi 6000 cat /sys/devices/virtual/dmi/id/product_version}
  ${color gold}BIOS Release: ${color}${execi 6000 cat /sys/class/dmi/id/bios_release}

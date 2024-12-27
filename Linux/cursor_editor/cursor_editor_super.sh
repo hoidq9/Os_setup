@@ -11,4 +11,4 @@ Main_cursor_editor() {
     cp cursor.desktop /usr/share/applications
 }
 
-# check_and_run Main_cursor_editor
+check_and_run Main_cursor_editor

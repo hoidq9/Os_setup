@@ -11,7 +11,7 @@ Main_user_config() {
         mkdir -p Yubico/$dir_name
         tar -xzvf $yubico_compress -C Yubico/$dir_name --strip-components=1
         cd "$HOME/Prj/Yubico/$dir_name" || return
-        ./desktop_integration.sh -i
+        # ./desktop_integration.sh -i
         cd "$HOME/Prj" || return
         rm -rf *.tar.gz *.tar.gz.sig
     }
@@ -205,45 +205,46 @@ Main_user_config() {
     gnome_extensions_normal() {
         # wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
 
-        for zip_extensions in $REPO_DIR/../extensions_gnome/gnome_extensions_list/*.zip*; do
-            gnome-extensions install "$zip_extensions" -f
-        done
+        if [ -d $REPO_DIR/../extensions_gnome/gnome_extensions_list ]; then
+            for zip_extensions in $REPO_DIR/../extensions_gnome/gnome_extensions_list/*.zip*; do
+                gnome-extensions install "$zip_extensions" -f
+            done
 
-        for extension_uuid in $HOME/.local/share/gnome-shell/extensions/*; do
-            gnome-extensions enable "$(basename "$extension_uuid")"
-        done
+            for extension_uuid in $HOME/.local/share/gnome-shell/extensions/*; do
+                gnome-extensions enable "$(basename "$extension_uuid")"
+            done
 
-        if [ "$os_id" == "fedora" ]; then
-            if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
-                sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+            if [ "$os_id" == "fedora" ]; then
+                if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
+                    sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+                fi
+
+                cd $REPO_DIR/../extensions_gnome
+                if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
+                    rm -rf $HOME/.config/burn-my-windows/profiles
+                    mkdir -p $HOME/.config/burn-my-windows/profiles
+                    cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+                fi
+
+                if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+                    cp -r _fedora_extensions.conf all_extensions
+                    sed -i "s/name_user_h/$user_current/g" all_extensions
+                    dconf load /org/gnome/shell/extensions/ <all_extensions
+                    rm -rf all_extensions
+                fi
+
+                rm -rf gnome_extensions_list
+
+            elif [ "$os_id" == "rhel" ]; then
+                sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
+                sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
+                sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
+                sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/extension.js
+                sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 100;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
             fi
 
-            cd $REPO_DIR/../extensions_gnome
-            if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
-                rm -rf $HOME/.config/burn-my-windows/profiles
-                mkdir -p $HOME/.config/burn-my-windows/profiles
-                cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
-            fi
-
-            if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
-                cp -r _fedora_extensions.conf all_extensions
-                sed -i "s/name_user_h/$user_current/g" all_extensions
-                dconf load /org/gnome/shell/extensions/ <all_extensions
-                rm -rf all_extensions
-            fi
-
-            rm -rf gnome_extensions_list
-
-        elif [ "$os_id" == "rhel" ]; then
-            sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
-            sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
-            sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
-            sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/extension.js
-            sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 100;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
-
+            dconf write /org/gnome/shell/disable-user-extensions false
         fi
-
-        dconf write /org/gnome/shell/disable-user-extensions false
     }
 
     tasks=(
