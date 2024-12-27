@@ -46,7 +46,7 @@ else
         }
         packages() {
             dnf upgrade -y
-            dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq gnome-extensions-app.x86_64 -y
+            dnf install gnome-shell zsh git gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n jq -y
         }
         kernel() {
             yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y

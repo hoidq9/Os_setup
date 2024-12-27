@@ -4,7 +4,6 @@ cd $REPO_DIR
 
 microsoft() {
     sudo cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
-    sudo dnf install microsoft-edge-stable code -y
 }
 
 gcm() {
@@ -23,20 +22,6 @@ gcm() {
         gcm_install
     fi
     git config --global credential.credentialStore secretservice
-}
-
-shfmt() {
-    mkdir -p $HOME/Drive/shfmt
-    cd $HOME/Drive/shfmt
-    curl -s https://api.github.com/repos/mvdan/sh/releases/latest | grep "browser_download_url" | grep "linux_amd64" | cut -d : -f 2,3 | tr -d \" | wget -i -
-    mv * shfmt
-    sudo mv shfmt /usr/bin/
-    sudo chmod +x /usr/bin/shfmt
-}
-
-warp() {
-    curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
-    sudo dnf install cloudflare-warp -y
 }
 
 install() {

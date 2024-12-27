@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Cursor
+Exec=/usr/local/bin/cursor
+Terminal=false
+Type=Application
+Icon=/usr/share/icons/cursor_ai/cursor_ai.svg
+StartupWMClass=Cursor
+X-AppImage-Version=latest
+Comment=Cursor is an AI-first coding environment.
+MimeType=x-scheme-handler/cursor;
+Categories=Utility;Development

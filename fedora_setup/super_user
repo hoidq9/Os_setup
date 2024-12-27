@@ -245,20 +245,6 @@ else
     }
 
     conky_setup() {
-        # if [ ! -d /home/$user_current/.config/autostart ]; then
-        #     mkdir -p /home/$user_current/.config/autostart
-        #     chown -R $user_current:$user_current /home/$user_current/.config/autostart
-        # fi
-        cd "$REPO_DIR" || return
-        cd system/conky_conf/
-        rsync -av --exclude={conky1.conf,conky2.conf,conky3.conf,conky4.conf,conky5.conf,conky.desktop,conky.lua,conkyrc_conf_wayland,conkyrc_conf_xorg} * /Os_H
-        # cp conky.desktop /home/$user_current/.config/autostart
-        # chown -R $user_current:$user_current /home/$user_current/.config/autostart/conky.desktop
-        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-            cp conkyrc_conf_wayland /etc/conky/conky.conf
-        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-            cp conkyrc_conf_xorg /etc/conky/conky.conf
-        fi
         cd "$REPO_DIR" || return
     }
 
