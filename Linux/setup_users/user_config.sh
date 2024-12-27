@@ -43,11 +43,11 @@ main_user_config() {
             cd $REPO_DIR/
             rm -rf ohmyzsh
 
-            config_file="_${os_id}_user.zshrc"
+            config_file="zshrc_config/_${os_id}_user.zshrc"
             if [ -f "$config_file" ]; then
                 cp -f "$config_file" "$HOME/.zshrc"
             fi
-            cp -f _user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
+            cp -f spaceshiprc_config/_user_spaceshiprc.zsh $HOME/.spaceshiprc.zsh
         fi
     }
 
@@ -82,15 +82,15 @@ main_user_config() {
             gsettings set org.gnome.desktop.interface gtk-theme "$os_id"_themes
         fi
         if [ -d "/usr/share/icons/"$os_id"_icons" ]; then
-            gsettings set org.gnome.desktop.interface icon-theme 'fedora_icons'
+            gsettings set org.gnome.desktop.interface icon-theme "$os_id"_icons
         fi
-        if [ -d "/usr/share/icons/fedora_cursors" ]; then
-            gsettings set org.gnome.desktop.interface cursor-theme 'fedora_cursors'
+        if [ -d "/usr/share/icons/"$os_id"_cursors" ]; then
+            gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
         fi
         mkdir -p $HOME/.local/share/backgrounds
         cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
-        cd $REPO_DIR/icons_extensions
         mkdir -p $HOME/.icons
+        cd $REPO_DIR/icons_extensions
         cp -r * $HOME/.icons
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
@@ -199,17 +199,10 @@ main_user_config() {
         done
     }
 
-    startup_apps() {
-        if [ ! -d "$HOME/.config/autostart" ]; then
-            mkdir "$HOME/.config/autostart"
-        fi
-        cp -r $REPO_DIR/system/conky_conf/conky.desktop $HOME/.config/autostart
-    }
-
     gnome_extensions_normal() {
         # wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
 
-        for zip_extensions in $REPO_DIR/extensions_setup/gnome_extensions_list/*.zip*; do
+        for zip_extensions in $REPO_DIR/../extensions_gnome/gnome_extensions_list/*.zip*; do
             gnome-extensions install "$zip_extensions" -f
         done
 
@@ -217,40 +210,48 @@ main_user_config() {
             gnome-extensions enable "$(basename "$extension_uuid")"
         done
 
-        if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
-            sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
-        fi
+        if [ "$os_id" == "fedora"]; then
+            if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
+                sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+            fi
 
-        if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
-            rm -rf $HOME/.config/burn-my-windows/profiles
-            mkdir -p $HOME/.config/burn-my-windows/profiles
-            cp -r $REPO_DIR/extensions_setup/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
-        fi
+            cd $REPO_DIR/../extensions_gnome
+            if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
+                rm -rf $HOME/.config/burn-my-windows/profiles
+                mkdir -p $HOME/.config/burn-my-windows/profiles
+                cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+            fi
 
-        if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
-            cp -r $REPO_DIR/extensions_setup/all_extensions.conf $REPO_DIR/extensions_setup/all_extensions_backup
-            sed -i "s/name_user_h/$user_current/g" $REPO_DIR/extensions_setup/all_extensions_backup
-            dconf load /org/gnome/shell/extensions/ <$REPO_DIR/extensions_setup/all_extensions_backup
-            rm -rf $REPO_DIR/extensions_setup/all_extensions_backup
-        else
-            echo "Thư mục /org/gnome/shell/extensions/ không tồn tại."
-        fi
+            if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+                cp -r _fedora_extensions.conf all_extensions
+                sed -i "s/name_user_h/$user_current/g" all_extensions
+                dconf load /org/gnome/shell/extensions/ <all_extensions
+                rm -rf all_extensions
+            fi
 
-        rm -rf $REPO_DIR/extensions_setup/gnome_extensions_list
+            rm -rf gnome_extensions_list
+
+        elif [ "$os_id" == "rhel"]; then
+            sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
+            sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
+            sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
+            sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/extension.js
+            sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 100;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
+
+        fi
 
         dconf write /org/gnome/shell/disable-user-extensions false
     }
 
     tasks=(
-        # "yubico"
-        # "ohmyzsh_user"
-        # "terminal"
+        "yubico"
+        "ohmyzsh_user"
+        "terminal"
         "accessibility"
-        # "gnome_extensions_normal"
-        # "keybinding"
+        "gnome_extensions_normal"
+        "keybinding"
         # "update_firefox_userChrome"
-        # "bookmark_nautilus"
-        # "startup_apps"
+        "bookmark_nautilus"
     )
 
     for task in "${tasks[@]}"; do
@@ -258,3 +259,5 @@ main_user_config() {
     done
 
 }
+
+check_and_run main_user_config
