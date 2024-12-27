@@ -24,6 +24,8 @@ Main_extensions() {
         extensions=('3628' '1160' '3843' '3010' '4679' '3733' '6272' '6682')
     elif [ "$os_id" == "rhel" ]; then
         extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
+    elif [ "$os_id" == "almalinux" ]; then
+        extensions=('3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082')
     fi
     for i in "${extensions[@]}"; do
         download_extension "$i"

@@ -21,6 +21,13 @@ if [ ! -s "$REPO_DIR/log/Result.log" ]; then
 fi
 
 if grep -q "Failed" "$REPO_DIR/log/Result.log"; then
+    grep "Failed" "$REPO_DIR/log/Result.log" | while read -r line; do
+        task_name=$(echo "$line" | awk -F': ' '{print $1}')
+        log_file="$REPO_DIR/logs/$task_name.log"
+        if [ -f "$log_file" ]; then
+            rm -rf "$log_file"
+        fi
+    done
     sed -i '/Failed/d' "$REPO_DIR/log/Result.log"
 fi
 

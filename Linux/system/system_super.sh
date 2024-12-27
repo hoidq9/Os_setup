@@ -127,6 +127,7 @@ fedora_system() {
 	}
 	main
 }
+
 rhel_system() {
 	epel_check() {
 		if ! rpm -q epel-release; then
@@ -139,6 +140,29 @@ rhel_system() {
 	main() {
 		epel_check
 		run
+	}
+	main
+}
+
+almalinux_system() {
+	epel() {
+		if ! rpm -q epel-release; then
+			dnf install epel-release -y
+			dnf upgrade -y
+		fi
+	}
+	packages() {
+		dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n jq gnome-extensions-app.x86_64 zsh -y # conky eza fzf ykclient ykpers pam_yubico
+		systemctl enable --now cockpit.socket
+	}
+	kernel() {
+		dnf install elrepo-release -y
+		yum --enablerepo=elrepo-kernel install kernel-ml -y
+	}
+	main() {
+		packages
+		epel
+		# kernel
 	}
 	main
 }

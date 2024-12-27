@@ -53,6 +53,10 @@ Main_user_config() {
 
     terminal() {
         id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
+        if [ "$os_id" == "almalinux" ]; then
+            gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
+            gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
+        fi
         gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ visible-name "'$user_current'"
         gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ cursor-shape "'ibeam'"
         gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy "'<Ctrl>C'"
@@ -128,8 +132,10 @@ Main_user_config() {
         gsettings set org.gnome.nautilus.preferences search-filter-time-type 'last_modified'
         gsettings set org.gnome.nautilus.preferences show-create-link true
         gsettings set org.gnome.nautilus.preferences show-delete-permanently true
-        gsettings set org.gnome.nautilus.list-view default-column-order "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
-        gsettings set org.gnome.nautilus.list-view default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
+        if [ "$os_id" == "fedora" ]; then
+            gsettings set org.gnome.nautilus.list-view default-column-order "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
+            gsettings set org.gnome.nautilus.list-view default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
+        fi
         gsettings set org.gnome.nautilus.list-view use-tree-view false
         gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
         gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
@@ -233,16 +239,20 @@ Main_user_config() {
                     rm -rf all_extensions
                 fi
 
-                rm -rf gnome_extensions_list
-
             elif [ "$os_id" == "rhel" ]; then
                 sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
                 sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
                 sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
                 sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com/extension.js
                 sed -i "s/var UPDATE_INTERVAL_CPU = 2000;/var UPDATE_INTERVAL_CPU = 100;/g" $HOME/.local/share/gnome-shell/extensions/tophat@fflewddur.github.io/lib/config.js
+
+            elif [ "$os_id" == "almalinux" ]; then
+                sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
+                sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
+                sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
             fi
 
+            rm -rf $REPO_DIR/../extensions_gnome/gnome_extensions_list
             dconf write /org/gnome/shell/disable-user-extensions false
         fi
     }

@@ -27,6 +27,7 @@ check_and_run() {
         else
             echo "Task $task_name encountered an error. Check $log_file for details."
             echo "$task_name: Failed" >> "$result_file"
+            exit 1
         fi
     fi
 }
