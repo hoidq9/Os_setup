@@ -10,8 +10,8 @@ NC='\033[0m' # Không màu
 
 check_and_run() {
     local task_name="$1"
-    local log_file="$REPO_DIR/../logs/$task_name.log"
-    local result_file="$REPO_DIR/../log/Result.log"
+    local log_file="$2"
+    local result_file="$3"
     if grep -q "Task completed" "$log_file" 2>/dev/null; then
         echo ""
         echo "Task $task_name: Already completed, skipping."
