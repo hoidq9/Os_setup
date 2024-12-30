@@ -6,6 +6,7 @@ if [ ! -d $REPO_DIR/logs ]; then
 fi
 
 touch $REPO_DIR/logs/Result.log
+sleep 3
 
 find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix -- &>/dev/null
 

@@ -84,9 +84,6 @@ User_setup() {
         fi
         mkdir -p $HOME/.local/share/backgrounds
         cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
-        mkdir -p $HOME/.local/share/icons/gnome_icons
-        cd $REPO_DIR/extensions_gnome/icons
-        cp -r * $HOME/.local/share/icons/gnome_icons
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
         gsettings set org.gnome.desktop.interface show-battery-percentage true
@@ -133,7 +130,7 @@ User_setup() {
         gsettings set org.gnome.desktop.privacy remove-old-temp-files true
         gsettings set org.gnome.desktop.privacy remove-old-trash-files true
         gsettings set org.gnome.desktop.privacy report-technical-problems true
-        
+        gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop']"
         cd $REPO_DIR/
     }
 
@@ -213,17 +210,21 @@ User_setup() {
         done
 
         if [ "$os_id" == "fedora" ]; then
+
+            mkdir -p $HOME/.local/share/icons/gnome_icons
+            cd $REPO_DIR/extensions_gnome/icons
+            cp -r * $HOME/.local/share/icons/gnome_icons
+
             if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
                 sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
             fi
 
-            cd $REPO_DIR/extensions_gnome
+            cd $REPO_DIR/extensions_gnome/config
             if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
                 mkdir -p $HOME/.config/burn-my-windows/profiles
-                cp -r config/burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+                cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
             fi
 
-            cd config
             if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
                 cp -r _fedora_extensions.conf all_extensions
                 sed -i "s/name_user_h/$user_current/g" all_extensions
