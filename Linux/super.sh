@@ -28,6 +28,9 @@ sh install.sh
 cd $REPO_DIR/Apps/Cursor
 sh install.sh
 
+cd $REPO_DIR/Apps/Gcm
+sh install.sh
+
 cd $REPO_DIR/System
 sh clean.sh
 

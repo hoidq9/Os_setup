@@ -9,8 +9,9 @@ icons() {
 	mkdir -p WhiteSur-icon-theme && curl -L $(curl -s https://api.github.com/repos/vinceliuice/WhiteSur-icon-theme/releases/latest | grep "tarball" | cut -d '"' -f 4) | tar -xz -C WhiteSur-icon-theme --strip-components=1
 
 	install_icons() {
+		local target_dir=$1
 		cd WhiteSur-icon-theme
-		./install.sh -n "${name_os}_icons" -t default -a -b
+		./install.sh -d $target_dir -n "${name_os}_icons" -t default -a -b
 	}
 
 	cleanup_icons() {
@@ -20,12 +21,12 @@ icons() {
 	}
 
 	if [ "$EUID" -eq 0 ]; then
-		install_icons
+		install_icons "/usr/share/icons"
 		cleanup_icons "/usr/share/icons"
 	else
 		if [ ! -d "/usr/share/icons/${name_os}_icons" ]; then
-			install_icons
-			cleanup_icons "/home/$user_current/.local/share/icons"
+			install_icons "$HOME/.icons"
+			cleanup_icons "$HOME/.icons"
 		fi
 	fi
 

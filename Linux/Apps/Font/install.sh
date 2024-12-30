@@ -9,7 +9,7 @@ download_and_extract() {
 
 	mkdir -p "$dest_dir"
 	wget -q "$url" -O "$output_name"
-	tar -xf "$output_name" -C "$dest_dir" --strip-components=1
+	unzip "$output_name" -d "$dest_dir" 
 	rm -f "$output_name"
 }
 
@@ -18,14 +18,18 @@ install_font() {
 	local system_dir="$2"
 	local user_dir="$3"
 
-	if [ "$EUID" -eq 0 ]; then
-		mkdir -p "$system_dir"
-		cp "$font_file" "$system_dir"
-	else
-		if [ ! -d "$system_dir" ]; then
-			mkdir -p "$user_dir"
-			cp "$font_file" "$user_dir"
+	if [ -f "$font_file" ]; then
+		if [ "$EUID" -eq 0 ]; then
+			mkdir -p "$system_dir"
+			cp "$font_file" "$system_dir"
+		else
+			if [ ! -d "$system_dir" ]; then
+				mkdir -p "$user_dir"
+				cp "$font_file" "$user_dir"
+			fi
 		fi
+	else
+		exit 1
 	fi
 }
 
@@ -40,9 +44,9 @@ Apps_Font() {
 	fi
 
 	if [ "$os_id" == "fedora" ]; then
-		local font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode.*.tar.xz" | cut -d '"' -f 4)
-		download_and_extract "$font_url" "fira-code-nerd" "fira-code-nerd.tar.xz"
-		install_font "fira-code-nerd/FiraCodeNerdFont-Bold.ttf" "/usr/share/fonts/fira-code-nerd-fonts" "$HOME/.local/share/fonts/fira-code-nerd-fonts"
+		local font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode.*.zip" | cut -d '"' -f 4)
+		download_and_extract "$font_url" "fira-code-nerd" "fira-code-nerd.zip"
+		install_font "fira-code-nerd/FiraCodeNerdFontMono-SemiBold.ttf" "/usr/share/fonts/fira-code-nerd-fonts" "$HOME/.local/share/fonts/fira-code-nerd-fonts"
 		rm -rf fira-code-nerd
 	fi
 

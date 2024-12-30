@@ -6,11 +6,10 @@ if [ ! -d $REPO_DIR/logs ]; then
 fi
 
 touch $REPO_DIR/logs/Result.log
-sleep 3
 
 find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix -- &>/dev/null
 
-if grep -q "Done" "$REPO_DIR/logs/Result.log"; then
+if grep -q "Done" "$REPO_DIR/logs/Result.log" &>/dev/null; then
     rm -rf $REPO_DIR/logs/*
     echo "" >"$REPO_DIR/logs/Result.log"
 fi
@@ -19,7 +18,7 @@ if [ ! -s "$REPO_DIR/logs/Result.log" ]; then
     rm -rf $REPO_DIR/logs/*
 fi
 
-if grep -q "Failed" "$REPO_DIR/logs/Result.log"; then
+if grep -q "Failed" "$REPO_DIR/logs/Result.log" &>/dev/null; then
     grep "Failed" "$REPO_DIR/logs/Result.log" | while read -r line; do
         task_name=$(echo "$line" | awk -F': ' '{print $1}')
         log_file="$REPO_DIR/logs/$task_name.log"
@@ -40,7 +39,7 @@ else
     sh normal.sh
 fi
 
-if ! grep -q "Failed" "$REPO_DIR/logs/Result.log"; then
+if ! grep -q "Failed" "$REPO_DIR/logs/Result.log" &>/dev/null; then
     echo "Done" >>"$REPO_DIR/logs/Result.log"
 fi
 

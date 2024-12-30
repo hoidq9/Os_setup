@@ -31,9 +31,9 @@ os_themes() {
         fi
     else
         if [ ! -d "/usr/share/themes/${os_name}_themes" ]; then
-            mkdir -p "$HOME/.local/share/themes/${os_name}_themes"
+            mkdir -p "$HOME/.themes/${os_name}_themes"
             cd release/
-            tar -xJf WhiteSur-Dark.tar.xz -C $HOME/.local/share/themes/${os_name}_themes --strip-components=1
+            tar -xJf WhiteSur-Dark.tar.xz -C $HOME/.themes/${os_name}_themes --strip-components=1
         fi
     fi
     cd "$REPO_DIR" || return

@@ -73,13 +73,13 @@ User_setup() {
     }
 
     accessibility() {
-        if [ -d "/usr/share/themes/"$os_id"_themes" ] || [ -d "$HOME/.local/share/themes/"$os_id"_themes" ]; then
+        if [ -d "/usr/share/themes/"$os_id"_themes" ] || [ -d "$HOME/.themes/"$os_id"_themes" ]; then
             gsettings set org.gnome.desktop.interface gtk-theme "$os_id"_themes
         fi
-        if [ -d "/usr/share/icons/"$os_id"_icons" ] || [ -d "$HOME/.local/share/icons/"$os_id"_icons" ]; then
+        if [ -d "/usr/share/icons/"$os_id"_icons" ] || [ -d "$HOME/.icons/"$os_id"_icons" ]; then
             gsettings set org.gnome.desktop.interface icon-theme "$os_id"_icons
         fi
-        if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.local/share/icons/"$os_id"_cursors" ]; then
+        if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.icons/"$os_id"_cursors" ]; then
             gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
         fi
         mkdir -p $HOME/.local/share/backgrounds
@@ -130,7 +130,7 @@ User_setup() {
         gsettings set org.gnome.desktop.privacy remove-old-temp-files true
         gsettings set org.gnome.desktop.privacy remove-old-trash-files true
         gsettings set org.gnome.desktop.privacy report-technical-problems true
-        gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop']"
+        gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop']"
         cd $REPO_DIR/
     }
 
@@ -211,9 +211,9 @@ User_setup() {
 
         if [ "$os_id" == "fedora" ]; then
 
-            mkdir -p $HOME/.local/share/icons/gnome_icons
+            mkdir -p $HOME/.icons
             cd $REPO_DIR/extensions_gnome/icons
-            cp -r * $HOME/.local/share/icons/gnome_icons
+            cp -r * $HOME/.icons
 
             if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
                 sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
