@@ -11,11 +11,16 @@ cursors() {
 	if [ "$EUID" -eq 0 ]; then
 		cp -r macOS /usr/share/icons/
 		cd /usr/share/icons/
-		mv "macOS" "${name_os}_cursors"
+
+		if [ ! -z "$(ls -A macOS)" ]; then
+			rm -rf "${name_os}_cursors"
+			mv macOS "${name_os}_cursors"
+		fi
+
 	else
 		if [ ! -d "/usr/share/icons/${name_os}_cursors" ]; then
-			mkdir -p /home/$user_current/.icons/
-			mv macOS /home/$user_current/.icons/${name_os}_cursors
+			mkdir -p /home/$user_current/.local/share/icons/
+			mv macOS /home/$user_current/.local/share/icons/${name_os}_cursors
 		fi
 	fi
 

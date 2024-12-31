@@ -73,13 +73,13 @@ User_setup() {
     }
 
     accessibility() {
-        if [ -d "/usr/share/themes/"$os_id"_themes" ] || [ -d "$HOME/.themes/"$os_id"_themes" ]; then
+        if [ -d "/usr/share/themes/"$os_id"_themes" ] || [ -d "$HOME/.local/share/themes/"$os_id"_themes" ]; then
             gsettings set org.gnome.desktop.interface gtk-theme "$os_id"_themes
         fi
-        if [ -d "/usr/share/icons/"$os_id"_icons" ] || [ -d "$HOME/.icons/"$os_id"_icons" ]; then
+        if [ -d "/usr/share/icons/"$os_id"_icons" ] || [ -d "$HOME/.local/share/icons/"$os_id"_icons" ]; then
             gsettings set org.gnome.desktop.interface icon-theme "$os_id"_icons
         fi
-        if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.icons/"$os_id"_cursors" ]; then
+        if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.local/share/icons/"$os_id"_cursors" ]; then
             gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
         fi
         mkdir -p $HOME/.local/share/backgrounds
@@ -211,9 +211,9 @@ User_setup() {
 
         if [ "$os_id" == "fedora" ]; then
 
-            mkdir -p $HOME/.icons
+            mkdir -p $HOME/.local/share/icons/
             cd $REPO_DIR/extensions_gnome/icons
-            cp -r * $HOME/.icons
+            cp -r * $HOME/.local/share/icons/
 
             if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
                 sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._centerBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
@@ -230,6 +230,10 @@ User_setup() {
                 sed -i "s/name_user_h/$user_current/g" all_extensions
                 dconf load /org/gnome/shell/extensions/ <all_extensions
                 rm -rf all_extensions
+            fi
+
+            if [ -d "$HOME/.local/share/gnome-shell/extensions/AddCustomTextToWorkSpaceIndicators@pratap.fastmail.fm" ]; then
+                sed -i "s|.icons|.local/share/icons|g" $HOME/.local/share/gnome-shell/extensions/AddCustomTextToWorkSpaceIndicators@pratap.fastmail.fm/prefs.js
             fi
 
         elif [ "$os_id" == "rhel" ]; then

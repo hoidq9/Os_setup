@@ -26,9 +26,9 @@ Apps_Cursor() {
         prepare_directories_and_files "/usr/local/bin" "/usr/share/applications" "/usr/share/icons/cursor"
     else
         if [ ! -f "/usr/local/bin/cursor" ]; then
-            prepare_directories_and_files "$HOME/Prj/Cursor" "$HOME/.local/share/applications" "$HOME/.icons/cursor"
+            prepare_directories_and_files "$HOME/Prj/Cursor" "$HOME/.local/share/applications" "$HOME/.local/share/icons/cursor"
         fi
     fi
 }
 
-# check_and_run Apps_Cursor "$REPO_DIR/../../logs/Apps_Cursor.log" "$REPO_DIR/../../logs/Result.log"
+check_and_run Apps_Cursor "$REPO_DIR/../../logs/Apps_Cursor.log" "$REPO_DIR/../../logs/Result.log"

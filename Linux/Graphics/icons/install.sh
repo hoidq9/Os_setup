@@ -25,8 +25,8 @@ icons() {
 		cleanup_icons "/usr/share/icons"
 	else
 		if [ ! -d "/usr/share/icons/${name_os}_icons" ]; then
-			install_icons "$HOME/.icons"
-			cleanup_icons "$HOME/.icons"
+			install_icons "$HOME/.local/share/icons"
+			cleanup_icons "$HOME/.local/share/icons"
 		fi
 	fi
 
