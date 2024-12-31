@@ -2,7 +2,7 @@
 all_users=($(cut -d: -f1 /etc/passwd))
 all_groups=($(cut -d: -f1 /etc/group))
 name_user=""
-source variables.sh
+# source variables.sh
 
 user() {
 	tput cuu1
@@ -40,14 +40,14 @@ create_users() {
 			check
 			sudo adduser "$name_user" &>/dev/null
 			sudo passwd "$name_user"
-			sudo chsh -s /bin/zsh "$name_user" &>/dev/null
-			if [ ! -d "/home/$name_user/Drive" ]; then
-				sudo mkdir /home/$name_user/Drive
-			fi
-			sudo chmod -R 777 /home/$name_user
-			cd /home/$name_user/Drive
-			git clone https://github.com/hoidq9/rhel_setup.git
-			sudo chmod -R 777 /home/$name_user
+			# sudo chsh -s /bin/zsh "$name_user" &>/dev/null
+			# if [ ! -d "/home/$name_user/Drive" ]; then
+			# 	sudo mkdir /home/$name_user/Drive
+			# fi
+			# sudo chmod -R 777 /home/$name_user
+			# cd /home/$name_user/Drive
+			# git clone https://github.com/hoidq9/rhel_setup.git
+			# sudo chmod -R 777 /home/$name_user
 		done
 	elif [[ "$option" == "n" ]]; then
 		return
@@ -57,7 +57,7 @@ create_users() {
 	fi
 }
 
-create_users 2>&1 | tee -a $HOME/Drive/logs/create_users.log
+create_users 2>&1
 if [[ ${PIPESTATUS[0]} -eq 1 ]]; then
 	exit 1
 fi
