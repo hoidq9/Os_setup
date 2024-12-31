@@ -15,6 +15,7 @@ function_info = {
     # "clean_data": ("clean_data/clean_data.sh", True),
 }
 
+
 def main():
     if check_sudo_privilege():
         sudo_users()

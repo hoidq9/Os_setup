@@ -15,6 +15,7 @@ if not os.path.exists(logs_folder_path):
     os.makedirs(logs_folder_path)
 completed_functions_file = os.path.join(folder_path, "completed_functions.txt")
 
+
 def create_function(func_name, func_info, contains_exit):
     code = f"""
 def {func_name}(returncode):
@@ -118,4 +119,3 @@ def check_sudo_privilege():
         return True
     except subprocess.CalledProcessError:
         return False
-

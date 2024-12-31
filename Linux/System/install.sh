@@ -81,7 +81,7 @@ fedora_system() {
 	}
 	packages() {
 		dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                     # "firefox"
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                  # "firefox"
 		dnf upgrade -y
 	}
 	main() {

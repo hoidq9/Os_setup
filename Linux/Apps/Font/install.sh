@@ -9,7 +9,7 @@ download_and_extract() {
 
 	mkdir -p "$dest_dir"
 	wget -q "$url" -O "$output_name"
-	unzip "$output_name" -d "$dest_dir" 
+	unzip "$output_name" -d "$dest_dir"
 	rm -f "$output_name"
 }
 

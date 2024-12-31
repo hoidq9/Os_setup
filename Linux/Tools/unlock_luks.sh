@@ -64,7 +64,7 @@ else
     dnf autoremove -y &>/dev/null
 fi
 
-echo 
+echo
 
 echo -ne "${YELLOW}Do you want to enroll a new TPM2 device to unlock LUKS2? (y/n): ${NC}"
 read -r enroll_tpm2
