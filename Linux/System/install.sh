@@ -134,13 +134,7 @@ almalinux_system() {
 }
 
 System_install() {
-	if [ "$os_id" == "fedora" ]; then
-		fedora_system
-	elif [ "$os_id" == "rhel" ]; then
-		rhel_system
-	elif [ "$os_id" == "almalinux" ]; then
-		almalinux_system
-	fi
+	"$os_id"_system
 }
 
 check_and_run System_install "$REPO_DIR/../logs/System_install.log" "$REPO_DIR/../logs/Result.log"
