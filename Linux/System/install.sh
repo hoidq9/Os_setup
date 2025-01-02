@@ -100,6 +100,8 @@ rhel_system() {
 	packages() {
 		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n microsoft-edge-stable code conky -y # podman-compose cockpit-podman cockpit-machines podman dconf-editor gnome-extensions-app.x86_64
 		dnf group install "Fonts" -y
+		# dnf install virt-manager
+		# systemctl restart libvirtd
 	}
 	main() {
 		epel_check
@@ -132,7 +134,13 @@ almalinux_system() {
 }
 
 System_install() {
-	"$os_id"_system
+	if [ "$os_id" == "fedora" ]; then
+		fedora_system
+	elif [ "$os_id" == "rhel" ]; then
+		rhel_system
+	elif [ "$os_id" == "almalinux" ]; then
+		almalinux_system
+	fi
 }
 
 check_and_run System_install "$REPO_DIR/../logs/System_install.log" "$REPO_DIR/../logs/Result.log"

@@ -23,7 +23,11 @@ rhel_bootloader() {
 }
 
 Bootloader_themes() {
-	"$os_id"_bootloader
+	if [ "$os_id" == "fedora" ]; then
+		fedora_bootloader
+	elif [ "$os_id" == "rhel" ]; then
+		rhel_bootloader
+	fi
 }
 
 check_and_run Bootloader_themes "$REPO_DIR/../logs/Bootloader_themes.log" "$REPO_DIR/../logs/Result.log"
