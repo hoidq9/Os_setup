@@ -2,7 +2,7 @@
 
 REPO_DIR="$(dirname "$(readlink -m "${0}")")"
 user_current=$(logname)
-os_id=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
+os_id=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 YELLOW='\033[1;33m'
 GREEN='\033[1;32m'
 RED='\033[0;31m'
