@@ -50,6 +50,7 @@ echo ""
 
 echo -ne "${YELLOW}Do you want to enroll a new FIDO2 device to unlock LUKS2? (y/n): ${NC}"
 read -r enroll_fido2
+
 if [[ "$enroll_fido2" == "y" ]]; then
     echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
     read -r fido2_device_path
@@ -58,16 +59,14 @@ if [[ "$enroll_fido2" == "y" ]]; then
     echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
     systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
     dracut -f
-    dnf autoremove -y &>/dev/null
     echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
-else
-    dnf autoremove -y &>/dev/null
 fi
 
 echo
 
 echo -ne "${YELLOW}Do you want to enroll a new TPM2 device to unlock LUKS2? (y/n): ${NC}"
 read -r enroll_tpm2
+
 if [[ "$enroll_tpm2" == "y" ]]; then
     echo -ne "${YELLOW}Type the path to the TPM2 device (Enter correctly, not contain spaces) (ex: /dev/tpm0): ${NC}"
     read -r tpm2_device_path
@@ -75,10 +74,13 @@ if [[ "$enroll_tpm2" == "y" ]]; then
     read -r luks2_disk_path
     echo "add_dracutmodules+=\" tpm2-tss \"" | sudo tee /etc/dracut.conf.d/tpm2.conf
     systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
-    systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" --tpm2-with-pin=yes $luks2_disk_path
+    if systemd-detect-virt | grep -q "none"; then
+        systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" --tpm2-with-pin=yes $luks2_disk_path
+    else
+        systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "7" $luks2_disk_path
+    fi
     dracut -f
-    dnf autoremove -y &>/dev/null
     echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
-else
-    dnf autoremove -y &>/dev/null
 fi
+
+dnf autoremove -y &>/dev/null
