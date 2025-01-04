@@ -7,7 +7,8 @@ Apps_Yubico() {
     fi
     cd "$HOME/Prj/Yubico" || return
     rm -rf *
-    wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
+    # wget $(curl -s https://api.github.com/repos/Yubico/yubioath-flutter/releases/latest | grep "browser_download_url" | grep "linux" | grep "tar.gz" | cut -d '"' -f 4)
+    wget https://developers.yubico.com/yubioath-flutter/Releases/yubico-authenticator-latest-linux.tar.gz    
     yubico_compress=$(ls -d *.tar.gz)
     dir_name=$(basename $yubico_compress .tar.gz)
     mkdir -p $dir_name
