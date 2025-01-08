@@ -82,8 +82,12 @@ User_setup() {
         if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.local/share/icons/"$os_id"_cursors" ]; then
             gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
         fi
-        mkdir -p $HOME/.local/share/backgrounds
-        cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
+        if [ "$os_id" == "fedora" ]; then
+            mkdir -p $HOME/.local/share/backgrounds
+            cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
+            gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+            gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+        fi
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
         gsettings set org.gnome.desktop.interface show-battery-percentage true
@@ -100,7 +104,7 @@ User_setup() {
         gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
         gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
         gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
-        gsettings set org.gnome.desktop.input-sources sources "[('ibus', 'm17n:vi:telex'), ('xkb', 'us')]"
+        gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
         gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
         gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
         gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
@@ -120,13 +124,9 @@ User_setup() {
         gsettings set org.gnome.nautilus.preferences search-filter-time-type 'last_modified'
         gsettings set org.gnome.nautilus.preferences show-create-link true
         gsettings set org.gnome.nautilus.preferences show-delete-permanently true
-        if [ "$os_id" == "fedora" ]; then
-            gsettings set org.gnome.nautilus.list-view default-column-order "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
-            gsettings set org.gnome.nautilus.list-view default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
-        fi
+        gsettings set org.gnome.nautilus.list-view default-column-order "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
+        gsettings set org.gnome.nautilus.list-view default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'date_accessed', 'date_created', 'recency', 'detailed_type']"
         gsettings set org.gnome.nautilus.list-view use-tree-view false
-        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
-        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
         gsettings set org.gnome.desktop.privacy remove-old-temp-files true
         gsettings set org.gnome.desktop.privacy remove-old-trash-files true
         gsettings set org.gnome.desktop.privacy report-technical-problems true
@@ -199,8 +199,9 @@ User_setup() {
 
         if [ "$os_id" == "fedora" ]; then
             extensions=('3628' '1160' '3843' '3010' '4679' '3733' '6272')
-        # elif [ "$os_id" == "rhel" ]; then
-        #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
+        elif [ "$os_id" == "rhel" ]; then
+            #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
+            extensions=('3628' '1160' '3843' '3010' '4679' '3733' '4405')
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082')
         fi
@@ -236,7 +237,24 @@ User_setup() {
                 sed -i "s|.icons|.local/share/icons|g" $HOME/.local/share/gnome-shell/extensions/AddCustomTextToWorkSpaceIndicators@pratap.fastmail.fm/prefs.js
             fi
 
-        # elif [ "$os_id" == "rhel" ]; then
+        elif [ "$os_id" == "rhel" ]; then
+
+            mkdir -p $HOME/.local/share/icons/
+            cd $REPO_DIR/extensions_gnome/icons
+            cp -r * $HOME/.local/share/icons/
+
+            cd $REPO_DIR/extensions_gnome/config
+            if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
+                mkdir -p $HOME/.config/burn-my-windows/profiles
+                cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+            fi
+            
+            if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+                cp -r _rhel_extensions.conf all_extensions
+                sed -i "s/name_user_h/$user_current/g" all_extensions
+                dconf load /org/gnome/shell/extensions/ <all_extensions
+                rm -rf all_extensions
+            fi
         #     sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
         #     sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
         #     sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js

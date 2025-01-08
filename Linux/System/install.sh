@@ -98,10 +98,9 @@ rhel_system() {
 		fi
 	}
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus gnome-disk-utility chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc gdb ibus-m17n microsoft-edge-stable code conky cockpit-podman podman-compose podman -y # cockpit-machines dconf-editor gnome-extensions-app.x86_64
+		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc ibus-m17n microsoft-edge-stable code cockpit-podman podman-compose podman cockpit-machines msr-tools -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility virt-manager gdb conky
 		dnf group install "Fonts" -y
-		# dnf install virt-manager
-		# systemctl restart libvirtd
+		systemctl restart libvirtd
 	}
 	main() {
 		epel_check

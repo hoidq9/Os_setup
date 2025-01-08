@@ -15,9 +15,9 @@ source ../../variables.sh
 System_gdm() {
     settings=(
         "org.gnome.desktop.interface text-scaling-factor 1.25"
-        "org.gnome.desktop.interface gtk-theme 'fedora_themes'"
-        "org.gnome.desktop.interface icon-theme 'fedora_icons'"
-        "org.gnome.desktop.interface cursor-theme 'fedora_cursors'"
+        "org.gnome.desktop.interface gtk-theme '"$os_id"_themes'"
+        "org.gnome.desktop.interface icon-theme '"$os_id"_icons'"
+        "org.gnome.desktop.interface cursor-theme '"$os_id"_cursors'"
         "org.gnome.desktop.interface clock-show-date true"
         "org.gnome.desktop.interface show-battery-percentage true"
         "org.gnome.desktop.interface clock-show-seconds true"
@@ -41,11 +41,15 @@ System_gdm() {
         "org.gnome.desktop.calendar show-weekdate true"
         "org.gnome.desktop.interface clock-format '24h'"
         "org.gnome.system.location enabled true"
-        "org.gnome.desktop.interface color-scheme 'prefer-dark'"
     )
     for setting in "${settings[@]}"; do
         sudo -u gdm dbus-launch gsettings set $setting
     done
+
+    if [ "$os_id" == "fedora" ]; then
+        sudo -u gdm dbus-launch gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    fi
+
     cp $REPO_DIR/custom.conf /etc/gdm
 }
 
