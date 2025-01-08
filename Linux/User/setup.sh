@@ -130,7 +130,11 @@ User_setup() {
         gsettings set org.gnome.desktop.privacy remove-old-temp-files true
         gsettings set org.gnome.desktop.privacy remove-old-trash-files true
         gsettings set org.gnome.desktop.privacy report-technical-problems true
-        gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
+        if [ "$os_id" == "fedora" ]; then
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
+        elif [ "$os_id" == "rhel" ]; then
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.cockpit_project.CockpitClient.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
+        fi
         cd $REPO_DIR/
     }
 
@@ -248,7 +252,7 @@ User_setup() {
                 mkdir -p $HOME/.config/burn-my-windows/profiles
                 cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
             fi
-            
+
             if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
                 cp -r _rhel_extensions.conf all_extensions
                 sed -i "s/name_user_h/$user_current/g" all_extensions
