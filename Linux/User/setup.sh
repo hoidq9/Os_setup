@@ -205,7 +205,7 @@ User_setup() {
             extensions=('3628' '1160' '3843' '3010' '4679' '3733' '6272')
         elif [ "$os_id" == "rhel" ]; then
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
-            extensions=('3628' '1160' '3843' '3010' '4679' '3733' '4405')
+            extensions=('3628' '1160' '3843' '3010' '3733')
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082')
         fi
@@ -245,13 +245,14 @@ User_setup() {
 
             mkdir -p $HOME/.local/share/icons/
             cd $REPO_DIR/extensions_gnome/icons
-            cp -r * $HOME/.local/share/icons/
+            cp -r brand-logo-symbolic.svg $HOME/.local/share/icons/
 
             cd $REPO_DIR/extensions_gnome/config
-            if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
-                mkdir -p $HOME/.config/burn-my-windows/profiles
-                cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
-            fi
+
+            # if [ -d "$HOME/.local/share/gnome-shell/extensions/burn-my-windows@schneegans.github.com" ]; then
+            #     mkdir -p $HOME/.config/burn-my-windows/profiles
+            #     cp -r burn-my-windows-profile.conf $HOME/.config/burn-my-windows/profiles
+            # fi
 
             if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
                 cp -r _rhel_extensions.conf all_extensions
