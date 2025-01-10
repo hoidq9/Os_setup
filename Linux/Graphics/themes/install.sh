@@ -20,14 +20,14 @@ os_themes() {
         done
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
         ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h smaller -normal -sf
-        ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 30 -h smaller -sf
+        # ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 30 -h smaller -sf
         cd /usr/share/themes/
 
         if [ ! -z "$(ls -A WoW-Dark-alt)" ]; then
             rm -rf "${os_name}_themes"
             mv WoW-Dark-alt "${os_name}_themes"
             cd "${os_name}_themes" || return
-            rm -rf cinnamon plank gnome-shell
+            rm -rf cinnamon plank # gnome-shell
             cd ..
             rm -rf WoW*
         fi
