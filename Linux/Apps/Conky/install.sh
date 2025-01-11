@@ -28,6 +28,12 @@ Apps_Conky() {
             if [ ! -f /home/$user_current/.config/conky/conky.conf ]; then
                 cp conky.conf /home/$user_current/.config/conky/
             fi
+            
+        elif [ "$os_id" == "almalinux" ]; then
+            cd rhel
+            if [ ! -f /home/$user_current/.config/conky/conky.conf ]; then
+                cp conky.conf /home/$user_current/.config/conky/
+            fi
         fi
     fi
 }

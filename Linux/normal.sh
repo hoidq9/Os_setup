@@ -25,5 +25,8 @@ sh install.sh
 cd $REPO_DIR/Apps/Yubico
 sh install.sh
 
+cd $REPO_DIR/Apps/Cockpit
+sh install.sh
+
 cd $REPO_DIR/User
 sh setup.sh

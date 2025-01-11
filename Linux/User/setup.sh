@@ -63,12 +63,14 @@ User_setup() {
         gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-previous "'<Ctrl>H'"
         gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-clear "'<Ctrl>J'"
         if command -v git >/dev/null 2>&1; then
-            cd $REPO_DIR/
-            git clone https://github.com/dracula/gnome-terminal
-            cd gnome-terminal
-            ./install.sh -s Dracula -p $user_current --skip-dircolors
-            cd $REPO_DIR/
-            rm -rf gnome-terminal
+            if command -v gnome-terminal >/dev/null 2>&1; then
+                cd $REPO_DIR/
+                git clone https://github.com/dracula/gnome-terminal
+                cd gnome-terminal
+                ./install.sh -s Dracula -p $user_current --skip-dircolors
+                cd $REPO_DIR/
+                rm -rf gnome-terminal
+            fi
         fi
     }
 
@@ -82,12 +84,12 @@ User_setup() {
         if [ -d "/usr/share/icons/"$os_id"_cursors" ] || [ -d "$HOME/.local/share/icons/"$os_id"_cursors" ]; then
             gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
         fi
-        if [ "$os_id" == "fedora" ]; then
-            mkdir -p $HOME/.local/share/backgrounds
-            cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
-            gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
-            gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
-        fi
+
+        mkdir -p $HOME/.local/share/backgrounds
+        cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
+        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
         gsettings set org.gnome.desktop.interface show-battery-percentage true
@@ -134,6 +136,8 @@ User_setup() {
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "rhel" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.cockpit_project.CockpitClient.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
+        elif [ "$os_id" == "almalinux" ]; then
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         fi
         cd $REPO_DIR/
     }
@@ -207,7 +211,7 @@ User_setup() {
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
             extensions=('3628' '3843' '3010' '3733') # '1160'
         elif [ "$os_id" == "almalinux" ]; then
-            extensions=('3628' '3843' '3010' '3733') # '3628' '1160' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
+            extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
         fi
 
         for i in "${extensions[@]}"; do
@@ -270,6 +274,18 @@ User_setup() {
             # sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 1, 'left');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
             # sed -i "s/panel.addToStatusArea('extensions-sync', this.button);/panel.addToStatusArea('extensions-sync', this.button, '2', 'right');/g" $HOME/.local/share/gnome-shell/extensions/extensions-sync@elhan.io/extension.js
             # sed -i "s/panel = Main.panel._rightBox;/panel = Main.panel._leftBox;/g" $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com/extension.js
+
+            mkdir -p $HOME/.local/share/icons/
+            cd $REPO_DIR/extensions_gnome/icons
+            cp -r brand-logo-symbolic.svg $HOME/.local/share/icons/
+
+            if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
+                cp -r _alma_extensions.conf all_extensions
+                sed -i "s/name_user_h/$user_current/g" all_extensions
+                dconf load /org/gnome/shell/extensions/ <all_extensions
+                rm -rf all_extensions
+            fi
+
         fi
 
         dconf write /org/gnome/shell/disable-user-extensions false

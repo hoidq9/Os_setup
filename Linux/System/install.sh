@@ -116,7 +116,7 @@ almalinux_system() {
 		fi
 	}
 	packages() {
-		dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n zsh PackageKit-command-not-found gnome-software microsoft-edge-stable code podman-compose podman msr-tools virt-manager conky ntfs-3g -y # conky eza fzf
+		dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n zsh PackageKit-command-not-found gnome-software microsoft-edge-stable code podman-compose podman msr-tools virt-manager conky ntfs-3g redhat-mono-fonts -y # conky eza fzf
 		dnf upgrade -y
 		dnf group install "Fonts" -y
 	}
@@ -126,7 +126,7 @@ almalinux_system() {
 	}
 	main() {
 		epel
-		packages
+		run
 		# kernel
 	}
 	main
