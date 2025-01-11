@@ -80,8 +80,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-disk-utility 
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                  # "firefox"
+		dnf install podman gnome-session-xsession xapps gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-disk-utility
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                               # "firefox"
 		dnf upgrade -y
 	}
 	main() {
@@ -98,7 +98,7 @@ rhel_system() {
 		fi
 	}
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools virt-manager -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility virt-manager gdb conky cockpit-machines cockpit-podman
+		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools virt-manager -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility gdb conky cockpit-machines cockpit-podman
 		dnf group install "Fonts" -y
 		systemctl restart libvirtd
 	}
@@ -113,20 +113,20 @@ almalinux_system() {
 	epel() {
 		if ! rpm -q epel-release; then
 			dnf install epel-release -y
-			dnf upgrade -y
 		fi
 	}
 	packages() {
-		dnf install gnome-terminal gnome-terminal-nautilus cockpit gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n gnome-extensions-app.x86_64 zsh -y # conky eza fzf ykclient ykpers pam_yubico
-		systemctl enable --now cockpit.socket
+		dnf install gnome-terminal gnome-terminal-nautilus gnome-shell git nautilus gnome-disk-utility chrome-gnome-shell gnome-system-monitor gdm git dbus-x11 ibus-m17n zsh PackageKit-command-not-found gnome-software microsoft-edge-stable code podman-compose podman msr-tools virt-manager conky ntfs-3g -y # conky eza fzf
+		dnf upgrade -y
+		dnf group install "Fonts" -y
 	}
 	kernel() {
 		dnf install elrepo-release -y
 		yum --enablerepo=elrepo-kernel install kernel-ml -y
 	}
 	main() {
-		packages
 		epel
+		packages
 		# kernel
 	}
 	main
