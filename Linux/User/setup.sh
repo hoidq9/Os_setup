@@ -117,8 +117,8 @@ User_setup() {
         gsettings set org.gnome.desktop.interface clock-format '24h'
         gsettings set org.gnome.system.location enabled true
         gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-        gsettings set org.gnome.nautilus.window-state initial-size '(2082, 1256)'
-        gsettings set org.gnome.nautilus.window-state initial-size-file-chooser '(890, 550)'
+        # gsettings set org.gnome.nautilus.window-state initial-size '(2082, 1256)'
+        # gsettings set org.gnome.nautilus.window-state initial-size-file-chooser '(890, 550)'
         gsettings set org.gnome.nautilus.preferences always-use-location-entry false
         gsettings set org.gnome.nautilus.preferences date-time-format 'detailed'
         gsettings set org.gnome.nautilus.preferences default-folder-viewer 'list-view'
@@ -137,7 +137,7 @@ User_setup() {
         elif [ "$os_id" == "rhel" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.cockpit_project.CockpitClient.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "almalinux" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'remote-viewer.desktop']"
         fi
         cd $REPO_DIR/
     }
