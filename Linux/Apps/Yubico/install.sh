@@ -14,7 +14,7 @@ Apps_Yubico() {
     mkdir -p $dir_name
     tar -xzvf $yubico_compress -C $dir_name --strip-components=1
     cd "$dir_name" || return
-    # ./desktop_integration.sh -i
+    ./desktop_integration.sh -i
     cd "$HOME/Prj/Yubico" || return
     rm -rf *.tar.gz *.tar.gz.sig
 }
