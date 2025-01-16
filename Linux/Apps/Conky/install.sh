@@ -25,7 +25,9 @@ Apps_Conky() {
 
         elif [ "$os_id" == "rhel" ] || [ "$os_id" == "almalinux" ]; then
             cd rhel
-            cp -f conky.conf /home/$user_current/.config/conky/
+            if [ ! -f $HOME/.config/conky/conky.conf ]; then
+                cp -f conky.conf /home/$user_current/.config/conky/
+            fi
         fi
     fi
 }
