@@ -41,7 +41,7 @@ User_setup() {
     terminal() {
         id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
         gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
-        if [ "$os_id" == "almalinux" ]; then
+        if [ "$os_id" == "almalinux" ] || [ "$os_id" == "rhel" ]; then
             gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
         elif [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'FiraCode Nerd Font Mono Bold Italic 11'
@@ -138,7 +138,7 @@ User_setup() {
         if [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.cockpit_project.CockpitClient.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop']" # 'virt-manager.desktop' 'org.gnome.DiskUtility.desktop'
         elif [ "$os_id" == "almalinux" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         fi
@@ -212,7 +212,7 @@ User_setup() {
             extensions=('3628' '1160' '3843' '3010' '4679' '3733' '6272')
         elif [ "$os_id" == "rhel" ]; then
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
-            extensions=('3628' '3843' '3010' '3733') # '1160'
+            extensions=('3628' '3843' '3010' '3733' '1160')
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
         fi

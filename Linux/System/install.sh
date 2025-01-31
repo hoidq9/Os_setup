@@ -30,7 +30,10 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+cp vscode.repo microsoft-edge.repo google-chrome.repo /etc/yum.repos.d/
+# if [ "$os_id" == "rhel" ] || [ "$os_id" == "almalinux" ]; then
+# 	cp yandex-browser.repo /etc/yum.repos.d/
+# fi
 
 sys() {
 	systemctl set-default graphical.target
@@ -98,7 +101,7 @@ rhel_system() {
 		fi
 	}
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gnome-system-monitor gdm git dbus-x11 gcc ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools virt-manager -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility gdb conky cockpit-machines cockpit-podman
+		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools google-chrome-stable redhat-mono-fonts -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility gdb conky cockpit-machines cockpit-podman virt-manager gcc yandex-browser-stable gnome-system-monitor
 		dnf group install "Fonts" -y
 		systemctl restart libvirtd
 	}
