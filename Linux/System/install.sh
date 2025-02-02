@@ -100,15 +100,23 @@ rhel_system() {
 			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y # EPEL 9
 		fi
 	}
+
+	flatpak_repo() {
+		flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	}
+
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools redhat-mono-fonts virt-manager cockpit-podman -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility gdb conky cockpit-machines gcc yandex-browser-stable gnome-system-monitor google-chrome-stable
+		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools redhat-mono-fonts virt-manager cockpit-podman conky -y # dconf-editor gnome-extensions-app.x86_64 gnome-disk-utility gdb cockpit-machines gcc yandex-browser-stable gnome-system-monitor google-chrome-stable
 		dnf group install "Fonts" -y
 		systemctl restart libvirtd
 	}
+
 	main() {
 		epel_check
+		flatpak_repo
 		run
 	}
+
 	main
 }
 

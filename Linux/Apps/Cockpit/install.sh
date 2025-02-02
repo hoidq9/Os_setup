@@ -2,7 +2,7 @@
 source ../../variables.sh
 
 Apps_Cockpit() {
-    flatpak install flathub org.cockpit_project.CockpitClient
+    flatpak install flathub org.cockpit_project.CockpitClient -y
     mkdir -p /home/$user_current/.config/autostart
     cd $REPO_DIR
     cp -r org.cockpit_project.CockpitClient.desktop /home/$user_current/.config/autostart
