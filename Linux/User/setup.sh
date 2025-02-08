@@ -138,7 +138,7 @@ User_setup() {
         if [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']" # 'org.gnome.DiskUtility.desktop'
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "almalinux" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         fi
@@ -203,6 +203,10 @@ User_setup() {
         for folder in "${folders[@]}"; do
             check_and_add_bookmark "$folder"
         done
+
+        if [ ! -d "/Os_H/Windows_H" ] && grep -q "file:///Os_H/Windows_H" "$bookmarks_file"; then
+            sed -i "/file:\/\/\/Os_H\/Windows_H/d" "$bookmarks_file"
+        fi
     }
 
     User_gnome_extensions() {
