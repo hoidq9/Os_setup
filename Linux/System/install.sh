@@ -49,6 +49,8 @@ services() {
 	systemctl enable cpu_voltage.service
 	systemctl start cpu_power.service
 	systemctl start cpu_voltage.service
+	chmod a-x,o-w '/etc/systemd/system/cpu_voltage.service'
+	chmod a-x,o-w '/etc/systemd/system/cpu_power.service'
 	systemctl daemon-reload
 }
 
