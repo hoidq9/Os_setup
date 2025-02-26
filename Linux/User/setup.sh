@@ -96,7 +96,7 @@ User_setup() {
         gsettings set org.gnome.desktop.interface clock-show-seconds true
         gsettings set org.gnome.desktop.interface clock-show-weekday true
         gsettings set org.gnome.desktop.interface enable-hot-corners false
-        gsettings set org.gnome.desktop.interface locate-pointer true
+        gsettings set org.gnome.desktop.interface locate-pointer false
         gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
         gsettings set org.gnome.desktop.session idle-delay 0
         gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
