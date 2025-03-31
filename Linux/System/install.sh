@@ -107,7 +107,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools redhat-mono-fonts cockpit-podman conky gnome-disk-utility rhc rhc-worker-playbook gdb gcc -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-system-monitor google-chrome-stable
+		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools redhat-mono-fonts cockpit-podman conky gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-system-monitor google-chrome-stable
 		dnf group install "Fonts" -y
 		# systemctl restart libvirtd
 	}
@@ -116,6 +116,8 @@ rhel_system() {
 		epel_check
 		flatpak_repo
 		run
+
+		sed -i 's/^\(session\s\+optional\s\+pam_gnome_keyring\.so\s\+auto_start\b.*\)/#\1/' /etc/pam.d/gdm-password
 	}
 
 	main

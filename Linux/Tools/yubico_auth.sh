@@ -18,8 +18,6 @@ check_and_add_pam_u2f() {
         fi
     done
 
-    # setup bypass check gnome keyring
-    sudo sed -i 's/^\(session\s\+optional\s\+pam_gnome_keyring\.so\s\+auto_start\b.*\)/#\1/' /etc/pam.d/gdm-password
 }
 
 echo -e "${GREEN}--- Listing FIDO2 devices... ---${NC}"
