@@ -117,7 +117,7 @@ rhel_system() {
 		flatpak_repo
 		run
 
-		sed -i 's/^\(session\s\+optional\s\+pam_gnome_keyring\.so\s\+auto_start\b.*\)/#\1/' /etc/pam.d/gdm-password
+		# sed -i 's/^\(session\s\+optional\s\+pam_gnome_keyring\.so\s\+auto_start\b.*\)/#\1/' /etc/pam.d/gdm-password
 	}
 
 	main
