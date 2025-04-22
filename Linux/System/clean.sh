@@ -4,7 +4,7 @@ source ../variables.sh
 System_clean() {
     dnf remove vim-minimal vim-data vim-common vim-enhanced vi sassc glib2-devel ImageMagick dialog inkscape optipng vim-data dbus-x11 opensc fprintd-pam gnome-tour default-editor -y
     dnf autoremove -y
-    dnf install PackageKit-command-not-found gnome-software fuse fuse-libs -y
+    dnf install PackageKit-command-not-found gnome-software fuse fuse-libs kernel-devel -y
 }
 
 check_and_run System_clean "$REPO_DIR/../logs/System_clean.log" "$REPO_DIR/../logs/Result.log"
