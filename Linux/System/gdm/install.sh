@@ -51,6 +51,8 @@ System_gdm() {
     fi
 
     cp $REPO_DIR/custom.conf /etc/gdm
+
+    sudo systemctl enable gdm
 }
 
 check_and_run System_gdm "$REPO_DIR/../../logs/System_gdm.log" "$REPO_DIR/../../logs/Result.log"
