@@ -39,39 +39,60 @@ User_setup() {
     }
 
     terminal() {
-        id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
-        gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
-        if [ "$os_id" == "almalinux" ] || [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
-        elif [ "$os_id" == "fedora" ]; then
-            gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'FiraCode Nerd Font Mono Bold Italic 11'
-        fi
-        gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ visible-name "'$user_current'"
-        gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ cursor-shape "'ibeam'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy "'<Ctrl>C'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-tab "'<Ctrl>T'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-window "'<Ctrl>N'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ save-contents "'<Ctrl>S'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-tab "'<Ctrl>W'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-window "'<Ctrl>Q'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy-html "'<Ctrl>X'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste "'<Ctrl>V'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ select-all "'<Ctrl>A'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ preferences "'<Ctrl>P'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find "'<Ctrl>F'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-next "'<Ctrl>G'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-previous "'<Ctrl>H'"
-        gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-clear "'<Ctrl>J'"
-        if command -v git >/dev/null 2>&1; then
-            if command -v gnome-terminal >/dev/null 2>&1; then
-                cd $REPO_DIR/
-                git clone https://github.com/dracula/gnome-terminal
-                cd gnome-terminal
-                ./install.sh -s Dracula -p $user_current --skip-dircolors
-                cd $REPO_DIR/
-                rm -rf gnome-terminal
-            fi
-        fi
+        # id=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
+        # gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ use-system-font false
+
+        id=$(gsettings get org.gnome.Ptyxis default-profile-uuid | tr -d "'")
+        gsettings set org.gnome.Ptyxis.Profile:/org/gnome/Ptyxis/Profiles/$id/ label "'$user_current'"
+        gsettings set org.gnome.Ptyxis.Profile:/org/gnome/Ptyxis/Profiles/$id/ palette "'dracula'"
+
+        gsettings set org.gnome.Ptyxis use-system-font false
+        gsettings set org.gnome.Ptyxis font-name 'FiraCode Nerd Font Mono Semi-Bold 11'
+
+        # if [ "$os_id" == "almalinux" ] || [ "$os_id" == "rhel" ]; then
+        #     gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'Red Hat Mono Light, Medium 12'
+        # elif [ "$os_id" == "fedora" ]; then
+        #     gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ font 'FiraCode Nerd Font Mono Bold Italic 11'
+        # fi
+
+        # gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ visible-name "'$user_current'"
+        # gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$id/ cursor-shape "'ibeam'"
+
+        gsettings set org.gnome.Ptyxis cursor-shape 'ibeam'
+        gsettings set org.gnome.Ptyxis interface-style 'dark'
+        gsettings set org.gnome.Ptyxis.Shortcuts copy-clipboard '<ctrl>c'
+        gsettings set org.gnome.Ptyxis.Shortcuts paste-clipboard '<ctrl>v'
+        gsettings set org.gnome.Ptyxis.Shortcuts new-tab '<ctrl>t'
+        gsettings set org.gnome.Ptyxis.Shortcuts new-window '<ctrl>n'
+        gsettings set org.gnome.Ptyxis.Shortcuts close-tab '<ctrl>w'
+        gsettings set org.gnome.Ptyxis.Shortcuts select-all '<ctrl>a'
+        gsettings set org.gnome.Ptyxis.Shortcuts search '<ctrl>f'
+        gsettings set org.gnome.Ptyxis.Shortcuts tab-overview '<ctrl>o'
+
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy "'<Ctrl>C'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-tab "'<Ctrl>T'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ new-window "'<Ctrl>N'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ save-contents "'<Ctrl>S'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-tab "'<Ctrl>W'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ close-window "'<Ctrl>Q'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ copy-html "'<Ctrl>X'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ paste "'<Ctrl>V'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ select-all "'<Ctrl>A'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ preferences "'<Ctrl>P'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find "'<Ctrl>F'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-next "'<Ctrl>G'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-previous "'<Ctrl>H'"
+        # gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ find-clear "'<Ctrl>J'"
+        # if command -v git >/dev/null 2>&1; then
+        #     if command -v gnome-terminal >/dev/null 2>&1; then
+        #         cd $REPO_DIR/
+        #         git clone https://github.com/dracula/gnome-terminal
+        #         cd gnome-terminal
+        #         ./install.sh -s Dracula -p $user_current --skip-dircolors
+        #         cd $REPO_DIR/
+        #         rm -rf gnome-terminal
+        #     fi
+        # fi
     }
 
     accessibility() {
@@ -104,6 +125,7 @@ User_setup() {
         gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
         gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
         gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
+        gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-automatic false
         gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
         gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
         gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'm17n:vi:telex')]"
@@ -138,7 +160,8 @@ User_setup() {
         if [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'nvidia-settings.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop']"
+            # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'nvidia-settings.desktop']"
         elif [ "$os_id" == "almalinux" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         fi
@@ -150,8 +173,8 @@ User_setup() {
         KEY_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
         gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
             "['$KEY_PATH/custom0/']"
-        gsettings set $KEY0_PATH:$KEY_PATH/custom0/ name "GNOME Terminal"
-        gsettings set $KEY0_PATH:$KEY_PATH/custom0/ command "gnome-terminal"
+        gsettings set $KEY0_PATH:$KEY_PATH/custom0/ name "Terminal"
+        gsettings set $KEY0_PATH:$KEY_PATH/custom0/ command "ptyxis"
         gsettings set $KEY0_PATH:$KEY_PATH/custom0/ binding "<Primary><Alt>T"
     }
 
@@ -187,6 +210,7 @@ User_setup() {
             "$HOME/Prj"
             "/Os_H/Windows_H"
             "$HOME/Prj/Yubico"
+            "$HOME/Conky"
         )
         check_and_add_bookmark() {
             folder_path="$1"

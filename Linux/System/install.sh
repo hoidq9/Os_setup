@@ -98,7 +98,7 @@ fedora_system() {
 rhel_system() {
 	epel_check() {
 		if ! rpm -q epel-release; then
-			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y # EPEL 9
+			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 		fi
 	}
 
@@ -107,15 +107,20 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-terminal gnome-terminal-nautilus nautilus chrome-gnome-shell PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n microsoft-edge-stable code podman-compose podman msr-tools redhat-mono-fonts cockpit-podman conky gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse google-chrome-stable ansible-core yara -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-system-monitor
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-system-monitor gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky cockpit-podman
 		dnf group install "Fonts" -y
 		# systemctl restart libvirtd
 	}
 
 	main() {
+		update-crypto-policies --set LEGACY
 		epel_check
 		flatpak_repo
 		run
+		
+		if grep -q "LEGACY" /etc/crypto-policies/config; then
+			dnf install microsoft-edge-stable code google-chrome-stable -y
+		fi
 
 		sed -i '/password[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so use_authtok/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
 		sed -i '/session[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so[[:space:]]\+auto_start\b/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password

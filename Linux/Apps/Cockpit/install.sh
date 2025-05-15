@@ -8,4 +8,4 @@ Apps_Cockpit() {
     cp -r org.cockpit_project.CockpitClient.desktop /home/$user_current/.config/autostart
 }
 
-check_and_run Apps_Cockpit "$REPO_DIR/../../logs/Apps_Cockpit.log" "$REPO_DIR/../../logs/Result.log"
+# check_and_run Apps_Cockpit "$REPO_DIR/../../logs/Apps_Cockpit.log" "$REPO_DIR/../../logs/Result.log"
