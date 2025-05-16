@@ -107,7 +107,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-system-monitor gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky cockpit-podman
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks -y # dconf-editor gnome-extensions-app.x86_64 cockpit-machines virt-manager yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky cockpit-podman
 		dnf group install "Fonts" -y
 		# systemctl restart libvirtd
 	}

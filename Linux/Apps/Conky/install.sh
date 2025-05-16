@@ -44,6 +44,16 @@ Apps_Conky() {
             mkdir -p /home/$user_current/.config/conky
             cp -f conky.conf /home/$user_current/.config/conky
         fi
+
+        mkdir -p ~/.config/systemd/user
+        cd $REPO_DIR
+        cp -r conky_boot.service conky.service
+        sed -i "s/name_user_h/$user_current/g" conky.service
+        mv conky.service ~/.config/systemd/user
+        systemctl --user enable conky.service
+        systemctl --user start conky.service
+        loginctl enable-linger $user_current
+
     fi
 }
 
