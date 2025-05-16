@@ -19,4 +19,4 @@ Apps_Yubico() {
     rm -rf *.tar.gz *.tar.gz.sig .tar.gz
 }
 
-# check_and_run Apps_Yubico "$REPO_DIR/../../logs/Apps_Yubico.log" "$REPO_DIR/../../logs/Result.log"
+check_and_run Apps_Yubico "$REPO_DIR/../../logs/Apps_Yubico.log" "$REPO_DIR/../../logs/Result.log"
