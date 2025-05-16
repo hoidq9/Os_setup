@@ -157,11 +157,14 @@ User_setup() {
         gsettings set org.gnome.nautilus.preferences show-hidden-files true
         gsettings set org.gtk.Settings.FileChooser show-hidden true
         gsettings set org.gtk.gtk4.Settings.FileChooser show-hidden true
-        if [ "$os_id" == "fedora" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
-        elif [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop']"
+        if [ "$os_id" == "rhel" ]; then
+            gsettings set org.gnome.desktop.interface document-font-name 'Red Hat Text Medium 11 @wght=500'
+            gsettings set org.gnome.desktop.interface font-name 'Red Hat Text Semi-Bold 11 @wght=600'
+            gsettings set org.gnome.desktop.interface monospace-font-name 'Red Hat Mono Semi-Bold 11 @wght=600'
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.google.Chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop']"
             # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'nvidia-settings.desktop']"
+        elif [ "$os_id" == "fedora" ]; then
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "almalinux" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         fi

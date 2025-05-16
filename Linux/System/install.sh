@@ -30,7 +30,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo microsoft-edge.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
+cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo google-chrome.repo
 
 sys() {
 	systemctl set-default graphical.target
@@ -119,7 +119,7 @@ rhel_system() {
 		run
 		
 		if grep -q "LEGACY" /etc/crypto-policies/config; then
-			dnf install microsoft-edge-stable code google-chrome-stable -y
+			dnf install microsoft-edge-stable code -y # google-chrome-stable
 		fi
 
 		sed -i '/password[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so use_authtok/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
