@@ -2,6 +2,7 @@
 source ../../variables.sh
 
 Apps_Conky() {
+    local environment_display
     cd $REPO_DIR
 
     if rpm -q conky; then
@@ -30,29 +31,41 @@ Apps_Conky() {
         fi
 
     elif [ "$os_id" == "rhel" ]; then
+
+        if [ ! -d /home/$user_current/.config/autostart ]; then
+            mkdir -p /home/$user_current/.config/autostart
+        fi
+
         cd $os_id
         curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
             grep "browser_download_url.*\\.AppImage\"" |
             head -n1 |
             cut -d '"' -f4 |
             xargs curl -L -o conky.AppImage
+
         mkdir -p /home/$user_current/Conky
         mv conky.AppImage $HOME/Conky
         chmod +x $HOME/Conky/conky.AppImage
+        # $HOME/Conky/conky.AppImage --appimage-extract
+        cp conky.desktop /home/$user_current/.config/autostart
+        sed -i "s/name_user_h/$user_current/g" $HOME/.config/autostart/conky.desktop
 
-        if [ ! -f $HOME/.config/conky/conky.conf ]; then
-            mkdir -p /home/$user_current/.config/conky
-            cp -f conky.conf /home/$user_current/.config/conky
+        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
+            environment_display="wayland"
+        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
+            environment_display="x11"
         fi
 
-        mkdir -p ~/.config/systemd/user
-        cd $REPO_DIR
-        cp -r conky_boot.service conky.service
-        sed -i "s/name_user_h/$user_current/g" conky.service
-        mv conky.service ~/.config/systemd/user
-        systemctl --user enable conky.service
-        systemctl --user start conky.service
-        loginctl enable-linger $user_current
+        mkdir -p /home/$user_current/.config/conky
+        cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
+
+        # mkdir -p ~/.config/systemd/user
+        # cp -r conky_$environment_display.service conky.service
+        # sed -i "s/name_user_h/$user_current/g" conky.service
+        # mv conky.service ~/.config/systemd/user
+        # systemctl --user enable conky.service
+        # systemctl --user start conky.service
+        # loginctl enable-linger $user_current
 
     fi
 }

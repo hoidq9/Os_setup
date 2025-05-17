@@ -1,9 +1,0 @@
-[Unit]
-Description=Run conky on startup
-
-[Service]
-Type=simple
-ExecStart=/home/name_user_h/Conky/conky.AppImage
-
-[Install]
-WantedBy=multi-user.target

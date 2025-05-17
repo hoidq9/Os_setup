@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=conky
+Exec=/home/name_user_h/Conky/squashfs-root/usr/bin/conky --daemonize --pause=1
+StartupNotify=false
+Terminal=false
+Icon=/usr/share/icons/rhel_icons/apps/scalable/indicator-cpufreq.svg
+Categories=System;Monitor;
