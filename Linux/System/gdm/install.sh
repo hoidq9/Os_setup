@@ -51,7 +51,7 @@ System_gdm() {
         sudo -u gdm dbus-launch gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     fi
 
-    cp $REPO_DIR/custom.conf /etc/gdm
+    # cp $REPO_DIR/custom.conf /etc/gdm
 
     sudo systemctl enable gdm
 }

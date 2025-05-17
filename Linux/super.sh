@@ -31,6 +31,9 @@ sh install.sh
 cd $REPO_DIR/Apps/Gcm
 sh install.sh
 
+cd $REPO_DIR/Apps/Warp_Terminal
+sh install.sh
+
 cd $REPO_DIR/System
 sh clean.sh
 
