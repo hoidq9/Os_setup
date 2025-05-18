@@ -1,5 +1,6 @@
 #!/bin/bash
 source $(pwd)/variables.sh
+flatpak update -y &>/dev/null
 
 cd $REPO_DIR/Graphics/themes
 sh install.sh

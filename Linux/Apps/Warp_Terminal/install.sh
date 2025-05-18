@@ -8,4 +8,4 @@ Apps_Warp_Terminal() {
     rm warp_terminal.rpm
 }
 
-check_and_run Apps_Warp_Terminal "$REPO_DIR/../../logs/Apps_Warp_Terminal.log" "$REPO_DIR/../../logs/Result.log"
+# check_and_run Apps_Warp_Terminal "$REPO_DIR/../../logs/Apps_Warp_Terminal.log" "$REPO_DIR/../../logs/Result.log"
