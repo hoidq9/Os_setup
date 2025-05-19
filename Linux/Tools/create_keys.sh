@@ -13,7 +13,7 @@ openssl req -x509 \
     -sha256 \
     -days "${DAYS_VALID}" \
     -nodes \
-    -keyout "${BASE_NAME}.priv" \
+    -keyout "${BASE_NAME}.key" \
     -out "${BASE_NAME}.x509" \
     -subj "${SUBJECT}"
 
