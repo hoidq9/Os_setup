@@ -75,7 +75,7 @@ if [[ "$enroll_tpm2" == "y" ]]; then
     echo "add_dracutmodules+=\" tpm2-tss \"" | sudo tee /etc/dracut.conf.d/tpm2.conf
     systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
     if systemd-detect-virt | grep -q "none"; then
-        systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" --tpm2-with-pin=yes $luks2_disk_path
+        systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "0+7" $luks2_disk_path # --tpm2-with-pin=yes
     else
         systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "7" $luks2_disk_path
     fi
