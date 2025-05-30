@@ -2,7 +2,14 @@
 source ../variables.sh
 
 System_clean() {
-    dnf remove vim-minimal vim-data vim-common vim-enhanced vi ImageMagick inkscape optipng vim-data opensc fprintd-pam gnome-tour default-editor -y # dbus-x11 glib2-devel dialog sassc
+    list_packages=("vim-minimal" "vim-data" "vim-common" "vim-enhanced" "vi" "ImageMagick" "inkscape" "optipng" "vim-data" "opensc" "fprintd-pam" "gnome-tour" "default-editor") # dbus-x11 glib2-devel dialog sassc
+
+    for package in "${list_packages[@]}"; do
+        if rpm -q "$package" &>/dev/null; then
+            dnf remove -y "$package"
+        fi
+    done
+
     dnf autoremove -y
     dnf install PackageKit-command-not-found gnome-software -y
 

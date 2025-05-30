@@ -49,6 +49,14 @@ services() {
 	chmod a-x,o-w '/etc/systemd/system/cpu_voltage.service'
 	chmod a-x,o-w '/etc/systemd/system/cpu_power.service'
 	systemctl daemon-reload
+	if rpm -q cockpit; then
+		systemctl enable cockpit.socket
+		systemctl start cockpit.socket
+		systemctl restart cockpit.socket
+		systemctl enable cockpit.service
+		systemctl start cockpit.service
+		systemctl restart cockpit.service
+	fi
 }
 
 mount_windows_partition() {
@@ -70,9 +78,31 @@ mount_windows_partition() {
 	fi
 }
 
+cockpit_browser() {
+	if rpm -q cockpit; then
+
+		touch /etc/cockpit/allowed
+		echo "$user_current" >/etc/cockpit/allowed
+		chown root:root /etc/cockpit/allowed
+		chmod 600 /etc/cockpit/allowed
+
+		file=/etc/pam.d/cockpit
+
+		pam1='auth [success=done default=ignore] pam_listfile.so item=user sense=allow file=/etc/cockpit/allowed onerr=fail'
+		pam2='auth required pam_deny.so'
+
+		for line in "$pam2" "$pam1"; do
+			if ! grep -Fxq "$line" "$file"; then
+				sed -i "1i $line" "$file"
+			fi
+		done
+	fi
+}
+
 run() {
 	packages
 	sys
+	cockpit_browser
 	services
 	# if [ "$os_id" != "rhel" ]; then
 	# 	mount_windows_partition
@@ -84,8 +114,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility -y # eza fzf cockpit pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                  # "firefox"
+		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                         # "firefox"
 		dnf upgrade -y
 	}
 	main() {

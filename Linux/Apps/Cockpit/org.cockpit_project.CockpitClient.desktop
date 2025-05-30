@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Cockpit Client
-Comment=Connect via ssh to servers running Cockpit
-Icon=org.cockpit_project.CockpitClient
-Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=cockpit-client org.cockpit_project.CockpitClient
-Categories=Network;RemoteAccess
-X-Flatpak=org.cockpit_project.CockpitClient
