@@ -41,6 +41,7 @@ Apps_Conky() {
         fi
 
         cd $os_id
+
         curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
             grep "browser_download_url.*\\.AppImage\"" |
             head -n1 |
@@ -50,9 +51,13 @@ Apps_Conky() {
         mkdir -p /home/$user_current/Conky
         mv conky.AppImage $HOME/Conky
         chmod +x $HOME/Conky/conky.AppImage
-        # $HOME/Conky/conky.AppImage --appimage-extract
+        cp conky_rhel.desktop conky.desktop
+        sed -i "s/name_user_h/$user_current/g" conky.desktop
+        if [ ! -d $HOME/.local/share/applications ]; then
+            mkdir -p $HOME/.local/share/applications
+        fi
+        cp conky.desktop $HOME/.local/share/applications
         cp conky.desktop /home/$user_current/.config/autostart
-        sed -i "s/name_user_h/$user_current/g" $HOME/.config/autostart/conky.desktop
 
         if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
             environment_display="wayland"

@@ -49,13 +49,15 @@ Apps_Font() {
 	}
 
 	adwaita_fonts() {
-		if rpm -q git &>/dev/null; then
-			git clone https://gitlab.gnome.org/GNOME/adwaita-fonts.git
-			cd adwaita-fonts
-			install_font "mono/AdwaitaMono-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
-			install_font "sans/AdwaitaSans-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
-			cd "$REPO_DIR" || return
-			rm -rf adwaita-fonts
+		if [ "$os_id" == "rhel" ]; then
+			if rpm -q git &>/dev/null; then
+				git clone https://gitlab.gnome.org/GNOME/adwaita-fonts.git
+				cd adwaita-fonts
+				install_font "mono/AdwaitaMono-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
+				install_font "sans/AdwaitaSans-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
+				cd "$REPO_DIR" || return
+				rm -rf adwaita-fonts
+			fi
 		fi
 	}
 
