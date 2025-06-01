@@ -40,12 +40,27 @@ install_font() {
 
 Apps_Font() {
 	cd "$REPO_DIR" || return
-	
-	local font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode.*.zip" | cut -d '"' -f 4)
-	download_and_extract "$font_url" "fira-code-nerd" "fira-code-nerd.zip"
-	install_font "fira-code-nerd/FiraCodeNerdFontMono-SemiBold.ttf" "/usr/share/fonts/fira-code-nerd-fonts" "$HOME/.local/share/fonts/fira-code-nerd-fonts"
-	rm -rf fira-code-nerd
 
+	fira_code_fonts() {
+		local font_url=$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | grep browser_download_url | grep "FiraCode.*.zip" | cut -d '"' -f 4)
+		download_and_extract "$font_url" "fira-code-nerd" "fira-code-nerd.zip"
+		install_font "fira-code-nerd/FiraCodeNerdFontMono-SemiBold.ttf" "/usr/share/fonts/fira-code-nerd-fonts" "$HOME/.local/share/fonts/fira-code-nerd-fonts"
+		rm -rf fira-code-nerd
+	}
+
+	adwaita_fonts() {
+		if rpm -q git &>/dev/null; then
+			git clone https://gitlab.gnome.org/GNOME/adwaita-fonts.git
+			cd adwaita-fonts
+			install_font "mono/AdwaitaMono-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
+			install_font "sans/AdwaitaSans-Regular.ttf" "/usr/share/fonts/adwaita-fonts" "$HOME/.local/share/fonts/adwaita-fonts"
+			cd "$REPO_DIR" || return
+			rm -rf adwaita-fonts
+		fi
+	}
+
+	fira_code_fonts
+	adwaita_fonts
 	fc-cache -f -v
 }
 

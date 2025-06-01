@@ -6,5 +6,5 @@ suffixes=(W V)
 total=${#nums[@]}; 
 for idx in "${!nums[@]}"; do 
   printf "%s %s" "${nums[$idx]}" "${suffixes[$idx]}"; 
-  (( idx < total - 1 )) && printf " || "; 
+  (( idx < total - 1 )) && printf "     "; 
 done; printf "\n"
