@@ -48,15 +48,13 @@ services() {
 	systemctl start cpu_voltage.service
 	chmod a-x,o-w '/etc/systemd/system/cpu_voltage.service'
 	chmod a-x,o-w '/etc/systemd/system/cpu_power.service'
-	systemctl daemon-reload
 	if rpm -q cockpit; then
 		systemctl enable cockpit.socket
 		systemctl start cockpit.socket
-		systemctl restart cockpit.socket
 		systemctl enable cockpit.service
 		systemctl start cockpit.service
-		systemctl restart cockpit.service
 	fi
+	systemctl daemon-reload
 }
 
 mount_windows_partition() {
@@ -141,20 +139,18 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager
 		dnf group install "Fonts" -y
 		# systemctl restart libvirtd
 	}
 
 	main() {
-		update-crypto-policies --set LEGACY
+		cp $REPO_DIR/checksum/SHA1.pmod /etc/crypto-policies/policies/modules
+		# update-crypto-policies --set LEGACY
+		update-crypto-policies --set DEFAULT:SHA1
 		epel_check
 		flatpak_repo
 		run
-
-		if grep -q "LEGACY" /etc/crypto-policies/config; then
-			dnf install microsoft-edge-stable code -y # google-chrome-stable
-		fi
 
 		sed -i '/password[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so use_authtok/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
 		sed -i '/session[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so[[:space:]]\+auto_start\b/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
