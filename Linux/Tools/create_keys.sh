@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ==== CẤU HÌNH CHUNG ====
 DAYS_VALID=36500
-SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNW/OU=IT/CN=vnh.com"
+SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=vnh.com"
 BASE_NAME="db"   # tên chung cho các file: secureboot.key, secureboot.x509, secureboot.der
 
 # ==== 1. TẠO PRIVATE KEY VÀ SELF-SIGNED CERTIFICATE (.key + .x509) ====
