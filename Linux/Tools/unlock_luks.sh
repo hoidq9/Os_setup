@@ -1,4 +1,5 @@
 #!/bin/bash
+source ../variables.sh
 
 # Mã màu
 RED='\033[0;31m'
@@ -52,6 +53,11 @@ echo -ne "${YELLOW}Do you want to enroll a new FIDO2 device to unlock LUKS2? (y/
 read -r enroll_fido2
 
 if [[ "$enroll_fido2" == "y" ]]; then
+
+    if [ "$os_id" == "rhel" ]; then
+        bash $REPO_DIR/edit_crypttab.sh
+    fi
+
     echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
     read -r fido2_device_path
     echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
