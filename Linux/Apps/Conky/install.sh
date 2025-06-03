@@ -43,7 +43,7 @@ Apps_Conky() {
         fi
 
         cd $os_id
-        
+
         cp run_conky.sh /home/$user_current/Conky
         sed -i "s/name_user_h/$user_current/g" /home/$user_current/Conky/run_conky.sh
         chmod +x /home/$user_current/Conky/run_conky.sh
@@ -72,7 +72,9 @@ Apps_Conky() {
         fi
 
         mkdir -p /home/$user_current/.config/conky
-        cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
+        if [ ! -f $HOME/.config/conky/conky.conf ]; then
+            cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
+        fi
 
         # mkdir -p ~/.config/systemd/user
         # cp -r conky_$environment_display.service conky.service
