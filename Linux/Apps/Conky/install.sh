@@ -34,40 +34,45 @@ Apps_Conky() {
             fi
         fi
 
-        # elif [ "$os_id" == "rhel" ]; then
+    elif [ "$os_id" == "rhel" ]; then
 
-        #     if [ ! -d /home/$user_current/.config/autostart ]; then
-        #         mkdir -p /home/$user_current/.config/autostart
-        #     fi
+        mkdir -p /home/$user_current/Conky
 
-        #     cd $os_id
+        if [ ! -d /home/$user_current/.config/autostart ]; then
+            mkdir -p /home/$user_current/.config/autostart
+        fi
 
-        #     curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
-        #         grep "browser_download_url.*\\.AppImage\"" |
-        #         head -n1 |
-        #         cut -d '"' -f4 |
-        #         xargs curl -L -o conky.AppImage
+        cd $os_id
+        
+        cp run_conky.sh /home/$user_current/Conky
+        sed -i "s/name_user_h/$user_current/g" /home/$user_current/Conky/run_conky.sh
+        chmod +x /home/$user_current/Conky/run_conky.sh
 
-        #     mkdir -p /home/$user_current/Conky
-        #     mv conky.AppImage $HOME/Conky
-        #     chmod +x $HOME/Conky/conky.AppImage
-        #     cp conky_rhel.desktop conky.desktop
-        #     sed -i "s/name_user_h/$user_current/g" conky.desktop
-        #     if [ ! -d $HOME/.local/share/applications ]; then
-        #         mkdir -p $HOME/.local/share/applications
-        #     fi
-        #     cp conky.desktop $HOME/.local/share/applications
-        #     cp conky.desktop /home/$user_current/.config/autostart
-        #     rm -rf conky.desktop
+        curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
+            grep "browser_download_url.*\\.AppImage\"" |
+            head -n1 |
+            cut -d '"' -f4 |
+            xargs curl -L -o conky.AppImage
 
-        #     if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-        #         environment_display="wayland"
-        #     elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-        #         environment_display="x11"
-        #     fi
+        mv conky.AppImage $HOME/Conky
+        chmod +x $HOME/Conky/conky.AppImage
+        cp conky_rhel.desktop conky.desktop
+        sed -i "s/name_user_h/$user_current/g" conky.desktop
+        if [ ! -d $HOME/.local/share/applications ]; then
+            mkdir -p $HOME/.local/share/applications
+        fi
+        cp conky.desktop $HOME/.local/share/applications
+        cp conky.desktop /home/$user_current/.config/autostart
+        rm -rf conky.desktop
 
-        #     mkdir -p /home/$user_current/.config/conky
-        #     cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
+        if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
+            environment_display="wayland"
+        elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
+            environment_display="x11"
+        fi
+
+        mkdir -p /home/$user_current/.config/conky
+        cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
 
         # mkdir -p ~/.config/systemd/user
         # cp -r conky_$environment_display.service conky.service
