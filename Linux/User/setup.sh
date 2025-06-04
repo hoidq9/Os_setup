@@ -158,11 +158,11 @@ User_setup() {
         gsettings set org.gtk.Settings.FileChooser show-hidden true
         gsettings set org.gtk.gtk4.Settings.FileChooser show-hidden true
         if [ "$os_id" == "rhel" ]; then
-            gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11' # Red Hat Text Medium 11 @wght=500
-            gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11' # Red Hat Text Semi-Bold 11 @wght=600
+            gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11'  # Red Hat Text Medium 11 @wght=500
+            gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'           # Red Hat Text Semi-Bold 11 @wght=600
             gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11' # Red Hat Mono Semi-Bold 11 @wght=600
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.google.Chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop']"
-            # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'nvidia-settings.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.google.Chrome.desktop', 'yandex-browser.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop']"
+            # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop']"
         elif [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
         elif [ "$os_id" == "almalinux" ]; then
@@ -326,12 +326,20 @@ User_setup() {
 
     }
 
+    autostart_edge() {
+        if [ -d "$HOME/.config/autostart" ] && rpm -q microsoft-edge-stable >/dev/null 2>&1; then
+            cd $REPO_DIR/
+            cp microsoft-edge.desktop $HOME/.config/autostart/
+        fi
+    }
+
     tasks=(
         "terminal"
         "accessibility"
         "keybinding"
         # "update_firefox_userChrome"
         "bookmark_nautilus"
+        "autostart_edge"
     )
 
     for task in "${tasks[@]}"; do

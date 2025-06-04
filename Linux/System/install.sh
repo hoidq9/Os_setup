@@ -30,7 +30,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo google-chrome.repo
+cp vscode.repo microsoft-edge.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
 
 sys() {
 	systemctl set-default graphical.target
@@ -139,9 +139,25 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools redhat-mono-fonts gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable dkms kernel-devel -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager
 		dnf group install "Fonts" -y
 		# systemctl restart libvirtd
+	}
+
+	dkms_config() {
+		if [ -d /etc/dkms ]; then
+			if [ ! -f /etc/dkms/framework.conf ]; then
+				touch /etc/dkms/framework.conf
+			else
+				grep -qxF 'mok_signing_key=/keys/db.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/db.key' | sudo tee -a /etc/dkms/framework.conf
+				grep -qxF 'mok_certificate=/keys/db.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/db.x509' | sudo tee -a /etc/dkms/framework.conf
+			fi
+		fi
+	}
+
+	nvidia_drivers() {
+		sh $REPO_DIR/drivers/create_keys.sh
+		sh $REPO_DIR/drivers/nvidia.sh
 	}
 
 	main() {
@@ -151,6 +167,8 @@ rhel_system() {
 		epel_check
 		flatpak_repo
 		run
+		dkms_config
+		nvidia_drivers
 
 		sed -i '/password[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so use_authtok/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
 		sed -i '/session[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so[[:space:]]\+auto_start\b/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
