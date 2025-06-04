@@ -214,6 +214,7 @@ User_setup() {
             "/Os_H/Windows_H"
             "$HOME/Prj/Yubico"
             "$HOME/Conky"
+            "/NVIDIA"
         )
         check_and_add_bookmark() {
             folder_path="$1"
