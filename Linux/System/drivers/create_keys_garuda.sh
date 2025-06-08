@@ -9,8 +9,8 @@ fi
 
 cd /keys || exit 1
 
-# Nếu chưa có private key db.key, mới sinh
-if [ ! -f db.key ]; then
+# Nếu chưa có private key garuda.key, mới sinh
+if [ ! -f garuda.key ]; then
 
     # ==== CẤU HÌNH CHUNG ====
     DAYS_VALID=36500
