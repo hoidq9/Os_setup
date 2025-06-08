@@ -14,7 +14,7 @@ if [ ! -f db.key ]; then
 
     # ==== CẤU HÌNH CHUNG ====
     DAYS_VALID=36500
-    SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=vnh.com"
+    SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=rhel.com"
     BASE_NAME="db" # sẽ sinh: db.key, db.x509, db.der, db.pem, db.p12
 
     # 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)

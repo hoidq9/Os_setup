@@ -14,7 +14,7 @@ if [ ! -f garuda.key ]; then
 
     # ==== CẤU HÌNH CHUNG ====
     DAYS_VALID=36500
-    SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=vnh.com"
+    SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=garuda.com"
     BASE_NAME="garuda" # sẽ sinh: garuda.key, garuda.x509, garuda.der, garuda.pem, garuda.p12 garuda.crt
 
     # 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)
