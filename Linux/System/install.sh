@@ -157,7 +157,7 @@ rhel_system() {
 	}
 
 	nvidia_drivers() {
-		sh $REPO_DIR/drivers/create_keys.sh
+		sh $REPO_DIR/drivers/create_keys_rhel.sh
 		sh $REPO_DIR/drivers/nvidia.sh
 	}
 
