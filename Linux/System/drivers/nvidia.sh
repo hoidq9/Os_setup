@@ -35,5 +35,5 @@ else
 
     chmod +x "$RUN_FILE"
 
-    bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --dkms --allow-installation-with-running-driver --module-signing-secret-key=/keys/db.key --module-signing-public-key=/keys/db.x509 --no-x-check
+    bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --dkms --allow-installation-with-running-driver --module-signing-secret-key=/keys/rhel.key --module-signing-public-key=/keys/rhel.x509 --no-x-check
 fi

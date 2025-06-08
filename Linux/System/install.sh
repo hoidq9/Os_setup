@@ -150,8 +150,8 @@ rhel_system() {
 			if [ ! -f /etc/dkms/framework.conf ]; then
 				touch /etc/dkms/framework.conf
 			else
-				grep -qxF 'mok_signing_key=/keys/db.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/db.key' | sudo tee -a /etc/dkms/framework.conf
-				grep -qxF 'mok_certificate=/keys/db.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/db.x509' | sudo tee -a /etc/dkms/framework.conf
+				grep -qxF 'mok_signing_key=/keys/rhel.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/rhel.key' | sudo tee -a /etc/dkms/framework.conf
+				grep -qxF 'mok_certificate=/keys/rhel.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/rhel.x509' | sudo tee -a /etc/dkms/framework.conf
 			fi
 		fi
 	}
