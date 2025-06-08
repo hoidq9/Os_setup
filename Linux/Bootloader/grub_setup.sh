@@ -42,8 +42,8 @@ grub_new() {
         # Create EFI images
         grub2-mkimage -d /usr/lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c ../config_rhel.cfg -s $OUTPUT_FILE at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace connectefi lsefimmap lsefi efifwsetup efi_netfs zstd xfs fshelp version tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi pkcs1_v15 crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 increment http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat blscfg loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios
 
-        if certutil -d /etc/pki/pesign -L | grep -qw "db"; then
-            pesign --in grubx64_new.efi --out grubx64.efi --certificate 'db' --sign
+        if certutil -d /etc/pki/pesign -L | grep -qw "rhel"; then
+            pesign --in grubx64_new.efi --out grubx64.efi --certificate 'rhel' --sign
             mv grubx64.efi /boot/efi/EFI/redhat/
         fi
         # cd /boot/grub2/themes/bootloader

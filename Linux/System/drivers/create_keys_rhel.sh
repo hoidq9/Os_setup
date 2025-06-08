@@ -9,13 +9,13 @@ fi
 
 cd /keys || exit 1
 
-# Nếu chưa có private key db.key, mới sinh
-if [ ! -f db.key ]; then
+# Nếu chưa có private key rhel.key, mới sinh
+if [ ! -f rhel.key ]; then
 
     # ==== CẤU HÌNH CHUNG ====
     DAYS_VALID=36500
     SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VNH/OU=IT/CN=rhel.com"
-    BASE_NAME="db" # sẽ sinh: db.key, db.x509, db.der, db.pem, db.p12
+    BASE_NAME="rhel" # sẽ sinh: rhel.key, rhel.x509, rhel.der, rhel.pem, rhel.p12
 
     # 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)
     openssl req -x509 \
@@ -27,13 +27,13 @@ if [ ! -f db.key ]; then
         -out "${BASE_NAME}.x509" \
         -subj "${SUBJECT}"
 
-    # 2. Chuyển certificate PEM (db.x509) sang DER (db.der)
+    # 2. Chuyển certificate PEM (rhel.x509) sang DER (rhel.der)
     openssl x509 \
         -in "${BASE_NAME}.x509" \
         -outform DER \
         -out "${BASE_NAME}.der"
 
-    # 3. Chuyển từ DER trở lại PEM (db.pem) – giống cert.pem
+    # 3. Chuyển từ DER trở lại PEM (rhel.pem) – giống cert.pem
     openssl x509 \
         -in "${BASE_NAME}.der" \
         -inform DER \
@@ -45,7 +45,7 @@ if [ ! -f db.key ]; then
     openssl x509 -in "${BASE_NAME}.x509" -noout -text | head -n 5 && echo "   …"
     openssl x509 -in "${BASE_NAME}.der" -inform DER -noout -text | head -n 5 && echo "   …"
 
-    # 5. Tạo thêm file PKCS#12 (db.p12) chứa private key + certificate,
+    # 5. Tạo thêm file PKCS#12 (rhel.p12) chứa private key + certificate,
     #    không đặt passphrase (pass empty) để dễ import vào NSS DB
     openssl pkcs12 -export \
         -inkey "${BASE_NAME}.key" \
