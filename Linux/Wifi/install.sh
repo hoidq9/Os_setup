@@ -3,7 +3,7 @@ source ../variables.sh
 
 Wifi_download() {
     if rpm -q NetworkManager-wifi; then
-        dnf upgrade -y
+        dnf upgrade -y iw wireless-regdb wpa_supplicant NetworkManager-wifi
         rm -rf iw* wireless-regdb* wpa_supplicant* NetworkManager-wifi*
         wifi_rpms=(
             "iw"
