@@ -330,7 +330,7 @@ User_setup() {
     autostart_edge() {
         if [ -d "$HOME/.config/autostart" ] && rpm -q microsoft-edge-stable >/dev/null 2>&1; then
             cd $REPO_DIR/
-            # cp microsoft-edge.desktop $HOME/.config/autostart/
+            cp microsoft-edge.desktop $HOME/.config/autostart/
         fi
     }
 
