@@ -256,7 +256,7 @@ User_setup() {
         if [ "$os_id" == "fedora" ]; then
 
             mkdir -p $HOME/.local/share/icons/
-            cd $REPO_DIR/extensions_gnome/icons
+            cd $REPO_DIR/extensions_gnome/icons/fedora
             cp -r * $HOME/.local/share/icons/
 
             if [ -d "$HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com" ]; then
@@ -283,7 +283,7 @@ User_setup() {
         elif [ "$os_id" == "rhel" ]; then
 
             mkdir -p $HOME/.local/share/icons/
-            cd $REPO_DIR/extensions_gnome/icons
+            cd $REPO_DIR/extensions_gnome/icons/rhel
             cp -r brand-logo-symbolic.svg $HOME/.local/share/icons/
 
             cd $REPO_DIR/extensions_gnome/config
