@@ -114,6 +114,9 @@ fedora_system() {
 	packages() {
 		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus
 		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                         # "firefox"
+		if blkid | grep -q "btrfs"; then
+			dnf install btrfs-progs -y
+		fi
 		dnf upgrade -y
 	}
 	main() {
