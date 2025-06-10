@@ -146,9 +146,11 @@ nvidia_drivers() {
 
 		rm -f "$TMP_HTML"
 
-		dkms status | grep nvidia | awk '{print $1}' | while read module; do
-			dkms remove -m "$module" --all
-		done
+		if rpm -q dkms; then
+			dkms status | grep nvidia | awk '{print $1}' | while read module; do
+				dkms remove -m "$module" --all
+			done
+		fi
 
 		chmod +x "$RUN_FILE"
 
