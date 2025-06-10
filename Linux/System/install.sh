@@ -152,7 +152,8 @@ nvidia_drivers() {
 
 		chmod +x "$RUN_FILE"
 
-		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --dkms --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check
+		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check
+		# --dkms
 	fi
 	rm -rf "$TMP_HTML"
 
@@ -172,13 +173,13 @@ dkms_config() {
 # check if machine have nvidia gpu
 install_gpu_driver() {
 	if lspci | grep -qi nvidia; then
-		if rpm -q dkms; then
-			dnf upgrade dkms -y
-		else
-			dnf install dkms -y
-		fi
+		# if rpm -q dkms; then
+		# 	dnf upgrade dkms -y
+		# else
+		# 	dnf install dkms -y
+		# fi
 		create_keys_secureboot
-		dkms_config
+		# dkms_config
 		nvidia_drivers
 	fi
 }
