@@ -154,8 +154,7 @@ nvidia_drivers() {
 
 		chmod +x "$RUN_FILE"
 
-		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check
-		# --dkms
+		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
 	fi
 	rm -rf "$TMP_HTML"
 
@@ -175,13 +174,18 @@ dkms_config() {
 # check if machine have nvidia gpu
 install_gpu_driver() {
 	if lspci | grep -qi nvidia; then
-		# if rpm -q dkms; then
-		# 	dnf upgrade dkms -y
-		# else
-		# 	dnf install dkms -y
-		# fi
+		if rpm -q dkms; then
+			dnf upgrade dkms -y
+		else
+			dnf install dkms -y
+		fi
+		if rpm -q libglvnd-devel; then
+			dnf upgrade libglvnd-devel -y
+		else
+			dnf install libglvnd-devel -y
+		fi
 		create_keys_secureboot
-		# dkms_config
+		dkms_config
 		nvidia_drivers
 	fi
 }
@@ -307,8 +311,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                      # "firefox"
+		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                         # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
@@ -324,9 +328,10 @@ fedora_system() {
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
-		flatpak_repo
+		# flatpak_repo
 		run
-		install_gpu_driver
+		create_keys_secureboot
+		# install_gpu_driver
 		change_policy_keyring
 		sign_kernel_garuda
 	}

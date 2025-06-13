@@ -54,9 +54,9 @@ read -r enroll_fido2
 
 if [[ "$enroll_fido2" == "y" ]]; then
 
-    if [ "$os_id" == "rhel" ]; then
-        bash $REPO_DIR/edit_crypttab.sh
-    fi
+    # if [ "$os_id" == "rhel" ]; then
+    bash $REPO_DIR/edit_crypttab.sh
+    # fi
 
     echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
     read -r fido2_device_path
