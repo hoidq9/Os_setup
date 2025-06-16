@@ -214,8 +214,16 @@ sign_kernel_garuda() {
 
 				for kernel_path in "${kernel_paths[@]}"; do
 					if [ -f "$kernel_path" ]; then
-						sbsign --key /keys/${os_id}.priv --cert /keys/${os_id}.crt --output "${kernel_path}.signed" "$kernel_path"
-						mv "${kernel_path}.signed" "${kernel_path}"
+						sbverify --cert /keys/${os_id}.x509 "$kernel_path" &>/dev/null
+
+						if [ $? -eq 0 ]; then
+							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/${os_id}.der)"
+							continue
+						elif [ $? -ne 0 ]; then
+							sbsign --key /keys/${os_id}.priv --cert /keys/${os_id}.crt --output "${kernel_path}.signed" "$kernel_path"
+							mv "${kernel_path}.signed" "${kernel_path}"
+						fi
+
 					fi
 				done
 			fi
