@@ -171,6 +171,12 @@ dkms_config() {
 	fi
 }
 
+vscode_custom() {
+	if rpm -q code && [ -f /usr/share/applications/code.desktop ]; then
+		sed -i 's|^Exec=.*|Exec=bash -c '\''unset HOSTNAME; exec /usr/bin/code %F'\''|' /usr/share/applications/code.desktop
+	fi
+}
+
 # check if machine have nvidia gpu
 install_gpu_driver() {
 	if lspci | grep -qi nvidia; then
@@ -342,6 +348,7 @@ fedora_system() {
 		# install_gpu_driver
 		change_policy_keyring
 		sign_kernel_garuda
+		vscode_custom
 	}
 	main
 }
