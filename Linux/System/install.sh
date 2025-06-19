@@ -345,7 +345,7 @@ fedora_system() {
 		# flatpak_repo
 		run
 		create_keys_secureboot
-		# install_gpu_driver
+		install_gpu_driver
 		change_policy_keyring
 		sign_kernel_garuda
 		vscode_custom
