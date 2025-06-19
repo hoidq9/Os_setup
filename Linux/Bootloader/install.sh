@@ -15,8 +15,6 @@ fedora_bootloader() {
 }
 
 rhel_bootloader() {
-	sh $REPO_DIR/mount_setup.sh
-	sh $REPO_DIR/../System/drivers/create_keys_rhel.sh
 	cp -r $REPO_DIR/distro /boot/grub2/themes
 	grep -q "/boot/grub2/themes/distro/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/distro/theme.txt\"" >>/etc/default/grub
 	sed -i 's/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT=\"intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash\"/g' /etc/default/grub
@@ -28,6 +26,7 @@ almalinux_bootloader() {
 }
 
 Bootloader_themes() {
+	sh $REPO_DIR/mount_setup.sh
 	"$os_id"_bootloader
 	sh $REPO_DIR/grub_setup.sh
 }

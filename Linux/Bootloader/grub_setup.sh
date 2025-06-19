@@ -76,6 +76,10 @@ grub_new() {
     fi
 
     grub2-mkconfig -o /boot/grub2/grub.cfg
+    if [ "$os_id" = "fedora" ]; then
+        grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+    fi
+
 }
 
 grub_new
