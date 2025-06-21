@@ -60,7 +60,7 @@ grub_new() {
 
         dnf reinstall grub2-efi -y
         # if multiple packages are installed, remove the old ones
-        for p in btrfs-progs grub2-efi-x64-modules pesign; do
+        for p in btrfs-progs grub2-efi-x64-modules; do # pesign
             rpm -q $p &>/dev/null && dnf remove -y $p
         done
         dnf autoremove -y
