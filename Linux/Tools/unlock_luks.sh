@@ -62,7 +62,7 @@ if [[ "$enroll_fido2" == "y" ]]; then
     read -r fido2_device_path
     echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
     read -r luks2_disk_path
-    echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
+    # echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
     systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
     dracut -f
     echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"

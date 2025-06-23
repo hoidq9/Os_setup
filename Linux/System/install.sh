@@ -325,8 +325,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                         # "firefox"
+		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                      # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
