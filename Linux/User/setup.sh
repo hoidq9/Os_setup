@@ -328,7 +328,7 @@ User_setup() {
     }
 
     autostart_edge() {
-        if [ "$os_id" == "rhel" ]; then
+        if [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
             if [ -d "$HOME/.config/autostart" ] && rpm -q microsoft-edge-stable >/dev/null 2>&1; then
                 cd $REPO_DIR/
                 cp microsoft-edge.desktop $HOME/.config/autostart/

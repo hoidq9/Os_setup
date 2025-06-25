@@ -34,7 +34,7 @@ Apps_Conky() {
             fi
         fi
 
-    elif [ "$os_id" == "rhel" ]; then
+    elif [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
 
         mkdir -p /home/$user_current/Conky
 
