@@ -310,6 +310,16 @@ cockpit_browser() {
 	fi
 }
 
+keepassxc_secret_service() {
+	if [ $os_id == "fedora" ]; then
+		dnf install keepassxc -y
+	elif [ $os_id == "rhel" ]; then
+		dnf install gnome-software -y
+		flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+		flatpak install flathub org.keepassxc.KeePassXC
+	fi
+}
+
 run() {
 	packages
 	sys
@@ -325,8 +335,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                      # "firefox"
+		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                             # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
@@ -342,8 +352,8 @@ fedora_system() {
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
-		# flatpak_repo
 		run
+		flatpak_repo
 		create_keys_secureboot
 		install_gpu_driver
 		change_policy_keyring
@@ -365,7 +375,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable kernel-devel -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable kernel-devel gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts
 		dnf group install "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
