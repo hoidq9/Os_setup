@@ -354,6 +354,7 @@ User_setup() {
         # "update_firefox_userChrome"
         "bookmark_nautilus"
         "autostart_edge"
+        "keepassxc_start"
     )
 
     for task in "${tasks[@]}"; do

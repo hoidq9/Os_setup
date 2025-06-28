@@ -354,6 +354,7 @@ fedora_system() {
 		}
 		run
 		flatpak_repo
+		keepassxc_secret_service
 		create_keys_secureboot
 		install_gpu_driver
 		change_policy_keyring
