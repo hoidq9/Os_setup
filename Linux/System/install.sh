@@ -310,10 +310,6 @@ cockpit_browser() {
 	fi
 }
 
-
-	
-
-
 run() {
 	packages
 	sys
