@@ -49,6 +49,7 @@ authselect_auth() {
     if [ ! -d /etc/authselect/custom/$user_current ]; then
         sudo authselect create-profile $user_current --base-on=sssd
     fi
+    sudo authselect select custom/$user_current
 
     FILE1="/etc/authselect/custom/$user_current/password-auth"
     FILE2="/etc/authselect/custom/$user_current/system-auth"
@@ -60,7 +61,7 @@ authselect_auth() {
             sudo awk -v l1="$LINE1" -v l2="$LINE2" '
         {
             print
-            if ($0 ~ /pam_faildelay\.so/) {
+            if ($0 ~ /auth[[:space:]]+sufficient[[:space:]]+pam_u2f\.so[[:space:]]+cue/) {
                 print l1
                 print l2
             }
@@ -68,6 +69,7 @@ authselect_auth() {
     ' "$FILE1" | sudo tee "${FILE1}.tmp" >/dev/null
             sudo mv "${FILE1}.tmp" "$FILE1"
         fi
+        sudo authselect apply-changes
     else
         echo "2 dòng pam_u2f.so đã tồn tại trong /etc/pam.d/password-auth, không thay đổi."
     fi
@@ -77,7 +79,7 @@ authselect_auth() {
             sudo awk -v l1="$LINE1" -v l2="$LINE2" '
         {
             print
-            if ($0 ~ /pam_faildelay\.so/) {
+            if ($0 ~ /auth[[:space:]]+sufficient[[:space:]]+pam_u2f\.so[[:space:]]+cue/) {
                 print l1
                 print l2
             }
@@ -85,11 +87,10 @@ authselect_auth() {
     ' "$FILE2" | sudo tee "${FILE2}.tmp" >/dev/null
             sudo mv "${FILE2}.tmp" "$FILE2"
         fi
+        sudo authselect apply-changes
     else
         echo "2 dòng pam_u2f.so đã tồn tại trong /etc/pam.d/system-auth, không thay đổi."
     fi
-
-    sudo authselect apply-changes
 }
 
 echo -e "${GREEN}--- Listing FIDO2 devices... ---${NC}"
