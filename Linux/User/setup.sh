@@ -336,27 +336,13 @@ User_setup() {
         fi
     }
 
-    keepassxc_start() {
-        mkdir -p $HOME/.config/autostart
-        cp $REPO_DIR/secret_service/start.desktop $REPO_DIR/secret_service/org.keepassxc.KeePassXC.desktop $HOME/.config/autostart/
-        systemctl --user mask gnome-keyring-daemon.service gnome-keyring-daemon.socket
-        mkdir -p $HOME/.local/share/dbus-1/services
-        cp $REPO_DIR/secret_service/org.freedesktop.secrets.service $HOME/.local/share/dbus-1/services/
-        if [ $os_id == "fedora" ]; then
-            sed -i 's|^Exec=.*|Exec=/usr/bin/keepassxc|g' $HOME/.local/share/dbus-1/services/org.freedesktop.secrets.service
-            rm -rf $HOME/.config/autostart/org.keepassxc.KeePassXC.desktop
-            cp $REPO_DIR/secret_service/keepassxc.desktop $HOME/.config/autostart/
-        fi
-    }
-
     tasks=(
         "terminal"
         "accessibility"
         "keybinding"
         # "update_firefox_userChrome"
         "bookmark_nautilus"
-        # "autostart_edge"
-        "keepassxc_start"
+        "autostart_edge"
     )
 
     for task in "${tasks[@]}"; do

@@ -310,15 +310,9 @@ cockpit_browser() {
 	fi
 }
 
-keepassxc_secret_service() {
-	if [ $os_id == "fedora" ]; then
-		dnf install keepassxc -y
-	elif [ $os_id == "rhel" ]; then
-		dnf install gnome-software -y
-		flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-		flatpak install flathub org.keepassxc.KeePassXC
-	fi
-}
+
+	
+
 
 run() {
 	packages
@@ -354,7 +348,6 @@ fedora_system() {
 		}
 		run
 		flatpak_repo
-		keepassxc_secret_service
 		create_keys_secureboot
 		install_gpu_driver
 		change_policy_keyring
