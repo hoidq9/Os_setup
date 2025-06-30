@@ -381,6 +381,7 @@ rhel_system() {
 		install_gpu_driver
 		change_policy_keyring
 		update-crypto-policies --set DEFAULT
+		vscode_custom
 	}
 
 	main
