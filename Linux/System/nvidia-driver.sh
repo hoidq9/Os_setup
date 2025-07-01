@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p /NVIDIA
 device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
 
 if [ -z "$device_id" ]; then
@@ -10,20 +11,30 @@ driver_version=$(curl -s https://www.nvidia.com/en-us/drivers/unix/ | sed -n '/<
 
 if curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html | grep -qoiw "$device_id"; then
     echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
+
+    CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
+    BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
+
+    if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
+        cd /NVIDIA || exit 1
+        RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
+        DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
+
+        if [[ ! -f "$RUN_FILE" ]]; then
+            wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
+        fi
+
+        if rpm -q dkms; then
+            dkms status | grep nvidia | awk '{print $1}' | while read module; do
+                dkms remove -m "$module" --all
+            done
+        fi
+
+        chmod +x "$RUN_FILE"
+        mv "$RUN_FILE" nvidia-driver.run
+
+    fi
 else
     echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
-fi
-
-CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
-BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
-
-if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
-    rm -rf /NVIDIA/*
-    cd /NVIDIA || exit 1
-    RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
-    DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
-
-    if [[ ! -f "$RUN_FILE" ]]; then
-        wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
-    fi
+    exit 1
 fi
