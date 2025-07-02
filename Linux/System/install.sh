@@ -208,6 +208,12 @@ vscode_custom() {
 	fi
 }
 
+windsurf_custom() {
+	if rpm -q windsurf && [ -f /usr/share/applications/windsurf.desktop ]; then
+		sed -i 's|^Exec=.*|Exec=bash -c '\''unset HOSTNAME; exec /usr/bin/windsurf'\''|' /usr/share/applications/windsurf.desktop
+	fi
+}
+
 # check if machine have nvidia gpu
 install_gpu_driver() {
 	if lspci | grep -qi nvidia; then
@@ -413,6 +419,7 @@ rhel_system() {
 		change_policy_keyring
 		update-crypto-policies --set DEFAULT
 		vscode_custom
+		windsurf_custom
 	}
 
 	main
