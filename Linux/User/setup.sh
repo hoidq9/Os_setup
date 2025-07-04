@@ -336,13 +336,23 @@ User_setup() {
         fi
     }
 
+    autostart_vscode() {
+        if [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
+            if [ -d "$HOME/.config/autostart" ] && rpm -q code >/dev/null 2>&1; then
+                cd $REPO_DIR/
+                cp code.desktop $HOME/.config/autostart/
+            fi
+        fi
+    }
+
     tasks=(
         "terminal"
         "accessibility"
         "keybinding"
         # "update_firefox_userChrome"
         "bookmark_nautilus"
-        "autostart_edge"
+        # "autostart_edge"
+        "autostart_vscode"
     )
 
     for task in "${tasks[@]}"; do
