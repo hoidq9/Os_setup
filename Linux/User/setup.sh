@@ -244,7 +244,7 @@ User_setup() {
             extensions=('3628' '6272' '6682' '4679' '1160' '3843' '3010' '3733')
         elif [ "$os_id" == "rhel" ]; then
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
-            extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733')
+            extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733' '5928' '6580' '1319' '2224' '8007')
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
         fi
@@ -284,7 +284,7 @@ User_setup() {
 
             mkdir -p $HOME/.local/share/icons/
             cd $REPO_DIR/extensions_gnome/icons/rhel
-            cp -r brand-logo-symbolic.svg $HOME/.local/share/icons/
+            cp -r brand-logo-symbolic.svg RhelH.svg $HOME/.local/share/icons/
 
             cd $REPO_DIR/extensions_gnome/config
 
