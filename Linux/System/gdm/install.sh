@@ -31,7 +31,7 @@ System_gdm() {
         "org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0"
         "org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0"
         "org.gnome.login-screen banner-message-enable true"
-        "org.gnome.login-screen banner-message-text 'Leader_H'"
+        "org.gnome.login-screen banner-message-text 'LeaderH'"
         "org.gnome.desktop.sound allow-volume-above-100-percent true"
         "org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'"
         "org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'"
@@ -48,7 +48,7 @@ System_gdm() {
     done
 
     if [ "$os_id" == "fedora" ]; then
-        sudo -u gdm dbus-launch gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+        sudo -u gdm dbus-launch gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
         cp $REPO_DIR/custom.conf /etc/gdm
     fi
 

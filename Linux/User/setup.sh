@@ -107,9 +107,9 @@ User_setup() {
         fi
 
         mkdir -p $HOME/.local/share/backgrounds
-        cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
-        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
-        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+        cp $REPO_DIR/backgrounds/intel-processor.jpg $HOME/.local/share/backgrounds
+        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
+        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
 
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
@@ -138,7 +138,7 @@ User_setup() {
         gsettings set org.gnome.desktop.calendar show-weekdate true
         gsettings set org.gnome.desktop.interface clock-format '24h'
         gsettings set org.gnome.system.location enabled true
-        gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+        gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
         # gsettings set org.gnome.nautilus.window-state initial-size '(2082, 1256)'
         # gsettings set org.gnome.nautilus.window-state initial-size-file-chooser '(890, 550)'
         gsettings set org.gnome.nautilus.preferences always-use-location-entry false
@@ -161,7 +161,7 @@ User_setup() {
             gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11'  # Red Hat Text Medium 11 @wght=500
             gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'           # Red Hat Text Semi-Bold 11 @wght=600
             gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11' # Red Hat Mono Semi-Bold 11 @wght=600
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop']"
             # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'

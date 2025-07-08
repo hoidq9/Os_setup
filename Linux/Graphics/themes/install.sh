@@ -16,16 +16,16 @@ os_themes() {
     if [ "$EUID" -eq 0 ]; then
         rm -rf src/assets/gnome-shell/backgrounds/*
         for target in background-default.png background-darken.png background-blank.png background-blur-darken.png background-blur.png; do
-            cp $REPO_DIR/intel-processor.jpg src/assets/gnome-shell/backgrounds/$target
+            cp $REPO_DIR/Lenovo_Legion.png src/assets/gnome-shell/backgrounds/$target
         done
         gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
-        ./install.sh -n 'WoW' -o normal -c dark -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h bigger -normal -sf
-        ./tweaks.sh -o solid -c dark -t default -s standard -g -b default -p 30 -h bigger -sf
+        ./install.sh -n 'WoW' -o normal -c light -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h bigger -normal -sf
+        ./tweaks.sh -o solid -c light -t default -s standard -g -b default -p 30 -h bigger -sf
         cd /usr/share/themes/
 
-        if [ ! -z "$(ls -A WoW-Dark-alt)" ]; then
+        if [ ! -z "$(ls -A WoW-Light-alt)" ]; then
             rm -rf "${os_name}_themes"
-            mv WoW-Dark-alt "${os_name}_themes"
+            mv WoW-Light-alt "${os_name}_themes"
             cd "${os_name}_themes" || return
             rm -rf cinnamon plank # gnome-shell
             cd ..
@@ -36,7 +36,7 @@ os_themes() {
         if [ ! -d "/usr/share/themes/${os_name}_themes" ]; then
             mkdir -p "$HOME/.local/share/themes/${os_name}_themes"
             cd release/
-            tar -xJf WhiteSur-Dark.tar.xz -C $HOME/.local/share/themes/${os_name}_themes --strip-components=1
+            tar -xJf WhiteSur-Light.tar.xz -C $HOME/.local/share/themes/${os_name}_themes --strip-components=1
         fi
     fi
     cd "$REPO_DIR" || return
