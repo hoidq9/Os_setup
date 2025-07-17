@@ -36,3 +36,7 @@ $outputFile = "$currentdir\install.ps1"  # Đặt tên tệp muốn lưu trên m
 $webClient.DownloadFile($url, $outputFile)
 ./install.ps1 -AllUsers
 Remove-Item .\install.ps1
+
+$scriptDir = $PSScriptRoot
+$scriptPath = Join-Path -Path $scriptDir -ChildPath "Set-EdgeSearch.ps1"
+& $scriptPath
