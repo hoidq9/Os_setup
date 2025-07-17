@@ -46,7 +46,7 @@ create_users() {
 			# fi
 			# sudo chmod -R 777 /home/$name_user
 			# cd /home/$name_user/Drive
-			# git clone https://github.com/hoidq9/rhel_setup.git
+			# git clone https://github.com/name_user_h9/rhel_setup.git
 			# sudo chmod -R 777 /home/$name_user
 		done
 	elif [[ "$option" == "n" ]]; then

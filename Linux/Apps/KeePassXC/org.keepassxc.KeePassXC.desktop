@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=org.keepassxc.KeePassXC
+X-XDP-Autostart=org.keepassxc.KeePassXC
+Exec=flatpak run org.keepassxc.KeePassXC
+X-Flatpak=org.keepassxc.KeePassXC

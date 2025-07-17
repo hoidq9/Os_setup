@@ -114,50 +114,81 @@ create_keys_secureboot() {
 }
 
 nvidia_drivers() {
-	#!/usr/bin/env bash
-	set -euo pipefail
-	mkdir -p /NVIDIA
 
-	BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
+	# BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
+	# TMP_HTML=$(mktemp)
+	# curl -s "$BASE_URL/latest.txt" -o "$TMP_HTML"
+	# VERSIONS=$(grep -Eo '[0-9]+\.[0-9]+\.[0-9]+/' "$TMP_HTML" | sed 's:/$::')
 
-	TMP_HTML=$(mktemp)
-	curl -s "$BASE_URL/latest.txt" -o "$TMP_HTML"
-	VERSIONS=$(grep -Eo '[0-9]+\.[0-9]+\.[0-9]+/' "$TMP_HTML" | sed 's:/$::')
+	# if [[ -z "$VERSIONS" ]]; then
+	# 	rm -f "$TMP_HTML"
+	# 	exit 1
+	# fi
 
-	if [[ -z "$VERSIONS" ]]; then
-		rm -f "$TMP_HTML"
-		exit 1
+	# LATEST_VERSION=$(printf "%s\n" $VERSIONS | sort -V | tail -n1)
+
+	# # How to get the current version of the NVIDIA driver installed on the system
+	# CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
+
+	# if [[ "$CURRENT_VERSION" < "$LATEST_VERSION" ]]; then
+	# 	rm -rf /NVIDIA/*
+	# 	cd /NVIDIA || exit 1
+	# 	RUN_FILE="NVIDIA-Linux-x86_64-${LATEST_VERSION}.run"
+	# 	DOWNLOAD_URL="${BASE_URL}/${LATEST_VERSION}/${RUN_FILE}"
+
+	# 	if [[ ! -f "$RUN_FILE" ]]; then
+	# 		wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
+	# 	fi
+
+	# 	rm -f "$TMP_HTML"
+
+	sh $REPO_DIR/nvidia-driver.sh
+
+	# mkdir -p /NVIDIA
+	# device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
+
+	# if [ -z "$device_id" ]; then
+	# 	echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
+	# 	exit 1
+	# fi
+
+	# driver_version=$(curl -s https://www.nvidia.com/en-us/drivers/unix/ | sed -n '/<p[^>]*>.*Linux x86_64\/AMD64\/EM64T.*<\/p>/p' | grep -oP 'Latest Production Branch Version:</span>\s*<a [^>]+>[^<]+</a>' | grep -oP '<a [^>]+>[^<]+</a>' | grep -o "[0-9]\{3\}\.[0-9]\{3\}")
+
+	# if curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html | grep -qoiw "$device_id"; then
+	# 	echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
+
+	# 	CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
+	# 	BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
+
+	# 	if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
+	# 		rm -rf /NVIDIA/*
+	# 		cd /NVIDIA || exit 1
+	# 		RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
+	# 		DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
+
+	# 		if [[ ! -f "$RUN_FILE" ]]; then
+	# 			wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
+	# 		fi
+
+	# 		if rpm -q dkms; then
+	# 			dkms status | grep nvidia | awk '{print $1}' | while read module; do
+	# 				dkms remove -m "$module" --all
+	# 			done
+	# 		fi
+
+	# 		chmod +x "$RUN_FILE"
+
+	# 		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
+	# 	fi
+	# else
+	# 	echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
+	# fi
+
+	cd /NVIDIA || exit 1
+	if [ -f nvidia-driver.run ]; then
+		bash nvidia-driver.run -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
 	fi
-
-	LATEST_VERSION=$(printf "%s\n" $VERSIONS | sort -V | tail -n1)
-
-	# How to get the current version of the NVIDIA driver installed on the system
-	CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
-
-	if [[ "$CURRENT_VERSION" < "$LATEST_VERSION" ]]; then
-		rm -rf /NVIDIA/*
-		cd /NVIDIA || exit 1
-		RUN_FILE="NVIDIA-Linux-x86_64-${LATEST_VERSION}.run"
-		DOWNLOAD_URL="${BASE_URL}/${LATEST_VERSION}/${RUN_FILE}"
-
-		if [[ ! -f "$RUN_FILE" ]]; then
-			wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
-		fi
-
-		rm -f "$TMP_HTML"
-
-		if rpm -q dkms; then
-			dkms status | grep nvidia | awk '{print $1}' | while read module; do
-				dkms remove -m "$module" --all
-			done
-		fi
-
-		chmod +x "$RUN_FILE"
-
-		bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
-	fi
-	rm -rf "$TMP_HTML"
-
+	rm -rf /NVIDIA/*
 }
 
 dkms_config() {
@@ -177,6 +208,12 @@ vscode_custom() {
 	fi
 }
 
+windsurf_custom() {
+	if rpm -q windsurf && [ -f /usr/share/applications/windsurf.desktop ]; then
+		sed -i 's|^Exec=.*|Exec=bash -c '\''unset HOSTNAME; exec /usr/bin/windsurf'\''|' /usr/share/applications/windsurf.desktop
+	fi
+}
+
 # check if machine have nvidia gpu
 install_gpu_driver() {
 	if lspci | grep -qi nvidia; then
@@ -192,8 +229,8 @@ install_gpu_driver() {
 		fi
 		create_keys_secureboot
 		dkms_config
-		nvidia_drivers
 	fi
+	nvidia_drivers
 }
 
 sign_kernel_garuda() {
@@ -325,8 +362,8 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                      # "firefox"
+		dnf install ptyxis podman gnome-session-xsession xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                             # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
@@ -342,8 +379,8 @@ fedora_system() {
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
-		# flatpak_repo
 		run
+		flatpak_repo
 		create_keys_secureboot
 		install_gpu_driver
 		change_policy_keyring
@@ -365,7 +402,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility rhc rhc-worker-playbook gdb gcc seahorse ansible-core yara gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable kernel-devel -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable kernel-devel gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara
 		dnf group install "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
@@ -381,6 +418,8 @@ rhel_system() {
 		install_gpu_driver
 		change_policy_keyring
 		update-crypto-policies --set DEFAULT
+		vscode_custom
+		windsurf_custom
 	}
 
 	main

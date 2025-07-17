@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Layer_1"
+   data-name="Layer 1"
+   viewBox="0 0 24 24.056029"
+   version="1.1"
+   sodipodi:docname="Red-Hat-Logo-A-RGB-Color-Reverse.svg"
+   width="24"
+   height="24.056028"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata698">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Red-Hat-Logo-A-RGB-Color-Reverse</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2240"
+     inkscape:window-height="1344"
+     id="namedview696"
+     showgrid="false"
+     fit-margin-top="2.95"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="2.95"
+     inkscape:zoom="34.375"
+     inkscape:cx="12"
+     inkscape:cy="12.136134"
+     inkscape:window-x="552"
+     inkscape:window-y="275"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Layer_1" />
+  <defs
+     id="defs675">
+    <style
+       id="style673">.cls-1{fill:#e00;}.cls-2{fill:#fff;}</style>
+  </defs>
+  <title
+     id="title677">Red-Hat-Logo-A-RGB-Color-Reverse</title>
+  <path
+     d="m 19.82916,10.781048 a 1.7651694,1.7651694 0 0 1 0.0391,0.431206 c 0,1.876122 -2.28211,2.201418 -3.859414,2.201418 -6.132703,0 -10.709535,-3.811505 -10.709535,-4.979039 A 0.8107171,0.8107171 0 0 1 5.327051,8.190031 L 4.865585,9.332348 A 2.3262411,2.3262411 0 0 0 4.675199,10.25654 c 0,2.283373 5.169425,5.734279 11.062569,5.734279 2.608662,0 4.593222,-0.978408 4.593222,-2.744838 0,-0.13617 0,-0.244602 -0.21813,-1.277226 z"
+     id="path679"
+     inkscape:connector-curvature="0"
+     style="stroke-width:0.12608352" />
+  <path
+     class="cls-1"
+     d="m 16.008826,13.413672 c 1.577304,0 3.859414,-0.325296 3.859414,-2.201418 a 1.7651694,1.7651694 0 0 0 -0.0391,-0.431206 L 18.88981,6.700985 C 18.67295,5.80327 18.48256,5.39602 16.90652,4.607998 15.68351,3.982624 13.019365,2.95 12.231343,2.95 c -0.733806,0 -0.946887,0.945626 -1.821907,0.945626 -0.842238,0 -1.467612,-0.706067 -2.255634,-0.706067 -0.756501,0 -1.249488,0.515681 -1.63026,1.576044 0,0 -1.060363,2.990701 -1.196533,3.424428 a 0.8107171,0.8107171 0 0 0 -0.02774,0.244602 c 0,1.162491 4.576832,4.973996 10.709535,4.973996 M 20.1103,11.973798 c 0.21813,1.032624 0.21813,1.141056 0.21813,1.277226 0,1.76517 -1.98456,2.744839 -4.593227,2.744839 C 9.839537,15.999663 4.675155,12.544956 4.675155,10.261584 A 2.3262411,2.3262411 0 0 1 4.865541,9.337391 C 2.744838,9.443302 0,9.821552 0,12.244878 c 0,3.969109 9.404571,8.86115 16.85106,8.86115 5.70907,0 7.14894,-2.582191 7.14894,-4.620961 0,-1.603783 -1.38692,-3.424429 -3.88716,-4.511269"
+     id="path681"
+     inkscape:connector-curvature="0"
+     style="fill:#ee0000;stroke-width:0.12608352" />
+</svg>

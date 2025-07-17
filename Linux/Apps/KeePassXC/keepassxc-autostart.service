@@ -1,0 +1,17 @@
+[Unit]
+Description=Kill gnome-keyring-daemon and start KeePassXC after login
+After=graphical.target
+
+[Service]
+Type=simple
+# Trước khi chạy KeePassXC, kill gnome-keyring-daemon (im lặng nếu không tìm thấy)
+ExecStartPre=-/usr/bin/killall -q gnome-keyring-daemon
+
+# Khởi động KeePassXC trong môi trường user
+ExecStart=flatpak run org.keepassxc.KeePassXC
+
+# Giữ service chạy để KeePassXC vẫn sống; stop khi session kết thúc
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

@@ -107,9 +107,9 @@ User_setup() {
         fi
 
         mkdir -p $HOME/.local/share/backgrounds
-        cp $REPO_DIR/backgrounds/Lenovo_Legion_Wallpaper.png $HOME/.local/share/backgrounds
-        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
-        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/Lenovo_Legion_Wallpaper.png"
+        cp $REPO_DIR/backgrounds/intel-processor.jpg $HOME/.local/share/backgrounds
+        gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
+        gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
 
         gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
         gsettings set org.gnome.desktop.interface clock-show-date true
@@ -138,7 +138,7 @@ User_setup() {
         gsettings set org.gnome.desktop.calendar show-weekdate true
         gsettings set org.gnome.desktop.interface clock-format '24h'
         gsettings set org.gnome.system.location enabled true
-        gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+        gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
         # gsettings set org.gnome.nautilus.window-state initial-size '(2082, 1256)'
         # gsettings set org.gnome.nautilus.window-state initial-size-file-chooser '(890, 550)'
         gsettings set org.gnome.nautilus.preferences always-use-location-entry false
@@ -161,7 +161,7 @@ User_setup() {
             gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11'  # Red Hat Text Medium 11 @wght=500
             gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'           # Red Hat Text Semi-Bold 11 @wght=600
             gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11' # Red Hat Mono Semi-Bold 11 @wght=600
-            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'yandex-browser.desktop']"
+            gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop']"
             # "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
         elif [ "$os_id" == "fedora" ]; then
             gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
@@ -244,7 +244,7 @@ User_setup() {
             extensions=('3628' '6272' '6682' '4679' '1160' '3843' '3010' '3733')
         elif [ "$os_id" == "rhel" ]; then
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
-            extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733')
+            extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733' '5928' '6580' '1319' '2224')
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
         fi
@@ -284,7 +284,7 @@ User_setup() {
 
             mkdir -p $HOME/.local/share/icons/
             cd $REPO_DIR/extensions_gnome/icons/rhel
-            cp -r brand-logo-symbolic.svg $HOME/.local/share/icons/
+            cp -r brand-logo-symbolic.svg RhelH.svg $HOME/.local/share/icons/
 
             cd $REPO_DIR/extensions_gnome/config
 
@@ -328,10 +328,19 @@ User_setup() {
     }
 
     autostart_edge() {
-        if [ "$os_id" == "rhel" ]; then
+        if [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
             if [ -d "$HOME/.config/autostart" ] && rpm -q microsoft-edge-stable >/dev/null 2>&1; then
                 cd $REPO_DIR/
                 cp microsoft-edge.desktop $HOME/.config/autostart/
+            fi
+        fi
+    }
+
+    autostart_vscode() {
+        if [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
+            if [ -d "$HOME/.config/autostart" ] && rpm -q code >/dev/null 2>&1; then
+                cd $REPO_DIR/
+                cp code.desktop $HOME/.config/autostart/
             fi
         fi
     }
@@ -342,7 +351,8 @@ User_setup() {
         "keybinding"
         # "update_firefox_userChrome"
         "bookmark_nautilus"
-        "autostart_edge"
+        # "autostart_edge"
+        "autostart_vscode"
     )
 
     for task in "${tasks[@]}"; do
