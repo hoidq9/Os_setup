@@ -247,7 +247,7 @@ User_setup() {
             if systemd-detect-virt | grep -q "none"; then
                 extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733' '5928' '6580' '1319' '2224')
             else
-                extensions=()
+                extensions=('3628' '6682' '1160' '3843' '3010' '3733' '5928' '6580')
             fi
         elif [ "$os_id" == "almalinux" ]; then
             extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
@@ -298,10 +298,17 @@ User_setup() {
             # fi
 
             if dconf list /org/gnome/shell/extensions/ &>/dev/null; then
-                cp -r _rhel_extensions.conf all_extensions
-                sed -i "s/name_user_h/$user_current/g" all_extensions
-                dconf load /org/gnome/shell/extensions/ <all_extensions
-                rm -rf all_extensions
+                if systemd-detect-virt | grep -q "none"; then
+                    cp -r _rhel_extensions.conf all_extensions
+                    sed -i "s/name_user_h/$user_current/g" all_extensions
+                    dconf load /org/gnome/shell/extensions/ <all_extensions
+                    rm -rf all_extensions
+                else
+                    cp -r _rhel_extensions_virt.conf all_extensions_virt
+                    sed -i "s/name_user_h/$user_current/g" all_extensions_virt
+                    dconf load /org/gnome/shell/extensions/ <all_extensions_virt
+                    rm -rf all_extensions_virt
+                fi
             fi
         #     sed -i "s/Main.panel.addToStatusArea ('cpufreq-indicator', monitor);/Main.panel.addToStatusArea ('cpufreq-indicator', monitor, 0, 'center');/g" $HOME/.local/share/gnome-shell/extensions/cpufreq@konkor/extension.js
         #     sed -i "s/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 0, 'right')/Main.panel.addToStatusArea(Me.metadata.uuid, this._button, 1, 'right')/g" $HOME/.local/share/gnome-shell/extensions/extension-list@tu.berry/extension.js
