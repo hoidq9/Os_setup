@@ -15,7 +15,7 @@ source ../../variables.sh
 System_gdm() {
     settings=(
         # "org.gnome.desktop.interface text-scaling-factor 1.25"
-        "org.gnome.desktop.interface gtk-theme '"$os_id"_themes'"
+        # "org.gnome.desktop.interface gtk-theme '"$os_id"_themes'"
         "org.gnome.desktop.interface icon-theme '"$os_id"_icons'"
         "org.gnome.desktop.interface cursor-theme '"$os_id"_cursors'"
         "org.gnome.desktop.interface clock-show-date true"

@@ -2,8 +2,8 @@
 source ../../variables.sh
 
 Apps_Gcm() {
-    if ! command -v git &>/dev/null; then
-        echo "Git is not installed. Please install Git first."
+    if ! command -v git &>/dev/null && ! command -v code &>/dev/null; then
+        echo "Git and Visual Studio Code are not installed. Please install them first."
         exit 1
     fi
 
