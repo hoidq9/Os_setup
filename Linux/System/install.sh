@@ -8,14 +8,16 @@
 # sudo yum --enablerepo=elrepo-kernel install kernel-ml -y
 # sudo subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
 
-# shfmt() {
-#     mkdir -p $HOME/Drive/shfmt
-#     cd $HOME/Drive/shfmt
-#     curl -s https://api.github.com/repos/mvdan/sh/releases/latest | grep "browser_download_url" | grep "linux_amd64" | cut -d : -f 2,3 | tr -d \" | wget -i -
-#     mv * shfmt
-#     sudo mv shfmt /usr/bin/
-#     sudo chmod +x /usr/bin/shfmt
-# }
+shfmt_install() {
+	mkdir -p shfmt_install
+	cd shfmt_install || return
+	curl -s https://api.github.com/repos/mvdan/sh/releases/latest | grep "browser_download_url" | grep "linux_amd64" | cut -d : -f 2,3 | tr -d \" | wget -i -
+	mv * shfmt
+	mv shfmt /usr/bin/
+	chmod +x /usr/bin/shfmt
+	cd ..
+	rm -rf shfmt_install
+}
 
 # enpass_install() {
 # 	# curl -s https://www.enpass.io/downloads/ | grep "stable/portable/linux" | grep "https" | sed -n 's/.*\(https[^"]*\).*/\1/p'
@@ -30,7 +32,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo microsoft-edge.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
+cp google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -402,7 +404,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit microsoft-edge-stable code google-chrome-stable kernel-devel gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 ibus-m17n podman msr-tools gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks cockpit-machines cockpit-podman cockpit google-chrome-stable kernel-devel gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara
 		dnf group install "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
@@ -417,6 +419,12 @@ rhel_system() {
 		flatpak_repo
 		install_gpu_driver
 		change_policy_keyring
+		if systemd-detect-virt | grep -q "none"; then
+			cd $REPO_DIR/repo || return
+			cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
+			dnf install microsoft-edge-stable code -y
+			shfmt_install
+		fi
 		update-crypto-policies --set DEFAULT
 		vscode_custom
 		windsurf_custom
