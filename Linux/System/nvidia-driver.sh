@@ -7,7 +7,15 @@ if [ -z "$device_id" ]; then
     exit 1
 fi
 
-driver_version=$(curl -s https://www.nvidia.com/en-us/drivers/unix/ | sed -n '/<p[^>]*>.*Linux x86_64\/AMD64\/EM64T.*<\/p>/p' | grep -oP 'Latest Production Branch Version:</span>\s*<a [^>]+>[^<]+</a>' | grep -oP '<a [^>]+>[^<]+</a>' | grep -o "[0-9]\{3\}\.[0-9]\{3\}")
+# driver_version=$(curl -s https://www.nvidia.com/en-us/drivers/unix/ | sed -n '/<p[^>]*>.*Linux x86_64\/AMD64\/EM64T.*<\/p>/p' | grep -oP 'Latest Production Branch Version:</span>\s*<a [^>]+>[^<]+</a>' | grep -oP '<a [^>]+>[^<]+</a>' | grep -o "[0-9]\{3\}\.[0-9]\{3\}")
+
+driver_version=$(
+    curl -s https://www.nvidia.com/en-us/drivers/unix/ |
+        grep "Latest Production Branch Version:" |
+        grep "Linux x86_64/AMD64/EM64T" |
+        grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
+        tr -d '\0[:space:]'
+)
 
 if curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html | grep -qoiw "$device_id"; then
     echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
