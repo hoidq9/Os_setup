@@ -1,6 +1,7 @@
 #!/bin/bash
 mkdir -p /NVIDIA
 device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -z "$device_id" ]; then
     echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
@@ -16,12 +17,13 @@ driver_version=$(
         grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
         tr -d '\0[:space:]'
 )
+curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $DIR/supportedchips.html
 
-if curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html | grep -qoiw "$device_id"; then
+if grep -qoiw "$device_id" $DIR/supportedchips.html; then
     echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
 
     CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
-    BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
+    BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
 
     if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
         cd /NVIDIA || exit 1
@@ -46,3 +48,5 @@ else
     echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
     exit 1
 fi
+
+rm -rf $DIR/supportedchips.html
