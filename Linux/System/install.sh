@@ -117,40 +117,53 @@ create_keys_secureboot() {
 
 nvidia_drivers() {
 
-	# BASE_URL="https://download.nvidia.com/XFree86/Linux-x86_64"
-	# TMP_HTML=$(mktemp)
-	# curl -s "$BASE_URL/latest.txt" -o "$TMP_HTML"
-	# VERSIONS=$(grep -Eo '[0-9]+\.[0-9]+\.[0-9]+/' "$TMP_HTML" | sed 's:/$::')
+	mkdir -p /NVIDIA
+	device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
 
-	# if [[ -z "$VERSIONS" ]]; then
-	# 	rm -f "$TMP_HTML"
-	# 	exit 1
-	# fi
-
-	# LATEST_VERSION=$(printf "%s\n" $VERSIONS | sort -V | tail -n1)
-
-	# # How to get the current version of the NVIDIA driver installed on the system
-	# CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
-
-	# if [[ "$CURRENT_VERSION" < "$LATEST_VERSION" ]]; then
-	# 	rm -rf /NVIDIA/*
-	# 	cd /NVIDIA || exit 1
-	# 	RUN_FILE="NVIDIA-Linux-x86_64-${LATEST_VERSION}.run"
-	# 	DOWNLOAD_URL="${BASE_URL}/${LATEST_VERSION}/${RUN_FILE}"
-
-	# 	if [[ ! -f "$RUN_FILE" ]]; then
-	# 		wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
-	# 	fi
-
-	# 	rm -f "$TMP_HTML"
-
-	sh $REPO_DIR/nvidia-driver.sh
-
-	cd /NVIDIA || exit 1
-	if [ -f nvidia-driver.run ]; then
-		bash nvidia-driver.run -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
+	if [ -z "$device_id" ]; then
+		echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
+		exit 1
 	fi
-	rm -rf /NVIDIA/*
+
+	driver_version=$(
+		curl -s https://www.nvidia.com/en-us/drivers/unix/ |
+			grep "Latest Production Branch Version:" |
+			grep "Linux x86_64/AMD64/EM64T" |
+			grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
+			tr -d '\0[:space:]'
+	)
+	curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $REPO_DIR/supportedchips.html
+
+	if grep -qoiw "$device_id" $REPO_DIR/supportedchips.html; then
+		echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
+
+		CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader &>/dev/null || echo "0.0.0")
+		BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
+
+		if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
+			cd /NVIDIA || exit 1
+			RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
+			DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
+
+			if [[ ! -f "$RUN_FILE" ]]; then
+				wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
+			fi
+
+			if rpm -q dkms; then
+				dkms status | grep nvidia | awk '{print $1}' | while read module; do
+					dkms remove -m "$module" --all
+				done
+			fi
+
+			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
+
+		fi
+	else
+		echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
+		exit 1
+	fi
+
+	rm -rf $REPO_DIR/supportedchips.html
 }
 
 dkms_config() {
