@@ -137,7 +137,7 @@ nvidia_drivers() {
 	if grep -qoiw "$device_id" $REPO_DIR/supportedchips.html; then
 		echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
 
-		CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader &>/dev/null || echo "0.0.0")
+		CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader || echo "0.0.0")
 		BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
 
 		if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
