@@ -9,5 +9,8 @@ if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge")) {
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "DefaultSearchProviderEnabled"   -Value 1    -PropertyType DWord -Force
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "DefaultSearchProviderName"     -Value "Google" -PropertyType String -Force
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "DefaultSearchProviderSearchURL" -Value "https://www.google.com/search?q={searchTerms}" -PropertyType String -Force
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "DnsOverHttpsMode" -Value "secure" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "DnsOverHttpsTemplates" -Value "https://cloudflare-dns.com/dns-query" -PropertyType String -Force | Out-Null
+# New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "BuiltInDnsClientEnabled" -Value 1 -PropertyType DWord -Force | Out-Null
 
 Write-Host "Đã cấu hình xong. Vui lòng khởi động lại Microsoft Edge."
