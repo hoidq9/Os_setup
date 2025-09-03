@@ -47,10 +47,10 @@ create_keys_secureboot() {
 	cd /keys || exit 1
 
 	# Nếu chưa có private .key, mới sinh
-	if [ ! -f "${os_id}.key" ]; then
+	if [ ! -f "${os_id}-${user_current}.key" ]; then
 
 		# ==== CẤU HÌNH CHUNG ====
-		SUBJECT="/C=Vn/ST=Hanoi/L=Hanoi/O=VnH/OU=VnW/CN=${os_id}.com"
+		SUBJECT="/C=Vn/ST=Hanoi/L=Hanoi/O=VnH/OU=VnW/CN=${os_id}-${user_current}.com"
 
 		# 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)
 		openssl req -x509 \
@@ -58,59 +58,59 @@ create_keys_secureboot() {
 			-sha512 \
 			-days "${DAYS_VALID}" \
 			-nodes \
-			-keyout "${os_id}.key" \
-			-out "${os_id}.x509" \
+			-keyout "${os_id}-${user_current}.key" \
+			-out "${os_id}-${user_current}.x509" \
 			-subj "${SUBJECT}"
 
 		# 2. Chuyển certificate PEM (.x509) sang DER (.der)
 		openssl x509 \
-			-in "${os_id}.x509" \
+			-in "${os_id}-${user_current}.x509" \
 			-outform DER \
-			-out "${os_id}.der"
+			-out "${os_id}-${user_current}.der"
 
 		# 3. Chuyển từ DER trở lại PEM (.pem) – giống cert.pem
 		openssl x509 \
-			-in "${os_id}.der" \
+			-in "${os_id}-${user_current}.der" \
 			-inform DER \
 			-outform PEM \
-			-out "${os_id}.pem"
+			-out "${os_id}-${user_current}.pem"
 
 		# 4. Xuất một phần thông tin (để kiểm tra) nhưng chỉ hiển thị văn bản vài dòng đầu
-		openssl rsa -in "${os_id}.key" -noout -text | head -n 5 && echo "   …"
-		openssl x509 -in "${os_id}.x509" -noout -text | head -n 5 && echo "   …"
-		openssl x509 -in "${os_id}.der" -inform DER -noout -text | head -n 5 && echo "   …"
+		openssl rsa -in "${os_id}-${user_current}.key" -noout -text | head -n 5 && echo "   …"
+		openssl x509 -in "${os_id}-${user_current}.x509" -noout -text | head -n 5 && echo "   …"
+		openssl x509 -in "${os_id}-${user_current}.der" -inform DER -noout -text | head -n 5 && echo "   …"
 
 		# 5. Tạo thêm file PKCS#12 (.p12) chứa private key + certificate,
 		#    không đặt passphrase (pass empty) để dễ import vào NSS DB
 		openssl pkcs12 -export \
-			-inkey "${os_id}.key" \
-			-in "${os_id}.x509" \
-			-out "${os_id}.p12" \
-			-name "${os_id}" \
+			-inkey "${os_id}-${user_current}.key" \
+			-in "${os_id}-${user_current}.x509" \
+			-out "${os_id}-${user_current}.p12" \
+			-name "${os_id}-${user_current}" \
 			-passout pass:
 
-		cp "${os_id}.key" "${os_id}.priv"
-		cp "${os_id}.x509" "${os_id}.crt"
+		cp "${os_id}-${user_current}.key" "${os_id}-${user_current}.priv"
+		cp "${os_id}-${user_current}.x509" "${os_id}-${user_current}.crt"
 
 		# 6. Thiết lập quyền hạn chặt chẽ cho private key và file .p12
-		chmod 600 "${os_id}.key" # chỉ owner có thể đọc/ghi private key
-		chmod 600 "${os_id}.p12" # chỉ owner có thể đọc/ghi file PKCS#12
-		chmod 700 /keys          # chỉ owner có thể vào thư mục
+		chmod 600 "${os_id}-${user_current}.key" # chỉ owner có thể đọc/ghi private key
+		chmod 600 "${os_id}-${user_current}.p12" # chỉ owner có thể đọc/ghi file PKCS#12
+		chmod 700 /keys                          # chỉ owner có thể vào thư mục
 
 		# 7. Import vào NSS DB (nếu cần)
 		if [ "$os_id" == "rhel" ]; then
 			dnf install pesign -y
 			dnf upgrade -y pesign
-			pk12util -d /etc/pki/pesign -i /keys/"${os_id}.p12" -W ""
+			pk12util -d /etc/pki/pesign -i /keys/"${os_id}-${user_current}.p12" -W ""
 		fi
 
 		# 7. Thông báo các file đã sinh
 		echo "Hoàn thành! Bạn đã có các file trong /keys:"
-		echo "  • ${os_id}.key   (Private key, PEM, không mã hóa passphrase)"
-		echo "  • ${os_id}.x509  (Certificate, PEM X.509, SHA-512)"
-		echo "  • ${os_id}.der   (Certificate, DER X.509)"
-		echo "  • ${os_id}.pem   (Certificate PEM xuất từ DER)"
-		echo "  • ${os_id}.p12   (PKCS#12, chứa cả private key và certificate)"
+		echo "  • ${os_id}-${user_current}.key   (Private key, PEM, không mã hóa passphrase)"
+		echo "  • ${os_id}-${user_current}.x509  (Certificate, PEM X.509, SHA-512)"
+		echo "  • ${os_id}-${user_current}.der   (Certificate, DER X.509)"
+		echo "  • ${os_id}-${user_current}.pem   (Certificate PEM xuất từ DER)"
+		echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
 
 	fi
 }
@@ -155,7 +155,7 @@ nvidia_drivers() {
 				done
 			fi
 
-			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}".key --module-signing-public-key=/keys/"${os_id}".x509 --no-x-check --dkms --install-libglvnd
+			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}-${user_current}".key --module-signing-public-key=/keys/"${os_id}-${user_current}".x509 --no-x-check --dkms --install-libglvnd
 
 		fi
 	else
@@ -171,8 +171,8 @@ dkms_config() {
 		if [ ! -f /etc/dkms/framework.conf ]; then
 			touch /etc/dkms/framework.conf
 		else
-			grep -qxF 'mok_signing_key=/keys/'${os_id}'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/'${os_id}'.key' | sudo tee -a /etc/dkms/framework.conf
-			grep -qxF 'mok_certificate=/keys/'${os_id}'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/'${os_id}'.x509' | sudo tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_signing_key=/keys/'${os_id}-${user_current}'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/'${os_id}-${user_current}'.key' | sudo tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_certificate=/keys/'${os_id}-${user_current}'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/'${os_id}-${user_current}'.x509' | sudo tee -a /etc/dkms/framework.conf
 		fi
 	fi
 }
@@ -232,13 +232,13 @@ sign_kernel_garuda() {
 
 				for kernel_path in "${kernel_paths[@]}"; do
 					if [ -f "$kernel_path" ]; then
-						sbverify --cert /keys/${os_id}.x509 "$kernel_path" &>/dev/null
+						sbverify --cert /keys/${os_id}-${user_current}.x509 "$kernel_path" &>/dev/null
 
 						if [ $? -eq 0 ]; then
-							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/${os_id}.der)"
+							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/${os_id}-${user_current}.der)"
 							continue
 						elif [ $? -ne 0 ]; then
-							sbsign --key /keys/${os_id}.priv --cert /keys/${os_id}.crt --output "${kernel_path}.signed" "$kernel_path"
+							sbsign --key /keys/${os_id}-${user_current}.priv --cert /keys/${os_id}-${user_current}.crt --output "${kernel_path}.signed" "$kernel_path"
 							mv "${kernel_path}.signed" "${kernel_path}"
 						fi
 
@@ -250,6 +250,34 @@ sign_kernel_garuda() {
 		rm -rf /mount_btrfs
 	fi
 }
+
+sign_kernel_ubuntu() {
+	dnf install pesign -y
+	create_keys_secureboot
+	os-prober | grep 'Ubuntu' | while IFS= read -r line; do
+		device=$(echo "$line" | cut -d: -f1)
+		type=$(echo "$line" | cut -d: -f4)
+		if [ "$type" = "linux" ]; then
+			mount_point="/mnt/ubuntu-mount"
+			mkdir -p "$mount_point"
+			mount "$device" "$mount_point"
+			find $mount_point/boot/ -maxdepth 1 -type f -name 'vmlinuz-*-generic' -print0 |
+				while IFS= read -r -d '' k; do
+					# k có đường dẫn (./vmlinuz-...)
+					if grep -q "${os_id}-${user_current}" <<<"$(pesign -S -i "$k")"; then
+						echo "✅ Đã ký thành công: $k"
+					else
+						pesign --certificate "${os_id}-${user_current}" --in "$k" --sign --out "$k".signed
+						mv "$k".signed "$k"
+					fi
+				done
+			cd /mnt || return
+			umount -l "$mount_point"
+			# rm -rf "$mount_point"
+		fi
+	done
+}
+
 change_policy_keyring() {
 	if rpm -q gdm; then
 		sed -i '/password[[:space:]]\+optional[[:space:]]\+pam_gnome_keyring\.so use_authtok/ { /^[[:space:]]*#/! s/^/#/ }' /etc/pam.d/gdm-password
@@ -401,6 +429,7 @@ rhel_system() {
 		update-crypto-policies --set DEFAULT
 		vscode_custom
 		windsurf_custom
+		sign_kernel_ubuntu
 	}
 
 	main
