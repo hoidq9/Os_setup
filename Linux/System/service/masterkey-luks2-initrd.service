@@ -1,0 +1,9 @@
+[Unit]
+Description=Run extract masterkey LUKS2 on startup
+
+[Service]
+Type=simple
+ExecStart=sh /Extract-MasterKey-LUKS2/masterkey-luks2-initrd.sh
+
+[Install]
+WantedBy=multi-user.target
