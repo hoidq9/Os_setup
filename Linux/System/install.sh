@@ -122,7 +122,7 @@ nvidia_drivers() {
 
 	if [ -z "$device_id" ]; then
 		echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
-		exit 1
+		return 1
 	fi
 
 	driver_version=$(
@@ -132,7 +132,7 @@ nvidia_drivers() {
 			grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
 			tr -d '\0[:space:]'
 	)
-	curl -s https://download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $REPO_DIR/supportedchips.html
+	curl -s https://us.download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $REPO_DIR/supportedchips.html
 
 	if grep -qoiw "$device_id" $REPO_DIR/supportedchips.html; then
 		echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
@@ -141,7 +141,7 @@ nvidia_drivers() {
 		BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
 
 		if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
-			cd /NVIDIA || exit 1
+			cd /NVIDIA || return 1
 			RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
 			DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
 
@@ -160,7 +160,7 @@ nvidia_drivers() {
 		fi
 	else
 		echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
-		exit 1
+		return 1
 	fi
 
 	rm -rf $REPO_DIR/supportedchips.html
