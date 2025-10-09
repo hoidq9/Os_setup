@@ -1,0 +1,36 @@
+services:
+  # suse_sle:
+  #   image: registry.suse.com/suse/sle15:15.7
+  #   container_name: suse_sle15
+  #   tty: true
+  #   restart: always
+  #   volumes:
+  #     - /home/hoidq/Prj/Data/SUSE:/data
+  #   devices:
+  #     - /dev/tpm0:/dev/tpm0
+  #     - /dev/tpmrm0:/dev/tpmrm0
+  #   privileged: true
+
+  opensuse_tumbleweed:
+    image: opensuse/tumbleweed
+    container_name: opensuse_tumbleweed
+    tty: true
+    restart: always
+    volumes:
+      - /home/hoidq/Prj/Data/Tumbleweed:/data
+    devices:
+      - /dev/tpm0:/dev/tpm0
+      - /dev/tpmrm0:/dev/tpmrm0
+    privileged: true
+
+  fedora:
+    image: fedora:latest
+    container_name: fedora
+    tty: true
+    restart: always
+    volumes:
+      - /home/hoidq/Prj/Data/Fedora:/data
+    devices:
+      - /dev/tpm0:/dev/tpm0
+      - /dev/tpmrm0:/dev/tpmrm0
+    privileged: true
