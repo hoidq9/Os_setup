@@ -32,7 +32,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
+cp google-chrome.repo vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -386,8 +386,9 @@ fedora_system() {
 		create_keys_secureboot
 		install_gpu_driver
 		change_policy_keyring
-		sign_kernel_garuda
+		# sign_kernel_garuda
 		vscode_custom
+		services
 	}
 	main
 }
