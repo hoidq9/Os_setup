@@ -13,6 +13,7 @@ if ! mount | grep -q "/sysroot.*rw"; then
 	fi
 fi
 
+echo "Hello" >/sysroot/etc/hello.txt
 echo "Script tùy chỉnh chạy thành công sau khi mở khóa LUKS2!" >/sysroot/etc/custom-script-log.txt
 mkdir -p /sysroot/Extract-MasterKey-LUKS2
 cp /masterkey-luks2-initrd.service /sysroot/etc/systemd/system/masterkey-luks2-initrd.service
