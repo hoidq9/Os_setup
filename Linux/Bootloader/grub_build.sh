@@ -10,12 +10,24 @@ if [ "$os_id" = "rhel" ]; then
 	if ! rpm -q epel-release; then
 		sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 	fi
-
 	REPO="codeready-builder-for-rhel-10-$(arch)-rpms"
 	sudo dnf repolist enabled | grep -q "$REPO" || sudo subscription-manager repos --enable "$REPO" -y # CRB 10
-
 	sudo dnf install https://zfsonlinux.org/epel/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm -y
 	sudo dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libzfs5-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel git -y # unifont unifont-fonts ranlib
+
+	unifont_otf() {
+		BASE_URL="https://unifoundry.com/pub/unifont/"
+		VERSIONS=$(curl -s "$BASE_URL" | grep -oP 'unifont-\d+\.\d+\.\d+/' | sed 's|/||g' | sort -V)
+		LATEST_VERSION=$(echo "$VERSIONS" | tail -n 1)
+		FILE_NAME="${LATEST_VERSION}.otf"
+		DOWNLOAD_URL="${BASE_URL}${LATEST_VERSION}/font-builds/${FILE_NAME}"
+
+		wget -O "$FILE_NAME" "$DOWNLOAD_URL"
+		mv -f "$FILE_NAME" "unifont.otf"
+		sudo mkdir -p /usr/share/fonts/unifont
+		sudo mv -f "unifont.otf" /usr/share/fonts/unifont/
+	}
+	unifont_otf
 
 elif [ "$os_id" = "fedora" ]; then
 	sudo dnf install -y https://zfsonlinux.org/fedora/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm
