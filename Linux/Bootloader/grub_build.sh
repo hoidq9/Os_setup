@@ -5,6 +5,7 @@ if [ ! -d $HOME/Prj ]; then
 	mkdir -p $HOME/Prj
 fi
 cd $HOME/Prj
+sudo dnf upgrade -y
 
 if [ "$os_id" = "rhel" ]; then
 	if ! rpm -q epel-release; then
