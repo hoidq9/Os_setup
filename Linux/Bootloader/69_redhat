@@ -4,8 +4,11 @@ exec tail -n +3 $0
 # menu entries you want to add after this comment.  Be careful not to change
 # the 'exec tail' line above.
 
-search --no-floppy --fs-uuid --set=root cf6c73ae-919b-4a07-bfe1-72249af52a33
-menuentry "Red Hat Enterprise Linux (version) EncryptLUKS2" --class (osname) {
-	linux /boot/vmlinuz-6.16.10-200.fc42.x86_64 root=UUID=cf6c73ae-919b-4a07-bfe1-72249af52a33 rootfstype=ext4 rootflags=rw,relatime,seclabel
-	initrd /boot/initramfs-6.16.10-200.fc42.x86_64.img
+menuentry "Red Hat Enterprise Linux (os_version) EncryptLUKS2" --class (os_name) {
+	search --no-floppy --fs-uuid --set=first (efi_uuid)
+	tpm2_key_protector_init -T ($first)/efi/seal.tpm
+	cryptomount -u (boot_uuid) -P tpm2
+	search --no-floppy --fs-uuid --set=root (boot_mapper_uuid)
+	linux /vmlinuz-(kernel_version) crashkernel=512M rhgb (kernel_parameters)
+	initrd /initramfs-(kernel_version).img
 }
