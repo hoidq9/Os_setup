@@ -84,7 +84,10 @@ main_script() {
 	boot_device=$(findmnt -no SOURCE /boot 2>/dev/null || df -P /boot | tail -1 | awk '{print $1}')
 	root_device=$(findmnt -no SOURCE / 2>/dev/null || df -P / | tail -1 | awk '{print $1}')
 
-	if [ "${boot_device}" != "${root_device}" ]; then
+	if [ "${boot_device}" != "${root_device}" ] && [ "${boot_device}" == /dev/mapper/luks-* ]; then
 		echo "vmlinuz và initrd nằm trên phân vùng riêng biệt: ${boot_device}"
+		source_device=$(cryptsetup status "${boot_device#/dev/mapper/}" | grep 'device:' | awk '{print $2}' | tr -d ' ')
+		uuid=$(blkid -s UUID -o value "${source_device}")
+		echo "$uuid"
 	fi
 }
