@@ -1,0 +1,11 @@
+#!/usr/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+search --no-floppy --fs-uuid --set=root cf6c73ae-919b-4a07-bfe1-72249af52a33
+menuentry "Red Hat Enterprise Linux (version) EncryptLUKS2" --class (osname) {
+	linux /boot/vmlinuz-6.16.10-200.fc42.x86_64 root=UUID=cf6c73ae-919b-4a07-bfe1-72249af52a33 rootfstype=ext4 rootflags=rw,relatime,seclabel
+	initrd /boot/initramfs-6.16.10-200.fc42.x86_64.img
+}
