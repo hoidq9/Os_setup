@@ -14,7 +14,6 @@ build_grub_image() {
 	cd $(pwd)/../Grub/bin
 	./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c $REPO_DIR/config_"$os_id".cfg -s $REPO_DIR/sbat.csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace connectefi lsefimmap lsefi efifwsetup efi_netfs zstd xfs fshelp version tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi pkcs1_v15 crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 increment http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat blscfg loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector
 
-	sh $REPO_DIR/mount_setup.sh
 	cp grubx64_new.efi /boot/efi/EFI/"$os_id"/grubx64.efi
 
 }
@@ -70,5 +69,22 @@ run() {
 	else
 		git clone -b master https://github.com/rhboot/grub2.git
 		cd grub2
+	fi
+}
+
+main_script() {
+	kernel_version=$(uname -r)
+	vmlinuz_path="/boot/vmlinuz-${kernel_version}"
+	initrd_path="/boot/initramfs-${kernel_version}.img"
+
+	if [ ! -f "${vmlinuz_path}" ] || [ ! -f "${initrd_path}" ]; then
+		echo "Lỗi: Không tìm thấy vmlinuz hoặc initrd cho kernel ${kernel_version}."
+		exit 1
+	fi
+	boot_device=$(findmnt -no SOURCE /boot 2>/dev/null || df -P /boot | tail -1 | awk '{print $1}')
+	root_device=$(findmnt -no SOURCE / 2>/dev/null || df -P / | tail -1 | awk '{print $1}')
+
+	if [ "${boot_device}" != "${root_device}" ]; then
+		echo "vmlinuz và initrd nằm trên phân vùng riêng biệt: ${boot_device}"
 	fi
 }
