@@ -41,34 +41,34 @@ install_packages_dependencies() {
 
 build_grub_image() {
 	cd /home/$user_current/Prj/grub2
-	if grep -q "GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY:" grub-core/kern/efi/sb.c; then
 
-		install_packages_dependencies
-		mkdir -p $(pwd)/../Grub
-		./bootstrap
-		./autogen.sh
-		./configure --prefix="$(pwd)/../Grub" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-themes --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-libzfs --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking
-		make install
+	# Important
+	grep -q 'GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY' grub-core/kern/efi/sb.c || sed -i '/\*flags = GRUB_VERIFY_FLAGS_SKIP_VERIFICATION;/i\  case GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY:' grub-core/kern/efi/sb.c
 
-		cp $REPO_DIR/config_grub.cfg $REPO_DIR/config_"$os_id".cfg
-		cp $REPO_DIR/sbat_grub.csv $REPO_DIR/sbat_"$os_id".csv
+	install_packages_dependencies
+	mkdir -p $(pwd)/../Grub
+	./bootstrap
+	./autogen.sh
+	./configure --prefix="$(pwd)/../Grub" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-themes --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-libzfs --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking
+	make install
 
-		if [ "$os_id" = "rhel" ]; then
-			sed -i "s/osname/redhat/g" $REPO_DIR/config_"$os_id".cfg
-			grub_version_build=$(grep "grub_version" $(pwd)/../Grub/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
-			sed -i "s/(version)/$grub_version_build/g" $REPO_DIR/sbat_"$os_id".csv
-		fi
+	cp $REPO_DIR/config_grub.cfg $REPO_DIR/config_"$os_id".cfg
+	cp $REPO_DIR/sbat_grub.csv $REPO_DIR/sbat_"$os_id".csv
 
-		cd $(pwd)/../Grub/bin
-		./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c $REPO_DIR/config_"$os_id".cfg -s $REPO_DIR/sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector
-
-		cp grubx64_new.efi /boot/efi/EFI/redhat/grubx64.efi
-		# rm -rf $REPO_DIR/config_"$os_id".cfg
-
-	else
-		echo "GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY not found in grub-core/kern/efi/sb.c, skipping build."
-		exit 1
+	if [ "$os_id" = "rhel" ]; then
+		sed -i "s/osname/redhat/g" $REPO_DIR/config_"$os_id".cfg
+		grub_version_build=$(grep "grub_version" $(pwd)/../Grub/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
+		sed -i "s/(version)/$grub_version_build/g" $REPO_DIR/sbat_"$os_id".csv
 	fi
+
+	cd $(pwd)/../Grub/bin
+	./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c $REPO_DIR/config_"$os_id".cfg -s $REPO_DIR/sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector
+
+	if certutil -d /etc/pki/pesign -L | grep -qw "${os_id}-${user_current}"; then
+		pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign
+		mv grubx64.efi /boot/efi/EFI/redhat/
+	fi
+	# rm -rf $REPO_DIR/config_"$os_id".cfg
 }
 
 run() {
@@ -83,7 +83,7 @@ run() {
 		BRANCH=$(git rev-parse --abbrev-ref HEAD)
 		git fetch origin "$BRANCH"
 
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -f $(pwd)/../Grub/bin/grubx64_new.efi ]; then
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ]; then
 			git pull
 			build_grub_image
 		fi
@@ -117,7 +117,7 @@ luks2_key_tpm2_protect() {
 		echo $NC
 	fi
 
-	./grub-protect --action=add --protector=tpm2 --tpm2-asymmetric=ECC --tpm2-bank=SHA256 --tpm2-keyfile=/keys/key_luks2 --tpm2-outfile=/boot/efi/EFI/seal.tpm --tpm2-pcrs=7 --tpm2key
+	./grub-protect --action=add --protector=tpm2 --tpm2-asymmetric=ECC_NIST_P384 --tpm2-bank=SHA384 --tpm2-keyfile=/keys/key_luks2 --tpm2-outfile=/boot/efi/EFI/seal.tpm --tpm2-pcrs=7 --tpm2key
 
 }
 
