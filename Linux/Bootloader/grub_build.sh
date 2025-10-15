@@ -83,7 +83,7 @@ run() {
 		BRANCH=$(git rev-parse --abbrev-ref HEAD)
 		git fetch origin "$BRANCH"
 
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ]; then
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -f $(pwd)/../Grub/bin/grubx64_new.efi ]; then
 			git pull
 			build_grub_image
 		fi
