@@ -32,7 +32,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp google-chrome.repo vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo
+cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo google-chrome.repo
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -98,7 +98,7 @@ create_keys_secureboot() {
 		chmod 700 /keys                          # chỉ owner có thể vào thư mục
 
 		# 7. Import vào NSS DB (nếu cần)
-		if [ "$os_id" == "rhel" ]; then
+		if [ "$os_id" == "rhel" ] || [ "$os_id" == "fedora" ]; then
 			dnf install pesign -y
 			dnf upgrade -y pesign
 			pk12util -d /etc/pki/pesign -i /keys/"${os_id}-${user_current}.p12" -W ""
