@@ -16,7 +16,7 @@ install_packages_dependencies() {
 		REPO="codeready-builder-for-rhel-10-$(arch)-rpms"
 		dnf repolist enabled | grep -q "$REPO" || subscription-manager repos --enable "$REPO" -y # CRB 10
 		dnf install https://zfsonlinux.org/epel/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm -y
-		dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libzfs5-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel -y # unifont unifont-fonts ranlib
+		dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libzfs5-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel nss-tools pesign -y # unifont unifont-fonts ranlib
 
 		unifont_otf() {
 			BASE_URL="https://unifoundry.com/pub/unifont/"
@@ -34,7 +34,7 @@ install_packages_dependencies() {
 
 	elif [ "$os_id" = "fedora" ]; then
 		dnf install -y https://zfsonlinux.org/fedora/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm
-		dnf install autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libzfs6-devel libtasn1-devel device-mapper-devel unifont unifont-fonts make patch freetype-devel kernel-devel -y
+		dnf install autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libzfs6-devel libtasn1-devel device-mapper-devel unifont unifont-fonts make patch freetype-devel kernel-devel nss-tools pesign -y
 	fi
 	dnf upgrade -y
 }
@@ -59,6 +59,10 @@ build_grub_image() {
 		sed -i "s/osname/redhat/g" $REPO_DIR/config_"$os_id".cfg
 		grub_version_build=$(grep "grub_version" $(pwd)/../Grub/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
 		sed -i "s/(version)/$grub_version_build/g" $REPO_DIR/sbat_"$os_id".csv
+	elif [ "$os_id" = "fedora" ]; then
+		sed -i "s/osname/fedora/g" $REPO_DIR/config_"$os_id".cfg
+		grub_version_build=$(grep "grub_version" $(pwd)/../Grub/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
+		sed -i "s/(version)/$grub_version_build/g" $REPO_DIR/sbat_"$os_id".csv
 	fi
 
 	cd $(pwd)/../Grub/bin
@@ -66,7 +70,11 @@ build_grub_image() {
 
 	if certutil -d /etc/pki/pesign -L | grep -qw "${os_id}-${user_current}"; then
 		pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign
-		mv grubx64.efi /boot/efi/EFI/redhat/
+		if [ "$os_id" = "rhel" ]; then
+			mv grubx64.efi /boot/efi/EFI/redhat/
+		elif [ "$os_id" = "fedora" ]; then
+			mv grubx64.efi /boot/efi/EFI/fedora/
+		fi
 	fi
 	# rm -rf $REPO_DIR/config_"$os_id".cfg
 }
@@ -82,8 +90,7 @@ run() {
 		cd grub2
 		BRANCH=$(git rev-parse --abbrev-ref HEAD)
 		git fetch origin "$BRANCH"
-
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ]; then
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -d gnulib ]; then
 			git pull
 			build_grub_image
 		fi
@@ -98,26 +105,28 @@ luks2_key_tpm2_protect() {
 	mkdir -p /keys
 	chmod 600 /keys
 	cd /home/$user_current/Prj/Grub/bin
-	if [ ! -f /keys/key_luks2 ]; then
-		dd if=/dev/urandom of=/keys/key_luks2 bs=32 count=3
-		chmod 600 /keys/key_luks2
+	if [ ! -f /keys/key_important ]; then
+		dd if=/dev/urandom of=/keys/key_important bs=16 count=8
+		chmod 600 /keys/key_important
 	fi
 
 	GREEN='\033[1;32m'
 	RED='\033[0;31m'
 	NC='\033[0m'
 
-	if cryptsetup luksOpen --test-passphrase $1 --key-file=/keys/key_luks2 >/dev/null 2>&1; then
+	if cryptsetup luksOpen --test-passphrase $1 --key-file=/keys/key_important >/dev/null 2>&1; then
 		echo -e $GREEN
 		echo "LUKS2 device is already set up with the key file."
 		echo -e $NC
 	else
-		echo $RED
-		cryptsetup luksAddKey $1 /keys/key_luks2 --pbkdf=pbkdf2 --pbkdf-force-iterations=690298
-		echo $NC
+		echo -e $RED
+		cryptsetup luksAddKey $1 /keys/key_important --pbkdf=pbkdf2 --pbkdf-force-iterations=628960 --hash=sha3-512
+		echo -e $NC
 	fi
 
-	./grub-protect --action=add --protector=tpm2 --tpm2-asymmetric=ECC_NIST_P384 --tpm2-bank=SHA384 --tpm2-keyfile=/keys/key_luks2 --tpm2-outfile=/boot/efi/EFI/seal.tpm --tpm2-pcrs=7 --tpm2key
+	tpm2_nvundefine -C o 0x1000001 || true
+	tpm2_evictcontrol -C o -c 0x81000009 || true
+	./grub-protect --action=add --protector=tpm2 --tpm2-asymmetric=ECC --tpm2-bank=SHA256 --tpm2-keyfile=/keys/key_important --tpm2-pcrs=18 --tpm2-srk=0x81000009 --tpm2-nvindex=0x1000001 --tpm2key
 
 }
 
@@ -147,27 +156,41 @@ main_script() {
 		os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 		efi_device=$(findmnt -no SOURCE /boot/efi 2>/dev/null || df -P /boot/efi | tail -1 | awk '{print $1}')
 		efi_uuid=$(blkid -s UUID -o value "$efi_device")
-		kernel_ver=$(uname -r)
+		kernel_ver=$(rpm -q kernel | sort -V | tail -n1 | awk -F'kernel-' '{print $2}')
 		kernel_para=$(dracut --print-cmdline)
 		escaped_kernel_para=$(printf '%s' "$kernel_para" | sed 's/[&/\]/\\&/g')
 		path_disk=$(blkid -U $uuid_boot_locked)
 
-		cp $REPO_DIR/69_redhat /etc/grub.d/
-		# sed -i 's|\$os_version|(os_version)|g; s|\$os_id|(os_name)|g; s|\$uuid_boot_locked|(boot_uuid)|g; s|\$uuid_boot_unlocked|(boot_mapper_uuid)|g; s|'"$(uname -r)"'|(kernel_version)|g; s|'"$(dracut --print-cmdline)"'|(kernel_parameters)|g; s|\$efi_uuid|(efi_uuid)|g' /etc/grub.d/69_redhat
+		if [ "$os_id" = "rhel" ]; then
+			cp $REPO_DIR/69_redhat /etc/grub.d/
+			# sed -i 's|\$os_version|(os_version)|g; s|\$os_id|(os_name)|g; s|\$uuid_boot_locked|(boot_uuid)|g; s|\$uuid_boot_unlocked|(boot_mapper_uuid)|g; s|'"$(uname -r)"'|(kernel_version)|g; s|'"$(dracut --print-cmdline)"'|(kernel_parameters)|g; s|\$efi_uuid|(efi_uuid)|g' /etc/grub.d/69_redhat
 
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
-		sed -i "s/(boot_uuid)/$uuid_boot_locked/g" /etc/grub.d/69_redhat
-		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
-		sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
-		sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
-		sed -i "s/(efi_uuid)/$efi_uuid/g" /etc/grub.d/69_redhat
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
+			sed -i "s/(boot_uuid)/$uuid_boot_locked/g" /etc/grub.d/69_redhat
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
+			sed -i "s/(efi_uuid)/$efi_uuid/g" /etc/grub.d/69_redhat
+			chmod +x /etc/grub.d/69_redhat
+
+		elif [ "$os_id" = "fedora" ]; then
+			cp $REPO_DIR/1_fedora /etc/grub.d/
+			cp $REPO_DIR/grub.cfg /boot/efi/EFI/fedora
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora
+			sed -i "s/(boot_uuid)/$uuid_boot_locked/g" /boot/efi/EFI/fedora/grub.cfg
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /boot/efi/EFI/fedora/grub.cfg
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/1_fedora
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/1_fedora
+			sed -i "s/(efi_uuid)/$efi_uuid/g" /etc/grub.d/1_fedora
+			chmod +x /etc/grub.d/1_fedora
+		fi
 
 		run
 		luks2_key_tpm2_protect "$path_disk"
-		chmod +x /etc/grub.d/69_redhat
 		grub2-mkconfig -o /boot/grub2/grub.cfg
-		cp /boot/grub2/grub.cfg /boot/efi/EFI/redhat/grub.cfg
 	fi
 }
 
