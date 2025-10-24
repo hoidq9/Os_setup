@@ -63,7 +63,7 @@ if [[ "$enroll_fido2" == "y" ]]; then
 	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
 	read -r luks2_disk_path
 	# echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
-	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=yes --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
 	dracut -f
 	echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
 fi
@@ -81,9 +81,10 @@ if [[ "$enroll_tpm2" == "y" ]]; then
 	echo "add_dracutmodules+=\" tpm2-tss \"" | sudo tee /etc/dracut.conf.d/tpm2.conf
 	systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
 	if systemd-detect-virt | grep -q "none"; then
-		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 --tpm2-public-key=/keys/"$os_id"-"$user_current".crt $luks2_disk_path # --tpm2-with-pin=yes
+		# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-with-pin=yes --tpm2-public-key=/keys/"$os_id"-"$user_current".crt
+		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-public-key=srk-public.pem --tpm2-seal-key-handle=0x81000009 --tpm2-public-key-pcrs=18
 	else
-		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs "7" $luks2_disk_path
+		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path
 	fi
 	dracut -f
 	echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
