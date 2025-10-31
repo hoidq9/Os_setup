@@ -28,19 +28,19 @@ sh install.sh
 cd $REPO_DIR/System/gdm
 sh install.sh
 
-cd $REPO_DIR/Apps/Cursor
-sh install.sh
+# cd $REPO_DIR/Apps/Cursor
+# sh install.sh
 
 cd $REPO_DIR/Apps/Gcm
 sh install.sh
 
-cd $REPO_DIR/Apps/Warp_Terminal
-sh install.sh
+# cd $REPO_DIR/Apps/Warp_Terminal
+# sh install.sh
 
 cd $REPO_DIR/System
 sh clean.sh
 
-cd $REPO_DIR/Bootloader
-sh grub_build.sh
+# cd $REPO_DIR/Bootloader
+# sh grub_build.sh
 
 chmod -R 777 $REPO_DIR/logs

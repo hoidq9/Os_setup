@@ -241,7 +241,7 @@ User_setup() {
         # wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh
 
         if [ "$os_id" == "fedora" ]; then
-            extensions=('3628' '6272' '6682' '4679' '1160' '3843' '3010' '3733')
+            extensions=('3628' '6272' '6682' '4679' '1160' '3843' '3010' '3733' '6580')
         elif [ "$os_id" == "rhel" ]; then
             #     extensions=('1486' '3088' '3628' '4679' '1082' '3843' '120' '3733' '5219' '1460' '4670' '1160' '6272')
             if systemd-detect-virt | grep -q "none"; then
