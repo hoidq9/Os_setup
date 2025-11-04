@@ -1,0 +1,9 @@
+[Unit]
+Description=Run cpu_power.sh on startup
+
+[Service]
+Type=simple
+ExecStart=sh /Os_H/cpu_power.sh
+
+[Install]
+WantedBy=multi-user.target
