@@ -73,11 +73,23 @@ grub_new() {
 				dnf install btrfs-progs -y
 			fi
 		fi
+
+		boot_device=$(findmnt -no SOURCE /boot 2>/dev/null || df -P /boot | tail -1 | awk '{print $1}')
+		uuid_boot_unlocked=$(blkid -s UUID -o value "${boot_device}")
+		os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
+
+		if [ -f /boot/linux_uki_based_redhat.efi]; then
+			cp $REPO_DIR/2_fedora /etc/grub.d/
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/2_fedora
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/2_fedora
+			sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/2_fedora
+			chmod +x /etc/grub.d/2_fedora
+		fi
 	fi
 
-	if [ "$os_id" = "fedora" ]; then
-		grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
-	fi
+	# if [ "$os_id" = "fedora" ]; then
+	# 	grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+	# fi
 	grub2-mkconfig -o /boot/grub2/grub.cfg
 
 }
