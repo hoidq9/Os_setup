@@ -49,10 +49,10 @@ System_gdm() {
 
     if [ "$os_id" == "fedora" ]; then
         sudo -u gdm dbus-launch gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-        # cp $REPO_DIR/custom.conf /etc/gdm
+        cp $REPO_DIR/custom.conf /etc/gdm
     fi
 
-    sudo systemctl enable gdm
+    # sudo systemctl enable gdm
 }
 
 check_and_run System_gdm "$REPO_DIR/../../logs/System_gdm.log" "$REPO_DIR/../../logs/Result.log"
