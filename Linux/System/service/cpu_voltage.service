@@ -1,9 +1,0 @@
-[Unit]
-Description=Run cpu_voltage.sh on startup
-
-[Service]
-Type=simple
-ExecStart=sh /Os_H/cpu_voltage.sh
-
-[Install]
-WantedBy=multi-user.target
