@@ -5,7 +5,7 @@ services:
   #   tty: true
   #   restart: always
   #   volumes:
-  #     - /home/hoidq/Prj/Data/SUSE:/data
+  #     - $HOME/Prj/Data/SUSE:/data
   #   devices:
   #     - /dev/tpm0:/dev/tpm0
   #     - /dev/tpmrm0:/dev/tpmrm0
@@ -17,20 +17,20 @@ services:
     tty: true
     restart: always
     volumes:
-      - /home/hoidq/Prj/Data/Tumbleweed:/data
+      - $HOME/Prj/Data/Tumbleweed:/data
     devices:
       - /dev/tpm0:/dev/tpm0
       - /dev/tpmrm0:/dev/tpmrm0
     privileged: true
 
-  fedora:
-    image: fedora:latest
-    container_name: fedora
-    tty: true
-    restart: always
-    volumes:
-      - /home/hoidq/Prj/Data/Fedora:/data
-    devices:
-      - /dev/tpm0:/dev/tpm0
-      - /dev/tpmrm0:/dev/tpmrm0
-    privileged: true
+  # fedora:
+  #   image: fedora:latest
+  #   container_name: fedora
+  #   tty: true
+  #   restart: always
+  #   volumes:
+  #     - $HOME/Prj/Data/Fedora:/data
+  #   devices:
+  #     - /dev/tpm0:/dev/tpm0
+  #     - /dev/tpmrm0:/dev/tpmrm0
+  #   privileged: true
