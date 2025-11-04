@@ -62,9 +62,9 @@ if [[ "$enroll_fido2" == "y" ]]; then
 	read -r fido2_device_path
 	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
 	read -r luks2_disk_path
-	# echo "add_dracutmodules+=\" fido2 \"" | sudo tee /etc/dracut.conf.d/fido2.conf
+
+	systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
 	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
-	dracut -f
 	echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
 fi
 
@@ -78,15 +78,19 @@ if [[ "$enroll_tpm2" == "y" ]]; then
 	read -r tpm2_device_path
 	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
 	read -r luks2_disk_path
-	echo "add_dracutmodules+=\" tpm2-tss \"" | sudo tee /etc/dracut.conf.d/tpm2.conf
+
 	systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
 	if systemd-detect-virt | grep -q "none"; then
 		# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-with-pin=yes --tpm2-public-key=/keys/"$os_id"-"$user_current".crt
-		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-public-key=srk-public.pem --tpm2-seal-key-handle=0x81000009 --tpm2-public-key-pcrs=18
+		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=11 $luks2_disk_path # --tpm2-public-key=srk-public.pem --tpm2-seal-key-handle=0x81000009 --tpm2-public-key-pcrs=18 --unlock-fido2-device=auto
+
+		# mkdir -p /home/$user_current/pcr_result_luks_tpm || true
+		# systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
+		# awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
+		# chown -R "$user_current":"$user_current" /home/$user_current/pcr_result_luks_tpm
 	else
 		systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path
 	fi
-	dracut -f
 	echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
 fi
 
