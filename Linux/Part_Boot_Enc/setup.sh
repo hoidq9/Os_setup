@@ -9,7 +9,7 @@ uuid_boot_locked=$(uuidgen)
 uuid_boot_unlocked=$(uuidgen)
 user_current=$(logname)
 mkdir -p /keys/key_luks2_tpm2_pcr
-dd if=/dev/random of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
+dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
 
 dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
 ln -s /usr/lib64/pkgconfig/json-c.pc /usr/lib64/pkgconfig/json.pc
@@ -40,6 +40,26 @@ elif [[ "$deviceSpec" == PARTUUID=* ]]; then
 else
 	dev="$deviceSpec"
 fi
+
+create_one_time_file_enc_sha256() {
+	mkdir -p /repos/one_time_file_enc_sha256
+	cd /repos/one_time_file_enc_sha256 || return
+
+	R=/dev/urandom
+	# tạo file ngẫu nhiên 1 MiB
+	dd if=$R of=one_time_random.bin bs=1M count=1
+	# tạo key 32 bytes và IV 16 bytes
+	head -c32 $R >k
+	head -c16 $R >iv
+	K=$(xxd -p -c64 k)
+	IV=$(xxd -p -c32 iv)
+	# mã hoá AES-256-CTR
+	openssl enc -aes-256-ctr -K "$K" -iv "$IV" -in one_time_random.bin -out one_time_random.bin.enc
+	# tạo file expected.sha256 cho GRUB
+	sha256sum one_time_random.bin.enc >expected.sha256
+	# xoá key, IV và plaintext
+	(shred -u k iv one_time_random.bin 2>/dev/null || rm -f k iv one_time_random.bin)
+}
 
 grub2_bootloader_setup() {
 
@@ -99,7 +119,7 @@ pcr_oracle_tpm2_seal() {
 		cp sealed.tpm /boot/efi/
 
 	}
-	
+
 	mkdir -p /repos
 	cd /repos || return
 	if [ -d pcr-oracle/.git ]; then
@@ -120,7 +140,7 @@ pcr_oracle_tpm2_seal() {
 }
 
 create_keys_secureboot() {
-	set -euo pipefail
+	# set -euo pipefail
 	DAYS_VALID=1095
 
 	# Nếu chưa có thư mục /keys/secureboot, tạo mới với quyền 700 ngay từ đầu
@@ -226,7 +246,7 @@ create_luks2_boot_partition() {
 
 		cd / || return
 
-		set -euo pipefail
+		# set -euo pipefail
 		sync
 		umount -l /boot 2>/dev/null || true
 		umount -l $dev 2>/dev/null || true
@@ -237,7 +257,7 @@ create_luks2_boot_partition() {
 		rsync -aHAX --progress /mnt/data_boot/ /data_boot/
 		umount -l /mnt/data_boot || true
 
-		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=398201 --use-random $dev
+		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=398201 --use-urandom $dev
 		cryptsetup luksAddKey $dev /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=628960
 		systemd-cryptsetup attach my_crypt $dev /keys/key_luks2_tpm2_pcr/key.bin
 
@@ -254,6 +274,8 @@ create_luks2_boot_partition() {
 
 		mount -o rw /dev/mapper/my_crypt /boot
 		rsync -aHAX --progress /data_boot/ /boot/
+		cp /repos/one_time_file_enc_sha256/expected.sha256 /boot/expected.sha256
+		cp /repos/one_time_file_enc_sha256/one_time_random.bin.enc /boot/one_time_random.bin.enc
 		echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 		echo "add_dracutmodules+=\" tpm2-tss \"" | tee /etc/dracut.conf.d/tpm2.conf
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
@@ -271,12 +293,13 @@ create_luks2_boot_partition() {
 	fi
 }
 
-main() {
-	create_keys_secureboot
-	grub2_bootloader_setup
-	pcr_oracle_tpm2_seal
-	create_luks2_boot_partition
-}
+# main() {
+create_one_time_file_enc_sha256
+create_keys_secureboot
+grub2_bootloader_setup
+pcr_oracle_tpm2_seal
+create_luks2_boot_partition
+# }
 
-main |& tee /result.txt
+# main |& tee /result.txt
 echo "Hoàn tất thiết lập phân vùng /boot mã hóa LUKS2 với TPM2 và Secure Boot!"
