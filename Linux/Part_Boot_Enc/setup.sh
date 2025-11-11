@@ -42,21 +42,6 @@ else
 fi
 
 grub2_bootloader_setup() {
-	mkdir -p /repos/Grub
-	cd /repos || return
-	if [ -d grub2/.git ]; then
-		cd grub2
-		BRANCH=$(git rev-parse --abbrev-ref HEAD)
-		git fetch origin "$BRANCH"
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -d gnulib ]; then
-			git pull
-			build_grubx64_image
-		fi
-	else
-		git clone -b master https://github.com/rhboot/grub2.git
-		cd grub2
-		build_grubx64_image
-	fi
 
 	build_grubx64_image() {
 		grep -q 'GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY' grub-core/kern/efi/sb.c || sed -i '/\*flags = GRUB_VERIFY_FLAGS_SKIP_VERIFICATION;/i\  case GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY:' grub-core/kern/efi/sb.c
@@ -80,9 +65,41 @@ grub2_bootloader_setup() {
 		sbsign --key /keys/secureboot/${os_id}-${user_current}.key --cert /keys/secureboot/${os_id}-${user_current}.crt grubx64_new.efi --output grubx64.efi
 		cp grubx64.efi /boot/efi/EFI/$os_id/
 	}
+
+	mkdir -p /repos/Grub
+	cd /repos || return
+	if [ -d grub2/.git ]; then
+		cd grub2
+		BRANCH=$(git rev-parse --abbrev-ref HEAD)
+		git fetch origin "$BRANCH"
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -d gnulib ]; then
+			git pull
+			build_grubx64_image
+		fi
+	else
+		git clone -b master https://github.com/rhboot/grub2.git
+		cd grub2
+		build_grubx64_image
+	fi
+
 }
 
 pcr_oracle_tpm2_seal() {
+
+	build_sealed_tpm() {
+		./configure
+		make install
+		cd /keys/key_luks2_tpm2_pcr
+		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4
+
+		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
+
+		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-command=configfile" --before sign 0,4
+
+		cp sealed.tpm /boot/efi/
+
+	}
+	
 	mkdir -p /repos
 	cd /repos || return
 	if [ -d pcr-oracle/.git ]; then
@@ -100,19 +117,6 @@ pcr_oracle_tpm2_seal() {
 		build_sealed_tpm
 	fi
 
-	build_sealed_tpm() {
-		./configure
-		make install
-		cd /keys/key_luks2_tpm2_pcr
-		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4
-
-		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
-
-		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-command=configfile" --before sign 0,4
-
-		cp sealed.tpm /boot/efi/
-
-	}
 }
 
 create_keys_secureboot() {
