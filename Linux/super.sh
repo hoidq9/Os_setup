@@ -2,9 +2,6 @@
 source $(pwd)/variables.sh
 # dnf upgrade -y &>/dev/null
 
-cd $REPO_DIR/Wifi
-sh install.sh
-
 cd $REPO_DIR/System
 sh install.sh
 

@@ -36,92 +36,97 @@ cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo googl
 
 create_keys_secureboot() {
 	set -euo pipefail
-	DAYS_VALID=1095 # 3 năm
+	DAYS_VALID=1095
 
-	KEY_DIR="/keys"
-	KEY_NAME="${os_id}-${user_current}"
-	KEY_PATH="${KEY_DIR}/${KEY_NAME}.key"
-	CERT_PATH="${KEY_DIR}/${KEY_NAME}.x509"
-
-	# === 1. Chuẩn bị thư mục chứa khóa ===
-	if [ ! -d "${KEY_DIR}" ]; then
-		mkdir -p "${KEY_DIR}"
-		chmod 700 "${KEY_DIR}"
+	# Nếu chưa có thư mục /keys/secureboot, tạo mới với quyền 700 ngay từ đầu
+	if [ ! -d /keys/secureboot ]; then
+		mkdir -p /keys/secureboot
+		chmod 700 /keys/secureboot
 	fi
 
-	cd "${KEY_DIR}" || exit 1
+	cd /keys/secureboot || exit 1
 
-	# === 2. Kiểm tra xem cần tạo mới hay không ===
 	NEED_NEW_CERT=false
 
 	# Nếu chưa có key hoặc cert → tạo mới
-	if [ ! -f "${KEY_PATH}" ] || [ ! -f "${CERT_PATH}" ]; then
+	if [ ! -f "${os_id}-${user_current}.key" ]; then
 		NEED_NEW_CERT=true
 	else
 		# Nếu có cert rồi, kiểm tra xem có hết hạn chưa (7 ngày trước hạn thì tái tạo)
-		if ! openssl x509 -checkend $((7 * 24 * 3600)) -noout -in "${CERT_PATH}" >/dev/null 2>&1; then
+		if ! openssl x509 -checkend $((7 * 24 * 3600)) -noout -in "${os_id}-${user_current}.x509" >/dev/null 2>&1; then
 			echo "→ Chứng chỉ đã hết hạn hoặc sắp hết hạn. Sẽ tạo mới."
 			NEED_NEW_CERT=true
 		fi
 	fi
 
+	# Nếu chưa có private .key, mới sinh
 	if [ "${NEED_NEW_CERT}" = true ]; then
-		echo "Đang tạo mới ECC 521 keypair và chứng chỉ X.509…"
 
-		# ==== 3. Sinh ECC Private key + Self-signed certificate ====
-		SUBJECT="/C=VN/ST=Hanoi/L=Hanoi/O=VnH/OU=VnW/CN=${KEY_NAME}.com"
+		# ==== CẤU HÌNH CHUNG ====
+		SUBJECT="/C=Vn/ST=Hanoi/L=Hanoi/O=VnH/OU=VnW/CN=${os_id}-${user_current}.com"
 
+		# 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)
 		openssl req -x509 \
-			-newkey ec \
-			-pkeyopt ec_paramgen_curve:secp521r1 \
-			-pkeyopt ec_param_enc:named_curve \
+			-newkey rsa:4096 \
 			-sha512 \
 			-days "${DAYS_VALID}" \
 			-nodes \
-			-keyout "${KEY_PATH}" \
-			-out "${CERT_PATH}" \
+			-keyout "${os_id}-${user_current}.key" \
+			-out "${os_id}-${user_current}.x509" \
 			-subj "${SUBJECT}"
 
-		# ==== 4. Xuất định dạng DER, PEM, PKCS#12 ====
-		openssl x509 -in "${CERT_PATH}" -outform DER -out "${KEY_DIR}/${KEY_NAME}.der"
-		openssl x509 -in "${KEY_DIR}/${KEY_NAME}.der" -inform DER -outform PEM -out "${KEY_DIR}/${KEY_NAME}.pem"
+		# 2. Chuyển certificate PEM (.x509) sang DER (.der)
+		openssl x509 \
+			-in "${os_id}-${user_current}.x509" \
+			-outform DER \
+			-out "${os_id}-${user_current}.der"
 
+		# 3. Chuyển từ DER trở lại PEM (.pem) – giống cert.pem
+		openssl x509 \
+			-in "${os_id}-${user_current}.der" \
+			-inform DER \
+			-outform PEM \
+			-out "${os_id}-${user_current}.pem"
+
+		# 4. Xuất một phần thông tin (để kiểm tra) nhưng chỉ hiển thị văn bản vài dòng đầu
+		openssl rsa -in "${os_id}-${user_current}.key" -noout -text | head -n 5 && echo "   …"
+		openssl x509 -in "${os_id}-${user_current}.x509" -noout -text | head -n 5 && echo "   …"
+		openssl x509 -in "${os_id}-${user_current}.der" -inform DER -noout -text | head -n 5 && echo "   …"
+
+		# 5. Tạo thêm file PKCS#12 (.p12) chứa private key + certificate,
+		#    không đặt passphrase (pass empty) để dễ import vào NSS DB
 		openssl pkcs12 -export \
-			-inkey "${KEY_PATH}" \
-			-in "${CERT_PATH}" \
-			-out "${KEY_DIR}/${KEY_NAME}.p12" \
-			-name "${KEY_NAME}" \
+			-inkey "${os_id}-${user_current}.key" \
+			-in "${os_id}-${user_current}.x509" \
+			-out "${os_id}-${user_current}.p12" \
+			-name "${os_id}-${user_current}" \
 			-passout pass:
 
-		# Alias để tương thích
-		cp "${KEY_PATH}" "${KEY_DIR}/${KEY_NAME}.priv"
-		cp "${CERT_PATH}" "${KEY_DIR}/${KEY_NAME}.crt"
+		cp "${os_id}-${user_current}.key" "${os_id}-${user_current}.priv"
+		cp "${os_id}-${user_current}.x509" "${os_id}-${user_current}.crt"
 
-		# ==== 5. Quyền hạn ====
-		chmod 600 "${KEY_PATH}" "${KEY_DIR}/${KEY_NAME}.p12"
-		chmod 700 "${KEY_DIR}"
+		# 6. Thiết lập quyền hạn chặt chẽ cho private key và file .p12
+		chmod 600 "${os_id}-${user_current}.key" # chỉ owner có thể đọc/ghi private key
+		chmod 600 "${os_id}-${user_current}.p12" # chỉ owner có thể đọc/ghi file PKCS#12
+		chmod 700 /keys/secureboot               # chỉ owner có thể vào thư mục
 
+		# 7. Import vào NSS DB (nếu cần)
 		if [ "$os_id" == "rhel" ] || [ "$os_id" == "fedora" ]; then
 			dnf install pesign -y
 			dnf upgrade -y pesign
-			pk12util -d /etc/pki/pesign -i /keys/"${os_id}-${user_current}.p12" -W ""
+			pk12util -d /etc/pki/pesign -i /keys/secureboot/"${os_id}-${user_current}.p12" -W ""
 		fi
-		# ==== 6. Kiểm tra nhanh ====
-		echo "Kiểm tra khóa và chứng chỉ ECC 521:"
-		openssl ec -in "${KEY_PATH}" -noout -text | head -n 5 && echo "   …"
-		openssl x509 -in "${CERT_PATH}" -noout -text | head -n 5 && echo "   …"
 
-		echo "✅ Hoàn tất. Các file đã tạo tại ${KEY_DIR}:"
-		echo "  • ${KEY_NAME}.key   (ECC private key, secp521r1)"
-		echo "  • ${KEY_NAME}.x509  (Certificate X.509, SHA-512)"
-		echo "  • ${KEY_NAME}.der   (Certificate DER)"
-		echo "  • ${KEY_NAME}.pem   (Certificate PEM)"
-		echo "  • ${KEY_NAME}.p12   (PKCS#12, chứa cả private key + cert)"
-	else
-		echo "✅ Chứng chỉ ECC 521 hiện tại vẫn còn hạn sử dụng, không cần tạo mới."
+		# 7. Thông báo các file đã sinh
+		echo "Hoàn thành! Bạn đã có các file trong /keys/secureboot:"
+		echo "  • ${os_id}-${user_current}.key   (Private key, PEM, không mã hóa passphrase)"
+		echo "  • ${os_id}-${user_current}.x509  (Certificate, PEM X.509, SHA-512)"
+		echo "  • ${os_id}-${user_current}.der   (Certificate, DER X.509)"
+		echo "  • ${os_id}-${user_current}.pem   (Certificate PEM xuất từ DER)"
+		echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
+
 	fi
 }
-
 nvidia_drivers() {
 
 	mkdir -p /NVIDIA
@@ -162,7 +167,7 @@ nvidia_drivers() {
 				done
 			fi
 
-			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/"${os_id}-${user_current}".key --module-signing-public-key=/keys/"${os_id}-${user_current}".x509 --no-x-check --dkms --install-libglvnd
+			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/secureboot/"${os_id}-${user_current}".key --module-signing-public-key=/keys/secureboot/"${os_id}-${user_current}".x509 --no-x-check --dkms --install-libglvnd
 
 		fi
 	else
@@ -178,8 +183,8 @@ dkms_config() {
 		if [ ! -f /etc/dkms/framework.conf ]; then
 			touch /etc/dkms/framework.conf
 		else
-			grep -qxF 'mok_signing_key=/keys/'${os_id}-${user_current}'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/'${os_id}-${user_current}'.key' | tee -a /etc/dkms/framework.conf
-			grep -qxF 'mok_certificate=/keys/'${os_id}-${user_current}'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/'${os_id}-${user_current}'.x509' | tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_signing_key=/keys/secureboot/'${os_id}-${user_current}'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/secureboot/'${os_id}-${user_current}'.key' | tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_certificate=/keys/secureboot/'${os_id}-${user_current}'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/secureboot/'${os_id}-${user_current}'.x509' | tee -a /etc/dkms/framework.conf
 		fi
 	fi
 }
@@ -239,13 +244,13 @@ sign_kernel_garuda() {
 
 				for kernel_path in "${kernel_paths[@]}"; do
 					if [ -f "$kernel_path" ]; then
-						sbverify --cert /keys/${os_id}-${user_current}.x509 "$kernel_path" &>/dev/null
+						sbverify --cert /keys/secureboot/${os_id}-${user_current}.x509 "$kernel_path" &>/dev/null
 
 						if [ $? -eq 0 ]; then
-							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/${os_id}-${user_current}.der)"
+							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/secureboot/${os_id}-${user_current}.der)"
 							continue
 						elif [ $? -ne 0 ]; then
-							sbsign --key /keys/${os_id}-${user_current}.priv --cert /keys/${os_id}-${user_current}.crt --output "${kernel_path}.signed" "$kernel_path"
+							sbsign --key /keys/secureboot/${os_id}-${user_current}.priv --cert /keys/secureboot/${os_id}-${user_current}.crt --output "${kernel_path}.signed" "$kernel_path"
 							mv "${kernel_path}.signed" "${kernel_path}"
 						fi
 
@@ -380,12 +385,22 @@ create_uki_os_based_redhat() {
 
 		dracut -v --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$latest_kernel/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
 
-		pesign --in /boot/linux_uki_based_redhat.efi --out /boot/linux_uki_based_redhat.efi.signed --force --certificate "${os_id}-${user_current}" --sign
+		if [ "$os_id" == "rhel" ]; then
+			pesign --in /boot/linux_uki_based_redhat.efi --out /boot/linux_uki_based_redhat.efi.signed --force --certificate "${os_id}-${user_current}" --sign
+
+		elif [ "$os_id" == "fedora" ]; then
+			dnf install sbsigntools -y
+			sbsign --key /keys/secureboot/"${os_id}-${user_current}".key --cert /keys/secureboot/"${os_id}-${user_current}".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
+		fi
+
 		mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
 
-		systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
-		awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
-
+		if bootctl status | grep -q "Measured UKI: yes"; then
+			mkdir -p /home/$user_current/pcr_result_luks_tpm
+			systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
+			awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
+			chown -R $user_current:$user_current /home/$user_current/pcr_result_luks_tpm
+		fi
 	fi
 
 }
@@ -395,7 +410,7 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software virt-manager shfmt -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel
+		dnf install ptyxis podman xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 microsoft-edge-stable code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software virt-manager shfmt -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox
 		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                         # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
@@ -418,9 +433,9 @@ fedora_system() {
 		install_gpu_driver
 		change_policy_keyring
 		# sign_kernel_garuda
-		vscode_custom
+		# vscode_custom
 		services
-		create_uki_os_based_redhat
+		# create_uki_os_based_redhat
 	}
 	main
 }

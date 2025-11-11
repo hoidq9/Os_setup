@@ -74,17 +74,17 @@ grub_new() {
 			fi
 		fi
 
-		boot_device=$(findmnt -no SOURCE /boot 2>/dev/null || df -P /boot | tail -1 | awk '{print $1}')
-		uuid_boot_unlocked=$(blkid -s UUID -o value "${boot_device}")
-		os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
+		# boot_device=$(findmnt -no SOURCE /boot 2>/dev/null || df -P /boot | tail -1 | awk '{print $1}')
+		# uuid_boot_unlocked=$(blkid -s UUID -o value "${boot_device}")
+		# os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 
-		if [ -f /boot/linux_uki_based_redhat.efi]; then
-			cp $REPO_DIR/2_fedora /etc/grub.d/
-			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/2_fedora
-			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/2_fedora
-			sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/2_fedora
-			chmod +x /etc/grub.d/2_fedora
-		fi
+		# if [ -f /boot/linux_uki_based_redhat.efi ]; then
+		# 	cp $REPO_DIR/1_fedora_uki /etc/grub.d/
+		# 	sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora_uki
+		# 	sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora_uki
+		# 	sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora_uki
+		# 	chmod +x /etc/grub.d/1_fedora_uki
+		# fi
 	fi
 
 	# if [ "$os_id" = "fedora" ]; then

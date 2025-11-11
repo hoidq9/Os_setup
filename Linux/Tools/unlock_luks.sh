@@ -65,6 +65,20 @@ if [[ "$enroll_fido2" == "y" ]]; then
 
 	systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
 	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+
+	# dnf install sbsigntools -y &>/dev/null
+	# parameters=$(dracut --fstab --print-cmdline)
+	# dracut --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$(uname -r)/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
+	# sbsign --key /keys/"${os_id}-${user_current}".key --cert /keys/"${os_id}-${user_current}".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
+	# mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
+
+	# if bootctl status | grep -q "Measured UKI: yes"; then
+	# 	mkdir -p /home/$user_current/pcr_result_luks_tpm
+	# 	systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
+	# 	awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
+	# 	chown -R $user_current:$user_current /home/$user_current/pcr_result_luks_tpm
+	# fi
+
 	echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
 fi
 

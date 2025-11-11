@@ -26,7 +26,7 @@ almalinux_bootloader() {
 }
 
 Bootloader_themes() {
-	sh $REPO_DIR/mount_setup.sh
+	# sh $REPO_DIR/mount_setup.sh
 	"$os_id"_bootloader
 	sh $REPO_DIR/grub_setup.sh
 }
