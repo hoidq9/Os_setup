@@ -1,4 +1,6 @@
 #!/bin/bash
+dnf upgrade -y
+
 REPO_DIR="$(dirname "$(readlink -m "${0}")")"
 os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 os_id=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
@@ -10,6 +12,7 @@ uuid_boot_unlocked=$(uuidgen)
 user_current=$(logname)
 mkdir -p /keys/key_luks2_tpm2_pcr
 dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
+chmod 600 /keys/key_luks2_tpm2_pcr/key.bin
 
 dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
 ln -s /usr/lib64/pkgconfig/json-c.pc /usr/lib64/pkgconfig/json.pc
@@ -114,7 +117,7 @@ pcr_oracle_tpm2_seal() {
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 
-		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-command=configfile" --before sign 0,4
+		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4
 
 		cp sealed.tpm /boot/efi/
 
@@ -257,8 +260,8 @@ create_luks2_boot_partition() {
 		rsync -aHAX --progress /mnt/data_boot/ /data_boot/
 		umount -l /mnt/data_boot || true
 
-		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=398201 --use-urandom $dev
-		cryptsetup luksAddKey $dev /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=628960
+		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521 --use-urandom $dev
+		cryptsetup luksAddKey $dev /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521
 		systemd-cryptsetup attach my_crypt $dev /keys/key_luks2_tpm2_pcr/key.bin
 
 		if [ "$fsType" == "xfs" ]; then
@@ -274,11 +277,12 @@ create_luks2_boot_partition() {
 
 		mount -o rw /dev/mapper/my_crypt /boot
 		rsync -aHAX --progress /data_boot/ /boot/
-		cp /repos/one_time_file_enc_sha256/expected.sha256 /boot/expected.sha256
-		cp /repos/one_time_file_enc_sha256/one_time_random.bin.enc /boot/one_time_random.bin.enc
+		# cp /repos/one_time_file_enc_sha256/expected.sha256 /boot/expected.sha256
+		# cp /repos/one_time_file_enc_sha256/one_time_random.bin.enc /boot/one_time_random.bin.enc
 		echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 		echo "add_dracutmodules+=\" tpm2-tss \"" | tee /etc/dracut.conf.d/tpm2.conf
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
+		# echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key_root.bin \"" | tee /etc/dracut.conf.d/keys_root.conf
 		dracut -f -v
 		cp $REPO_DIR/1_fedora /etc/grub.d
 
@@ -294,7 +298,7 @@ create_luks2_boot_partition() {
 }
 
 # main() {
-create_one_time_file_enc_sha256
+# create_one_time_file_enc_sha256
 create_keys_secureboot
 grub2_bootloader_setup
 pcr_oracle_tpm2_seal
