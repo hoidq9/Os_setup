@@ -11,8 +11,11 @@ uuid_boot_locked=$(uuidgen)
 uuid_boot_unlocked=$(uuidgen)
 user_current=$(logname)
 mkdir -p /keys/key_luks2_tpm2_pcr
-dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
-chmod 600 /keys/key_luks2_tpm2_pcr/key.bin
+
+if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
+	dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
+	chmod 600 /keys/key_luks2_tpm2_pcr/key.bin
+fi
 
 dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
 ln -s /usr/lib64/pkgconfig/json-c.pc /usr/lib64/pkgconfig/json.pc
@@ -113,11 +116,11 @@ pcr_oracle_tpm2_seal() {
 		./configure
 		make install
 		cd /keys/key_luks2_tpm2_pcr
-		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4
+		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 
-		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4
+		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --after sign 0,4,7
 
 		cp sealed.tpm /boot/efi/
 
@@ -239,13 +242,19 @@ create_keys_secureboot() {
 
 create_luks2_boot_partition() {
 
-	cryptsetup isLuks "$dev" >/dev/null 2>&1
-	result=$?
+	# cryptsetup isLuks "$dev" >/dev/null 2>&1
+	# result=$?
 
 	root_dev=$(findmnt -no SOURCE /)
 	boot_dev=$(findmnt -no SOURCE /boot 2>/dev/null || true)
 
-	if [[ "$boot_dev" != "$root_dev" ]] && [[ $result != 0 ]]; then
+	if grep -q "/dev/mapper/" <<<"$boot_dev"; then
+		isLuks=true
+	else
+		isLuks=false
+	fi
+
+	if [[ "$boot_dev" != "$root_dev" ]] && [ "$isLuks" == false ]; then
 
 		cd / || return
 
@@ -282,7 +291,11 @@ create_luks2_boot_partition() {
 		echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 		echo "add_dracutmodules+=\" tpm2-tss \"" | tee /etc/dracut.conf.d/tpm2.conf
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
-		# echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key_root.bin \"" | tee /etc/dracut.conf.d/keys_root.conf
+
+		if [ -f /keys/key_luks2_tpm2_pcr/key_root.bin ]; then
+			echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key_root.bin \"" | tee /etc/dracut.conf.d/keys_root.conf
+		fi
+
 		dracut -f -v
 		cp $REPO_DIR/1_fedora /etc/grub.d
 
