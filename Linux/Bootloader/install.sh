@@ -15,9 +15,10 @@ fedora_bootloader() {
 }
 
 rhel_bootloader() {
-	cp -r $REPO_DIR/distro /boot/grub2/themes
-	grep -q "/boot/grub2/themes/distro/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/distro/theme.txt\"" >>/etc/default/grub
-	sed -i 's/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT=\"intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash\"/g' /etc/default/grub
+	# cp -r $REPO_DIR/distro /boot/grub2/themes
+	# grep -q "/boot/grub2/themes/distro/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/distro/theme.txt\"" >>/etc/default/grub
+	# sed -i 's/GRUB_CMDLINE_LINUX="rhgb quiet"/GRUB_CMDLINE_LINUX_DEFAULT=\"intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash\"/g' /etc/default/grub
+	echo "Rhel 10"
 }
 
 almalinux_bootloader() {
