@@ -452,16 +452,16 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks google-chrome-stable gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara
-		dnf group install "Fonts" -y
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable
+		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
 	}
 
 	main() {
-		cp $REPO_DIR/checksum/SHA1.pmod /etc/crypto-policies/policies/modules
+		# cp $REPO_DIR/checksum/SHA1.pmod /etc/crypto-policies/policies/modules
 		# update-crypto-policies --set LEGACY
-		update-crypto-policies --set DEFAULT:SHA1
+		# update-crypto-policies --set DEFAULT:SHA1
 		epel_check
 		run
 		flatpak_repo
@@ -470,14 +470,14 @@ rhel_system() {
 		if systemd-detect-virt | grep -q "none"; then
 			cd $REPO_DIR/repo || return
 			cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
-			dnf install microsoft-edge-stable code ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel -y
+			dnf install code ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel -y # microsoft-edge-stable
 			shfmt_install
 			services
 		fi
-		update-crypto-policies --set DEFAULT
-		vscode_custom
-		windsurf_custom
-		sign_kernel_ubuntu
+		# update-crypto-policies --set DEFAULT
+		# vscode_custom
+		# windsurf_custom
+		# sign_kernel_ubuntu
 	}
 
 	main
