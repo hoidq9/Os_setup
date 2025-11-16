@@ -37,6 +37,9 @@ sh install.sh
 cd $REPO_DIR/System
 sh clean.sh
 
+cd $REPO_DIR/Part_Boot_Enc
+sh setup.sh
+
 # cd $REPO_DIR/Bootloader
 # sh grub_build.sh
 
