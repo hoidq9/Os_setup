@@ -10,11 +10,16 @@ escaped_kernel_para=$(printf '%s' "$kernel_para" | sed 's/[&/\]/\\&/g')
 uuid_boot_locked=$(uuidgen)
 uuid_boot_unlocked=$(uuidgen)
 user_current=$(logname)
+GREEN='\033[1;32m'
+NC='\033[0m'
+
 mkdir -p /keys/key_luks2_tpm2_pcr
 
 if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
 	dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key.bin bs=16 count=8
+	dd if=/dev/urandom of=/keys/key_luks2_tpm2_pcr/key_root.bin bs=16 count=8
 	chmod 600 /keys/key_luks2_tpm2_pcr/key.bin
+	chmod 600 /keys/key_luks2_tpm2_pcr/key_root.bin
 fi
 
 dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
@@ -22,6 +27,17 @@ ln -s /usr/lib64/pkgconfig/json-c.pc /usr/lib64/pkgconfig/json.pc
 
 mapfile -t lines < <(awk '!/^#/ && ($2=="/boot") {print $1, $2, $3}' /etc/fstab)
 mapfile -t lines1 < <(awk '!/^#/ && ($2=="/boot/efi") {print $1, $2, $3}' /etc/fstab)
+# mapfile -t lines2 < <(awk '!/^#/ && ($2=="/") {print $1, $2, $3}' /etc/fstab)
+
+# if ((${#lines2[@]})); then
+# 	read -r deviceSpec2 mountPoint2 fsType2 <<<"${lines2[0]}"
+# fi
+
+# if [[ "$deviceSpec2" == UUID=* ]]; then
+# 	uuid_root="${deviceSpec2#UUID=}"
+# elif [[ "$deviceSpec2" == PARTUUID=* ]]; then
+# 	uuid_root="${deviceSpec2#PARTUUID=}"
+# fi
 
 if ((${#lines1[@]})); then
 	read -r deviceSpec1 mountPoint1 fsType1 <<<"${lines1[0]}"
@@ -46,6 +62,25 @@ elif [[ "$deviceSpec" == PARTUUID=* ]]; then
 else
 	dev="$deviceSpec"
 fi
+
+get_real_backing() {
+	dev="$1"
+
+	while true; do
+		base=$(basename "$(readlink -f "$dev")")
+		slaves=(/sys/block/$base/slaves/*)
+
+		# Nếu không có slave → đây là thiết bị thật (nvme, sda…)
+		if [ ! -e "${slaves[0]}" ]; then
+			echo "$dev"
+			return
+		fi
+
+		# Lấy slave đầu tiên
+		slave=$(basename "${slaves[0]}")
+		dev="/dev/$slave"
+	done
+}
 
 create_one_time_file_enc_sha256() {
 	mkdir -p /repos/one_time_file_enc_sha256
@@ -254,7 +289,13 @@ create_luks2_boot_partition() {
 		isLuks=false
 	fi
 
-	if [[ "$boot_dev" != "$root_dev" ]] && [ "$isLuks" == false ]; then
+	if grep -q "/dev/mapper/" <<<"$root_dev"; then
+		isLuksRoot=true
+	else
+		isLuksRoot=false
+	fi
+
+	if [[ "$boot_dev" != "$root_dev" ]] && [ "$isLuks" == false ] && [ "$isLuksRoot" == true ]; then
 
 		cd / || return
 
@@ -269,8 +310,15 @@ create_luks2_boot_partition() {
 		rsync -aHAX --progress /mnt/data_boot/ /data_boot/
 		umount -l /mnt/data_boot || true
 
+		root_real=$(get_real_backing "$root_dev")
+
+		echo -e "${GREEN} Action with device ${dev} ${NC}"
 		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521 --use-urandom $dev
 		cryptsetup luksAddKey $dev /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521
+
+		echo -e "${GREEN} Action with device ${root_real} ${NC}"
+		cryptsetup luksAddKey $root_real /keys/key_luks2_tpm2_pcr/key_root.bin
+
 		systemd-cryptsetup attach my_crypt $dev /keys/key_luks2_tpm2_pcr/key.bin
 
 		if [ "$fsType" == "xfs" ]; then
@@ -293,18 +341,42 @@ create_luks2_boot_partition() {
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
 
 		if [ -f /keys/key_luks2_tpm2_pcr/key_root.bin ]; then
+			uuid_root_real=$(blkid -s UUID -o value $root_real)
+
+			# in line contain root real uuid, if contain none, replace to /keys/key_luks2_tpm2_pcr/key_root.bin
+
+			awk -v uuid="$uuid_root_real" -v key="/keys/key_luks2_tpm2_pcr/key_root.bin" '
+				$0 ~ uuid {
+    				if ($3 == "none") {
+        				$3 = key
+    				}
+				}
+				{print}
+			' /etc/crypttab >/etc/crypttab.tmp && mv /etc/crypttab.tmp /etc/crypttab
+
 			echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key_root.bin \"" | tee /etc/dracut.conf.d/keys_root.conf
 		fi
 
 		dracut -f -v
-		cp $REPO_DIR/1_fedora /etc/grub.d
 
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora
-		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora
-		sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/1_fedora
-		sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/1_fedora
-		chmod +x /etc/grub.d/1_fedora
+		if [ "$os_id" == "fedora" ]; then
+			cp $REPO_DIR/1_fedora /etc/grub.d
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/1_fedora
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/1_fedora
+			chmod +x /etc/grub.d/1_fedora
+
+		elif [ "$os_id" == "rhel" ]; then
+			cp $REPO_DIR/69_redhat /etc/grub.d/
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
+			chmod +x /etc/grub.d/69_redhat
+		fi
 
 		grub2-mkconfig -o /boot/grub2/grub.cfg
 	fi
