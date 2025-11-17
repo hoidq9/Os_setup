@@ -22,7 +22,34 @@ if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
 	chmod 600 /keys/key_luks2_tpm2_pcr/key_root.bin
 fi
 
-dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
+if [ "$os_id" = "rhel" ]; then
+	if ! rpm -q epel-release; then
+		dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
+	fi
+	REPO="codeready-builder-for-rhel-10-$(arch)-rpms"
+	dnf repolist enabled | grep -q "$REPO" || subscription-manager repos --enable "$REPO" -y # CRB 10
+	# dnf install https://zfsonlinux.org/epel/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm -y
+	dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel nss-tools pesign tpm2-tss-devel libfdisk-devel -y # unifont unifont-fonts ranlib libzfs5-devel
+
+	unifont_otf() {
+		BASE_URL="https://unifoundry.com/pub/unifont/"
+		VERSIONS=$(curl -s "$BASE_URL" | grep -oP 'unifont-\d+\.\d+\.\d+/' | sed 's|/||g' | sort -V)
+		LATEST_VERSION=$(echo "$VERSIONS" | tail -n 1)
+		FILE_NAME="${LATEST_VERSION}.otf"
+		DOWNLOAD_URL="${BASE_URL}${LATEST_VERSION}/font-builds/${FILE_NAME}"
+
+		wget -O "$FILE_NAME" "$DOWNLOAD_URL"
+		mv -f "$FILE_NAME" "unifont.otf"
+		mkdir -p /usr/share/fonts/unifont
+		mv -f "unifont.otf" /usr/share/fonts/unifont/
+	}
+	unifont_otf
+
+elif [ "$os_id" = "fedora" ]; then
+	dnf install -y tpm2-tss-devel git json-c-devel util-linux pkg-config gcc make libfdisk-devel cryptsetup autoconf automake autopoint dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts ranlib fuse3 fuse3-devel libtasn1-devel device-mapper-devel unifont unifont-fonts patch freetype-devel kernel-devel nss-tools pesign sbsigntools
+fi
+
+dnf upgrade -y
 ln -s /usr/lib64/pkgconfig/json-c.pc /usr/lib64/pkgconfig/json.pc
 
 mapfile -t lines < <(awk '!/^#/ && ($2=="/boot") {print $1, $2, $3}' /etc/fstab)
@@ -123,8 +150,13 @@ grub2_bootloader_setup() {
 		cd /repos/Grub/bin || return
 		./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c config_"$os_id".cfg -s sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector usb_keyboard hashsum test
 
-		sbsign --key /keys/secureboot/${os_id}-${user_current}.key --cert /keys/secureboot/${os_id}-${user_current}.crt grubx64_new.efi --output grubx64.efi
-		cp grubx64.efi /boot/efi/EFI/$os_id/
+		if [ "$os_id" == "fedora" ]; then
+			sbsign --key /keys/secureboot/${os_id}-${user_current}.key --cert /keys/secureboot/${os_id}-${user_current}.crt grubx64_new.efi --output grubx64.efi
+			cp grubx64.efi /boot/efi/EFI/
+		elif [ "$os_id" == "rhel" ]; then
+			pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign
+			cp grubx64.efi /boot/efi/EFI/redhat/
+		fi
 	}
 
 	mkdir -p /repos/Grub
@@ -155,7 +187,7 @@ pcr_oracle_tpm2_seal() {
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 
-		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --after sign 0,4,7
+		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7
 
 		cp sealed.tpm /boot/efi/
 
