@@ -135,31 +135,31 @@ grub2_bootloader_setup() {
 		grep -q 'GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY' grub-core/kern/efi/sb.c || sed -i '/\*flags = GRUB_VERIFY_FLAGS_SKIP_VERIFICATION;/i\  case GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY:' grub-core/kern/efi/sb.c
 		./bootstrap
 		./autogen.sh
-		./configure --prefix="/repos/Grub" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking # --enable-libzfs --enable-grub-themes
+		./configure --prefix="/repos/Grub2" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking # --enable-libzfs --enable-grub-themes
 		make install
 
-		cp $REPO_DIR/config_grub.cfg /repos/Grub/bin/config_"$os_id".cfg
-		cp $REPO_DIR/sbat_grub.csv /repos/Grub/bin/sbat_"$os_id".csv
+		cp $REPO_DIR/config_grub.cfg /repos/Grub2/bin/config_"$os_id".cfg
+		cp $REPO_DIR/sbat_grub.csv /repos/Grub2/bin/sbat_"$os_id".csv
 
-		grub_version_build=$(grep "grub_version" /repos/Grub/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
-		sed -i "s/(version)/$grub_version_build/g" /repos/Grub/bin/sbat_"$os_id".csv
-		sed -i "s/(efi_uuid)/$uuid_efi/g" /repos/Grub/bin/config_"$os_id".cfg
-		sed -i "s/(boot_locked_uuid)/$uuid_boot_locked/g" /repos/Grub/bin/config_"$os_id".cfg
-		sed -i "s/(boot_unlocked_uuid)/$uuid_boot_unlocked/g" /repos/Grub/bin/config_"$os_id".cfg
+		grub_version_build=$(grep "grub_version" /repos/Grub2/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
+		sed -i "s/(version)/$grub_version_build/g" /repos/Grub2/bin/sbat_"$os_id".csv
+		sed -i "s/(efi_uuid)/$uuid_efi/g" /repos/Grub2/bin/config_"$os_id".cfg
+		sed -i "s/(boot_locked_uuid)/$uuid_boot_locked/g" /repos/Grub2/bin/config_"$os_id".cfg
+		sed -i "s/(boot_unlocked_uuid)/$uuid_boot_unlocked/g" /repos/Grub2/bin/config_"$os_id".cfg
 
-		cd /repos/Grub/bin || return
+		cd /repos/Grub2/bin || return
 		./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c config_"$os_id".cfg -s sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector usb_keyboard hashsum test
 
 		if [ "$os_id" == "fedora" ]; then
 			sbsign --key /keys/secureboot/${os_id}-${user_current}.key --cert /keys/secureboot/${os_id}-${user_current}.crt grubx64_new.efi --output grubx64.efi
 			cp grubx64.efi /boot/efi/EFI/
 		elif [ "$os_id" == "rhel" ]; then
-			pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign
+			pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign --force
 			cp grubx64.efi /boot/efi/EFI/redhat/
 		fi
 	}
 
-	mkdir -p /repos/Grub
+	mkdir -p /repos/Grub2
 	cd /repos || return
 	if [ -d grub2/.git ]; then
 		cd grub2
@@ -183,11 +183,11 @@ pcr_oracle_tpm2_seal() {
 		./configure
 		make install
 		cd /keys/key_luks2_tpm2_pcr
-		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7
+		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7,14
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 
-		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7
+		pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7,14
 
 		cp sealed.tpm /boot/efi/
 
