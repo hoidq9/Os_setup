@@ -363,7 +363,7 @@ User_setup() {
 		# "update_firefox_userChrome"
 		"bookmark_nautilus"
 		# "autostart_edge"
-		"autostart_vscode"
+		# "autostart_vscode"
 	)
 
 	for task in "${tasks[@]}"; do
