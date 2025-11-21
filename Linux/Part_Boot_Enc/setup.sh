@@ -69,6 +69,8 @@ mapfile -t lines1 < <(awk '!/^#/ && ($2=="/boot/efi") {print $1, $2, $3}' /etc/f
 if ((${#lines1[@]})); then
 	read -r deviceSpec1 mountPoint1 fsType1 <<<"${lines1[0]}"
 fi
+echo "$mountPoint1"
+echo "$fsType1"
 
 if [[ "$deviceSpec1" == UUID=* ]]; then
 	uuid_efi="${deviceSpec1#UUID=}"
@@ -79,6 +81,7 @@ fi
 if ((${#lines[@]})); then
 	read -r deviceSpec mountPoint fsType <<<"${lines[0]}"
 fi
+echo "$mountPoint"
 
 if [[ "$deviceSpec" == UUID=* ]]; then
 	uuid_old="${deviceSpec#UUID=}"
@@ -95,7 +98,7 @@ get_real_backing() {
 
 	while true; do
 		base=$(basename "$(readlink -f "$dev")")
-		slaves=(/sys/block/$base/slaves/*)
+		slaves=(/sys/block/"$base"/slaves/*)
 
 		# Nếu không có slave → đây là thiết bị thật (nvme, sda…)
 		if [ ! -e "${slaves[0]}" ]; then
@@ -138,8 +141,8 @@ grub2_bootloader_setup() {
 		./configure --prefix="/repos/Grub2" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking # --enable-libzfs --enable-grub-themes
 		make install
 
-		cp $REPO_DIR/config_grub.cfg /repos/Grub2/bin/config_"$os_id".cfg
-		cp $REPO_DIR/sbat_grub.csv /repos/Grub2/bin/sbat_"$os_id".csv
+		cp "$REPO_DIR"/config_grub.cfg /repos/Grub2/bin/config_"$os_id".cfg
+		cp "$REPO_DIR"/sbat_grub.csv /repos/Grub2/bin/sbat_"$os_id".csv
 
 		grub_version_build=$(grep "grub_version" /repos/Grub2/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
 		sed -i "s/(version)/$grub_version_build/g" /repos/Grub2/bin/sbat_"$os_id".csv
@@ -151,7 +154,7 @@ grub2_bootloader_setup() {
 		./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c config_"$os_id".cfg -s sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector usb_keyboard hashsum test
 
 		if [ "$os_id" == "fedora" ]; then
-			sbsign --key /keys/secureboot/${os_id}-${user_current}.key --cert /keys/secureboot/${os_id}-${user_current}.crt grubx64_new.efi --output grubx64.efi
+			sbsign --key /keys/secureboot/"${os_id}"-"${user_current}".key --cert /keys/secureboot/"${os_id}"-"${user_current}".crt grubx64_new.efi --output grubx64.efi
 			cp grubx64.efi /boot/efi/EFI/
 		elif [ "$os_id" == "rhel" ]; then
 			pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign --force
@@ -162,16 +165,16 @@ grub2_bootloader_setup() {
 	mkdir -p /repos/Grub2
 	cd /repos || return
 	if [ -d grub2/.git ]; then
-		cd grub2
+		cd grub2 || return
 		BRANCH=$(git rev-parse --abbrev-ref HEAD)
 		git fetch origin "$BRANCH"
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ] || [ ! -d gnulib ]; then
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/"$BRANCH")" ] || [ ! -d gnulib ]; then
 			git pull
 			build_grubx64_image
 		fi
 	else
 		git clone -b master https://github.com/rhboot/grub2.git
-		cd grub2
+		cd grub2 || return
 		build_grubx64_image
 	fi
 
@@ -182,7 +185,7 @@ pcr_oracle_tpm2_seal() {
 	build_sealed_tpm() {
 		./configure
 		make install
-		cd /keys/key_luks2_tpm2_pcr
+		cd /keys/key_luks2_tpm2_pcr || return
 		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7,14
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
@@ -196,17 +199,17 @@ pcr_oracle_tpm2_seal() {
 	mkdir -p /repos
 	cd /repos || return
 	if [ -d pcr-oracle/.git ]; then
-		cd pcr-oracle
+		cd pcr-oracle || return
 		BRANCH=$(git rev-parse --abbrev-ref HEAD)
 		git fetch origin "$BRANCH"
-		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/$BRANCH)" ]; then
+		if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/"$BRANCH")" ]; then
 			git pull
 			build_sealed_tpm
 		fi
 
 	else
 		git clone https://github.com/openSUSE/pcr-oracle.git
-		cd pcr-oracle
+		cd pcr-oracle || return
 		build_sealed_tpm
 	fi
 
@@ -334,7 +337,7 @@ create_luks2_boot_partition() {
 		# set -euo pipefail
 		sync
 		umount -l /boot 2>/dev/null || true
-		umount -l $dev 2>/dev/null || true
+		umount -l "$dev" 2>/dev/null || true
 
 		mkdir -p /mnt/data_boot || true
 		mount -o ro "$dev" /mnt/data_boot
@@ -345,18 +348,18 @@ create_luks2_boot_partition() {
 		root_real=$(get_real_backing "$root_dev")
 
 		echo -e "${GREEN} Action with device ${dev} ${NC}"
-		cryptsetup luksFormat --uuid=$uuid_boot_locked --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521 --use-urandom $dev
-		cryptsetup luksAddKey $dev /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521
+		cryptsetup luksFormat --uuid="$uuid_boot_locked" --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521 --use-urandom "$dev"
+		cryptsetup luksAddKey "$dev" /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2 --pbkdf-force-iterations=3986521
 
 		echo -e "${GREEN} Action with device ${root_real} ${NC}"
-		cryptsetup luksAddKey $root_real /keys/key_luks2_tpm2_pcr/key_root.bin
+		cryptsetup luksAddKey "$root_real" /keys/key_luks2_tpm2_pcr/key_root.bin
 
-		systemd-cryptsetup attach my_crypt $dev /keys/key_luks2_tpm2_pcr/key.bin
+		systemd-cryptsetup attach my_crypt "$dev" /keys/key_luks2_tpm2_pcr/key.bin
 
 		if [ "$fsType" == "xfs" ]; then
-			mkfs.xfs -m uuid=$uuid_boot_unlocked -L LinuxH /dev/mapper/my_crypt
+			mkfs.xfs -m uuid="$uuid_boot_locked" -L LinuxH /dev/mapper/my_crypt
 		elif [ "$fsType" == "ext4" ]; then
-			mkfs.ext4 -U $uuid_boot_unlocked -L LinuxH /dev/mapper/my_crypt
+			mkfs.ext4 -U "$uuid_boot_locked" -L LinuxH /dev/mapper/my_crypt
 		fi
 
 		sed -i "s/$uuid_old/$uuid_boot_unlocked/g" /etc/fstab
@@ -373,7 +376,7 @@ create_luks2_boot_partition() {
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
 
 		if [ -f /keys/key_luks2_tpm2_pcr/key_root.bin ]; then
-			uuid_root_real=$(blkid -s UUID -o value $root_real)
+			uuid_root_real=$(blkid -s UUID -o value "$root_real")
 
 			# in line contain root real uuid, if contain none, replace to /keys/key_luks2_tpm2_pcr/key_root.bin
 
@@ -392,7 +395,7 @@ create_luks2_boot_partition() {
 		dracut -f -v
 
 		if [ "$os_id" == "fedora" ]; then
-			cp $REPO_DIR/1_fedora /etc/grub.d
+			cp "$REPO_DIR"/1_fedora /etc/grub.d
 			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora
 			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora
 			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora
@@ -401,7 +404,7 @@ create_luks2_boot_partition() {
 			chmod +x /etc/grub.d/1_fedora
 
 		elif [ "$os_id" == "rhel" ]; then
-			cp $REPO_DIR/69_redhat /etc/grub.d/
+			cp "$REPO_DIR"/69_redhat /etc/grub.d/
 			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
 			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
 			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat

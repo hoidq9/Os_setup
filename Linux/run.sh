@@ -1,21 +1,21 @@
 #!/bin/bash
 source "$(pwd)/variables.sh"
 
-if [ ! -d $REPO_DIR/logs ]; then
+if [ ! -d "$REPO_DIR"/logs ]; then
     mkdir -p "$REPO_DIR/logs"
 fi
 
-touch $REPO_DIR/logs/Result.log
+touch "$REPO_DIR"/logs/Result.log
 
 find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix -- &>/dev/null
 
 if grep -q "Done" "$REPO_DIR/logs/Result.log" &>/dev/null; then
-    rm -rf $REPO_DIR/logs/*
+    rm -rf "$REPO_DIR"/logs/*
     echo "" >"$REPO_DIR/logs/Result.log"
 fi
 
 if [ ! -s "$REPO_DIR/logs/Result.log" ]; then
-    rm -rf $REPO_DIR/logs/*
+    rm -rf "$REPO_DIR"/logs/*
 fi
 
 if grep -q "Failed" "$REPO_DIR/logs/Result.log" &>/dev/null; then
@@ -31,8 +31,8 @@ fi
 
 [ ! -d "$HOME/Prj" ] && mkdir -p "$HOME/Prj"
 
-cd $REPO_DIR
-if id -nG "$user_current" | grep -q '\bwheel\b'; then
+cd "$REPO_DIR" || return
+if id -nG "$user_current" | grep -q '\wheel\b'; then
     sudo sh super.sh
     sh normal.sh
 else
