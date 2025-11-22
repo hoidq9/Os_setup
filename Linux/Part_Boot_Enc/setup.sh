@@ -27,7 +27,7 @@ if [ "$os_id" = "rhel" ]; then
 		dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 	fi
 	REPO="codeready-builder-for-rhel-10-$(arch)-rpms"
-	dnf repolist enabled | grep -q "$REPO" || subscription-manager repos --enable "$REPO" -y # CRB 10
+	dnf repolist enabled | grep -q "$REPO" || subscription-manager repos --enable "$REPO" # CRB 10
 	# dnf install https://zfsonlinux.org/epel/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm -y
 	dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel nss-tools pesign tpm2-tss-devel libfdisk-devel -y # unifont unifont-fonts ranlib libzfs5-devel
 
