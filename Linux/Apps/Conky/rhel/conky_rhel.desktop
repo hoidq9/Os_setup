@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=conky
-Exec=bash /home/name_user_h/Conky/run_conky.sh
+Exec=bash -c "sleep 30 && /home/name_user_h/Conky/conky.AppImage --daemonize"
 StartupNotify=false
 Terminal=false
 Icon=/usr/share/icons/rhel_icons/apps/scalable/indicator-cpufreq.svg
