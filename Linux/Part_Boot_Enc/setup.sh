@@ -155,7 +155,7 @@ grub2_bootloader_setup() {
 
 		if [ "$os_id" == "fedora" ]; then
 			sbsign --key /keys/secureboot/"${os_id}"-"${user_current}".key --cert /keys/secureboot/"${os_id}"-"${user_current}".crt grubx64_new.efi --output grubx64.efi
-			cp grubx64.efi /boot/efi/EFI/
+			cp grubx64.efi /boot/efi/EFI/fedora/
 		elif [ "$os_id" == "rhel" ]; then
 			pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign --force
 			cp grubx64.efi /boot/efi/EFI/redhat/
@@ -185,7 +185,9 @@ pcr_oracle_tpm2_seal() {
 	build_sealed_tpm() {
 		./configure
 		make install
+
 		cd /keys/key_luks2_tpm2_pcr || return
+
 		pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7,14
 
 		pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
