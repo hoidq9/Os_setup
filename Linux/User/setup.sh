@@ -124,7 +124,7 @@ User_setup() {
 		gsettings set org.gnome.desktop.input-sources show-all-sources true
 		gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:appmenu'
 		gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
-		gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2595
+		gsettings set org.gnome.settings-daemon.plugins.color night-light-temperature 2322
 		gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-automatic false
 		gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 0.0
 		gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 0.0
@@ -164,7 +164,7 @@ User_setup() {
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop']"
 			# "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
 		elif [ "$os_id" == "fedora" ]; then
-			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
+			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop', 'code-insiders.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
 		elif [ "$os_id" == "almalinux" ]; then
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
 		fi
