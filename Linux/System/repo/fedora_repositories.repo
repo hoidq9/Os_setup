@@ -49,7 +49,7 @@ skip_if_unavailable=False
 [fedora_rhel]
 name=Fedora Rhel $releasever - $basearch
 baseurl=https://download-cc-rdu01.fedoraproject.org/pub/fedora/linux/releases/$releasever/Everything/$basearch/os/
-enabled=1
+enabled=0
 countme=1
 metadata_expire=7d
 repo_gpgcheck=0
@@ -61,7 +61,7 @@ skip_if_unavailable=False
 [updates_rhel]
 name=Fedora Rhel $releasever - $basearch - Updates
 baseurl=https://download-cc-rdu01.fedoraproject.org/pub/fedora/linux/updates/$releasever/Everything/$basearch/
-enabled=1
+enabled=0
 countme=1
 repo_gpgcheck=0
 type=rpm
