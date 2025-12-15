@@ -185,7 +185,7 @@ grub2_bootloader_setup() {
 			fi
 		}
 
-		mkdir -p /home/$user_current/repos/Grub2
+		mkdir -p /home/$user_current/repos/
 		cd /home/$user_current/repos || return
 		if [ -d grub2/.git ]; then
 			cd grub2 || return
