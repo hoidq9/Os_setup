@@ -1,4 +1,19 @@
 # Kiểm tra xem script có đang chạy với quyền admin không
+
+# Thư mục đích
+$destDir = "C:\themes"
+
+# Tạo thư mục C:\themes nếu chưa tồn tại
+if (-not (Test-Path $destDir)) {
+    New-Item -Path $destDir -ItemType Directory -Force | Out-Null
+}
+
+# Đường dẫn file omp.json (cùng thư mục với setup.ps1)
+$sourceFile = Join-Path $PSScriptRoot "wholespace.omp.json"
+
+# Copy file vào C:\themes
+Copy-Item -Path $sourceFile -Destination $destDir -Force
+
 function Test-IsAdmin {
     $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
@@ -38,5 +53,5 @@ $webClient.DownloadFile($url, $outputFile)
 Remove-Item .\install.ps1
 
 $scriptDir = $PSScriptRoot
-$scriptPath = Join-Path -Path $scriptDir -ChildPath "Set-EdgeSearch.ps1"
+$scriptPath = Join-Path -Path $scriptDir -ChildPath "Set-Edge.ps1"
 & $scriptPath
