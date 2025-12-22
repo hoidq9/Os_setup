@@ -1,6 +1,7 @@
 #!/bin/bash
 dnf upgrade -y
 
+RED='\033[0;31m'
 REPO_DIR="$(dirname "$(readlink -m "${0}")")"
 os_version=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 os_id=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
@@ -13,6 +14,11 @@ user_current=$(logname)
 GREEN='\033[1;32m'
 NC='\033[0m'
 
+if [ "$EUID" -ne 0 ]; then
+	echo -e "${RED}This script must be run as root.${NC}"
+	exit 1
+fi
+
 mkdir -p /keys/key_luks2_tpm2_pcr
 
 if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
@@ -21,6 +27,10 @@ if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
 	chmod 600 /keys/key_luks2_tpm2_pcr/key.bin
 	chmod 600 /keys/key_luks2_tpm2_pcr/key_root.bin
 fi
+
+efi_dev=$(findmnt -no SOURCE /boot/efi 2>/dev/null || true)
+mkdir -p /custom_efi
+mount "$efi_dev" /custom_efi
 
 root_dev=$(findmnt -no SOURCE /)
 boot_dev=$(findmnt -no SOURCE /boot 2>/dev/null || true)
@@ -178,10 +188,10 @@ grub2_bootloader_setup() {
 
 			if [ "$os_id" == "fedora" ]; then
 				sbsign --key /keys/secureboot/"${os_id}"-"${user_current}".key --cert /keys/secureboot/"${os_id}"-"${user_current}".crt grubx64_new.efi --output grubx64.efi
-				cp grubx64.efi /boot/efi/EFI/fedora/
+				cp grubx64.efi /custom_efi/EFI/fedora/
 			elif [ "$os_id" == "rhel" ]; then
 				pesign --in grubx64_new.efi --out grubx64.efi --certificate "${os_id}-${user_current}" --sign --force
-				cp grubx64.efi /boot/efi/EFI/redhat/
+				cp grubx64.efi /custom_efi/EFI/redhat/
 			fi
 		}
 
@@ -218,7 +228,7 @@ pcr_oracle_tpm2_seal() {
 
 			pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7,14
 
-			cp sealed.tpm /boot/efi/
+			cp sealed.tpm /custom_efi
 
 		}
 
