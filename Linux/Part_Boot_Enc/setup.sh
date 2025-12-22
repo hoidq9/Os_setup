@@ -19,7 +19,7 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-mkdir -p /home/$user_current/repos
+mkdir -p /home/$user_current/Prj/repos
 mkdir -p /keys/key_luks2_tpm2_pcr
 
 if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
@@ -139,8 +139,8 @@ get_real_backing() {
 }
 
 create_one_time_file_enc_sha256() {
-	mkdir -p /home/$user_current/repos/one_time_file_enc_sha256
-	cd /home/$user_current/repos/one_time_file_enc_sha256 || return
+	mkdir -p /home/$user_current/Prj/repos/one_time_file_enc_sha256
+	cd /home/$user_current/Prj/repos/one_time_file_enc_sha256 || return
 
 	R=/dev/urandom
 	# tạo file ngẫu nhiên 1 MiB
@@ -166,25 +166,25 @@ grub2_bootloader_setup() {
 			grep -q 'GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY' grub-core/kern/efi/sb.c || sed -i '/\*flags = GRUB_VERIFY_FLAGS_SKIP_VERIFICATION;/i\  case GRUB_FILE_TYPE_CRYPTODISK_ENCRYPTION_KEY:' grub-core/kern/efi/sb.c
 			./bootstrap
 			./autogen.sh
-			./configure --prefix="/home/$user_current/repos/Grub2" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking # --enable-libzfs --enable-grub-themes
+			./configure --prefix="/home/$user_current/Prj/repos/Grub2" --with-platform=efi --target=x86_64 --enable-stack-protector --enable-mm-debug --enable-cache-stats --enable-boot-time --enable-grub-emu-sdl2 --enable-grub-emu-sdl --enable-grub-emu-pci --enable-grub-mkfont --enable-grub-mount --enable-device-mapper --enable-liblzma --enable-grub-protect --with-gnu-ld --with-unifont=/usr/share/fonts/unifont/unifont.otf --with-dejavufont=/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf --enable-threads=posix+isoc --enable-cross-guesses=conservative --enable-dependency-tracking # --enable-libzfs --enable-grub-themes
 			make install
 
-			cp "$REPO_DIR"/config_grub.cfg /home/$user_current/repos/Grub2/bin/config_"$os_id".cfg
-			cp "$REPO_DIR"/sbat_grub.csv /home/$user_current/repos/Grub2/bin/sbat_"$os_id".csv
+			cp "$REPO_DIR"/config_grub.cfg /home/$user_current/Prj/repos/Grub2/bin/config_"$os_id".cfg
+			cp "$REPO_DIR"/sbat_grub.csv /home/$user_current/Prj/repos/Grub2/bin/sbat_"$os_id".csv
 
-			grub_version_build=$(grep "grub_version" /home/$user_current/repos/Grub2/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
-			sed -i "s/(version)/$grub_version_build/g" /home/$user_current/repos/Grub2/bin/sbat_"$os_id".csv
-			sed -i "s/(efi_uuid)/$uuid_efi/g" /home/$user_current/repos/Grub2/bin/config_"$os_id".cfg
+			grub_version_build=$(grep "grub_version" /home/$user_current/Prj/repos/Grub2/lib/grub/x86_64-efi/modinfo.sh | cut -d'"' -f2)
+			sed -i "s/(version)/$grub_version_build/g" /home/$user_current/Prj/repos/Grub2/bin/sbat_"$os_id".csv
+			sed -i "s/(efi_uuid)/$uuid_efi/g" /home/$user_current/Prj/repos/Grub2/bin/config_"$os_id".cfg
 
 			boot_real=$(get_real_backing "$boot_dev")
 			uuid_boot_luks_locked=$(cryptsetup luksUUID "$boot_real")
 			mapped_name=$(basename "$boot_dev")
 			uuid_boot_luks_unlocked=$(blkid -s UUID -o value "/dev/mapper/$mapped_name")
 
-			sed -i "s/(boot_locked_uuid)/$uuid_boot_luks_locked/g" /home/$user_current/repos/Grub2/bin/config_"$os_id".cfg
-			sed -i "s/(boot_unlocked_uuid)/$uuid_boot_luks_unlocked/g" /home/$user_current/repos/Grub2/bin/config_"$os_id".cfg
+			sed -i "s/(boot_locked_uuid)/$uuid_boot_luks_locked/g" /home/$user_current/Prj/repos/Grub2/bin/config_"$os_id".cfg
+			sed -i "s/(boot_unlocked_uuid)/$uuid_boot_luks_unlocked/g" /home/$user_current/Prj/repos/Grub2/bin/config_"$os_id".cfg
 
-			cd /home/$user_current/repos/Grub2/bin || return
+			cd /home/$user_current/Prj/repos/Grub2/bin || return
 			./grub-mkimage -d ../lib/grub/x86_64-efi -p '' -o grubx64_new.efi -O x86_64-efi -c config_"$os_id".cfg -s sbat_"$os_id".csv at_keyboard boot keylayouts usbserial_common usb serial usbserial_usbdebug usbserial_ftdi usbserial_pl2303 tpm chain efinet net backtrace lsefimmap lsefi efifwsetup zstd xfs fshelp tftp test syslinuxcfg normal extcmd sleep terminfo search search_fs_uuid search_fs_file search_label regexp reboot png bitmap bufio pgp gcry_sha1 mpi crypto password_pbkdf2 pbkdf2 gcry_sha512 part_gpt part_msdos part_apple minicmd mdraid1x diskfilter mdraid09 luks2 afsplitter cryptodisk json luks lvm linux loopback jpeg iso9660 http halt acpi mmap gzio gcry_crc gfxmenu video font gfxterm bitmap_scale trig video_colors gcry_whirlpool gcry_twofish gcry_sha256 gcry_serpent gcry_rsa gcry_rijndael fat f2fs ext2 echo procfs archelp configfile cat loadenv disk gettext datetime terminal priority_queue all_video video_bochs video_cirrus efi_uga efi_gop video_fb probe btrfs afs bfs hfs zfs multiboot multiboot2 ls lsmmap ntfs smbios loadbios tpm2_key_protector usb_keyboard hashsum test
 
 			if [ "$os_id" == "fedora" ]; then
@@ -196,8 +196,8 @@ grub2_bootloader_setup() {
 			fi
 		}
 
-		mkdir -p /home/$user_current/repos/
-		cd /home/$user_current/repos || return
+		mkdir -p /home/$user_current/Prj/repos/
+		cd /home/$user_current/Prj/repos || return
 		if [ -d grub2/.git ]; then
 			cd grub2 || return
 			BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -233,8 +233,8 @@ pcr_oracle_tpm2_seal() {
 
 		}
 
-		mkdir -p /home/$user_current/repos
-		cd /home/$user_current/repos || return
+		mkdir -p /home/$user_current/Prj/repos
+		cd /home/$user_current/Prj/repos || return
 		if [ -d pcr-oracle/.git ]; then
 			cd pcr-oracle || return
 			BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -391,8 +391,8 @@ create_luks2_boot_partition() {
 
 		mount -o rw /dev/mapper/my_crypt /boot
 		rsync -aHAX --progress /data_boot/ /boot/
-		# cp /home/$user_current/repos/one_time_file_enc_sha256/expected.sha256 /boot/expected.sha256
-		# cp /home/$user_current/repos/one_time_file_enc_sha256/one_time_random.bin.enc /boot/one_time_random.bin.enc
+		# cp /home/$user_current/Prj/repos/one_time_file_enc_sha256/expected.sha256 /boot/expected.sha256
+		# cp /home/$user_current/Prj/repos/one_time_file_enc_sha256/one_time_random.bin.enc /boot/one_time_random.bin.enc
 		echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 		echo "add_dracutmodules+=\" tpm2-tss \"" | tee /etc/dracut.conf.d/tpm2.conf
 		echo "install_items+=\" /keys/key_luks2_tpm2_pcr/key.bin \"" | tee /etc/dracut.conf.d/keys.conf
@@ -447,6 +447,6 @@ grub2_bootloader_setup
 pcr_oracle_tpm2_seal
 # }
 
-chown -R $user_current:$user_current /home/$user_current/repos
+chown -R $user_current:$user_current /home/$user_current/Prj/repos
 # main |& tee /result.txt
 echo "Hoàn tất thiết lập phân vùng /boot mã hóa LUKS2 với TPM2 và Secure Boot!"
