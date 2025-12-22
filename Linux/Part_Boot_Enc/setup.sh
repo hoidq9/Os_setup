@@ -19,6 +19,7 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
+mkdir -p /home/$user_current/repos
 mkdir -p /keys/key_luks2_tpm2_pcr
 
 if [ ! -f /keys/key_luks2_tpm2_pcr/key.bin ]; then
@@ -54,7 +55,7 @@ if [ "$os_id" = "rhel" ]; then
 	REPO="codeready-builder-for-rhel-10-$(arch)-rpms"
 	dnf repolist enabled | grep -q "$REPO" || subscription-manager repos --enable "$REPO" # CRB 10
 	# dnf install https://zfsonlinux.org/epel/zfs-release-2-8$(rpm --eval "%{dist}").noarch.rpm -y
-	dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel nss-tools pesign tpm2-tss-devel libfdisk-devel -y # unifont unifont-fonts ranlib libzfs5-devel
+	dnf install autoconf automake gettext-devel dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts fuse3 fuse3-devel libtasn1-devel device-mapper-devel make patch freetype-devel kernel-devel nss-tools pesign tpm2-tss-devel libfdisk-devel libtool autoconf-archive -y # unifont unifont-fonts ranlib libzfs5-devel
 
 	unifont_otf() {
 		BASE_URL="https://unifoundry.com/pub/unifont/"
