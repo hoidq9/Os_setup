@@ -3,7 +3,7 @@ user_current=$(logname)
 yes=✅
 no=❌
 
-cd /home/$user_current/Prj/repos || return
+cd /home/$user_current/Bootloader || return
 if [ -d pcr-oracle/.git ]; then
 	cd pcr-oracle || return
 	BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -15,7 +15,7 @@ if [ -d pcr-oracle/.git ]; then
 	fi
 fi
 
-cd /home/$user_current/Prj/repos || return
+cd /home/$user_current/Bootloader || return
 if [ -d grub2/.git ]; then
 	cd grub2 || return
 	BRANCH=$(git rev-parse --abbrev-ref HEAD)
