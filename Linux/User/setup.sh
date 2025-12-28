@@ -106,11 +106,6 @@ User_setup() {
 			gsettings set org.gnome.desktop.interface cursor-theme "$os_id"_cursors
 		fi
 
-		mkdir -p $HOME/.local/share/backgrounds
-		cp $REPO_DIR/backgrounds/intel-processor.jpg $HOME/.local/share/backgrounds
-		gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
-		gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
-
 		gsettings set org.gnome.desktop.interface text-scaling-factor 1.25
 		gsettings set org.gnome.desktop.interface clock-show-date true
 		gsettings set org.gnome.desktop.interface show-battery-percentage true
@@ -157,13 +152,26 @@ User_setup() {
 		gsettings set org.gnome.nautilus.preferences show-hidden-files true
 		gsettings set org.gtk.Settings.FileChooser show-hidden true
 		gsettings set org.gtk.gtk4.Settings.FileChooser show-hidden true
+
+		mkdir -p $HOME/.local/share/backgrounds
+
 		if [ "$os_id" == "rhel" ]; then
+
+			cp $REPO_DIR/backgrounds/king.jpg $HOME/.local/share/backgrounds
+			gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/king.jpg"
+			gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/king.jpg"
+
 			gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11'  # Red Hat Text Medium 11 @wght=500
 			gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'           # Red Hat Text Semi-Bold 11 @wght=600
 			gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11' # Red Hat Mono Semi-Bold 11 @wght=600
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop']"
 			# "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
 		elif [ "$os_id" == "fedora" ]; then
+
+			cp $REPO_DIR/backgrounds/intel-processor.jpg $HOME/.local/share/backgrounds
+			gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
+			gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
+
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop', 'code-insiders.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
 		elif [ "$os_id" == "almalinux" ]; then
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'code.desktop', 'cursor.desktop', 'org.gnome.Software.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.authenticator.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
