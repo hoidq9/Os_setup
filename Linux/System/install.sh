@@ -452,7 +452,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code microsoft-edge-stable -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code microsoft-edge-stable xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
