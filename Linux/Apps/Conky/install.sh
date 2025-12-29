@@ -68,7 +68,7 @@ Apps_Conky() {
 			mkdir -p $HOME/.local/share/applications
 		fi
 		cp conky.desktop $HOME/.local/share/applications
-		cp conky.desktop /home/$user_current/.config/autostart
+		# cp conky.desktop /home/$user_current/.config/autostart
 		rm -rf conky.desktop
 
 		if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
