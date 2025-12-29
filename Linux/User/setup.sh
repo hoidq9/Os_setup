@@ -370,7 +370,7 @@ User_setup() {
 		"keybinding"
 		# "update_firefox_userChrome"
 		"bookmark_nautilus"
-		"autostart_edge"
+		# "autostart_edge"
 		# "autostart_vscode"
 	)
 
