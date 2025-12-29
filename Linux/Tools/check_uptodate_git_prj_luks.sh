@@ -27,17 +27,19 @@ if [ -d grub2/.git ]; then
 	fi
 fi
 
-cd /home/$user_current/Bootloader || return
-if [ -d grub2/gnulib/.git ]; then
-	cd grub2/gnulib || return
-	git branch --set-upstream-to=origin/master >/dev/null 2>&1
-	BRANCH=$(git rev-parse --abbrev-ref HEAD)
-	git fetch origin "$BRANCH" >/dev/null 2>&1
-	if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/"$BRANCH")" ]; then
-		gnulib_uptodate=$no
-	else
-		gnulib_uptodate=$yes
-	fi
-fi
+# cd /home/$user_current/Bootloader || return
+# if [ -d grub2/gnulib/.git ]; then
+# 	cd grub2/gnulib || return
+# 	git branch --set-upstream-to=origin/master >/dev/null 2>&1
+# 	BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# 	git fetch origin "$BRANCH" >/dev/null 2>&1
+# 	if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/"$BRANCH")" ]; then
+# 		gnulib_uptodate=$no
+# 	else
+# 		gnulib_uptodate=$yes
+# 	fi
+# fi
 
-echo " pcr-oracle: $pcr_oracle_uptodate || grub2: $grub2_uptodate || gnulib: $gnulib_uptodate "
+# || gnulib: $gnulib_uptodate
+
+echo " pcr-oracle: $pcr_oracle_uptodate || grub2: $grub2_uptodate "
