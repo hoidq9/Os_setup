@@ -50,9 +50,9 @@ Apps_Conky() {
 
 		cd $os_id
 
-		cp run_conky.sh /home/$user_current/Conky
-		sed -i "s/name_user_h/$user_current/g" /home/$user_current/Conky/run_conky.sh
-		chmod +x /home/$user_current/Conky/run_conky.sh
+		# cp run_conky.sh /home/$user_current/Conky
+		# sed -i "s/name_user_h/$user_current/g" /home/$user_current/Conky/run_conky.sh
+		# chmod +x /home/$user_current/Conky/run_conky.sh
 
 		curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
 			grep "browser_download_url.*\\.AppImage\"" |
@@ -77,10 +77,10 @@ Apps_Conky() {
 			environment_display="x11"
 		fi
 
-		mkdir -p /home/$user_current/.config/conky
-		if [ ! -f $HOME/.config/conky/conky.conf ]; then
-			cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
-		fi
+		# mkdir -p /home/$user_current/.config/conky
+		# if [ ! -f $HOME/.config/conky/conky.conf ]; then
+		# 	cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
+		# fi
 
 		# mkdir -p ~/.config/systemd/user
 		# cp -r conky_$environment_display.service conky.service
