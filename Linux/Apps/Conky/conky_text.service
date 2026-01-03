@@ -1,0 +1,10 @@
+[Unit]
+Description=Conky system monitor (Wayland)
+
+[Service]
+Type=simple
+WorkingDirectory=/home/name_user_h/Conky
+ExecStart=/home/name_user_h/Conky/conky.AppImage -c /home/name_user_h/Conky/conky_text.conf
+
+[Install]
+WantedBy=default.target
