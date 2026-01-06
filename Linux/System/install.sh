@@ -32,7 +32,7 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/ # yandex-browser.repo google-chrome.repo
+cp vscode.repo microsoft-edge.repo yandex-browser.repo google-chrome.repo /etc/yum.repos.d/
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -452,7 +452,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code microsoft-edge-stable xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel -y # dconf-editor gnome-extensions-app.x86_64 yandex-browser-stable gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel yandex-browser-stable -y # dconf-editor gnome-extensions-app.x86_64 gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable microsoft-edge-stable
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
