@@ -229,7 +229,11 @@ pcr_oracle_tpm2_seal() {
 
 			pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7,14
 
-			cp sealed.tpm /custom_efi
+			if mountpoint -q /boot/efi; then
+				cp sealed.tpm /boot/efi
+			else
+				cp sealed.tpm /custom_efi
+			fi
 
 		}
 
