@@ -374,7 +374,7 @@ create_luks2_boot_partition() {
 		root_real=$(get_real_backing "$root_dev")
 
 		echo -e "${GREEN} Action with device ${dev} ${NC}"
-		cryptsetup luksFormat --uuid="$uuid_boot_locked" --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --use-urandom "$dev"
+		cryptsetup luksFormat --force-password --uuid="$uuid_boot_locked" --hash=sha256 --key-size=512 --label=LinuxH --pbkdf=pbkdf2 --use-urandom "$dev"
 		cryptsetup luksAddKey "$dev" /keys/key_luks2_tpm2_pcr/key.bin --pbkdf=pbkdf2
 
 		echo -e "${GREEN} Action with device ${root_real} ${NC}"
