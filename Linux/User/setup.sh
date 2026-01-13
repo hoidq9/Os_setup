@@ -168,9 +168,9 @@ User_setup() {
 			# "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
 		elif [ "$os_id" == "fedora" ]; then
 
-			cp $REPO_DIR/backgrounds/intel-processor.jpg $HOME/.local/share/backgrounds
-			gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
-			gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/intel-processor.jpg"
+			cp $REPO_DIR/backgrounds/king.jpg $HOME/.local/share/backgrounds
+			gsettings set org.gnome.desktop.background picture-uri-dark "file:///home/$user_current/.local/share/backgrounds/king.jpg"
+			gsettings set org.gnome.desktop.background picture-uri "file:///home/$user_current/.local/share/backgrounds/king.jpg"
 
 			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'org.gnome.Settings.desktop', 'code.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.SystemMonitor.desktop', 'conky.desktop', 'virt-manager.desktop', 'code-insiders.desktop']" # 'org.gnome.Terminal.desktop' 'com.yubico.authenticator.desktop'
 		elif [ "$os_id" == "almalinux" ]; then
