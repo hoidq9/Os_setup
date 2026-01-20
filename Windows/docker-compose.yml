@@ -1,0 +1,8 @@
+services:
+  graphapp:
+    image: mcr.microsoft.com/microsoftgraph/powershell:latest
+    container_name: graph-app
+    volumes:
+      - .:/app/:Z
+    tty: true
+    stdin_open: true
