@@ -364,6 +364,13 @@ User_setup() {
 		fi
 	}
 
+	podman_service() {
+		if rpm -q podman >/dev/null 2>&1; then
+			systemctl --user enable --now podman-restart.service
+			loginctl enable-linger $USER
+		fi
+	}
+
 	tasks=(
 		"terminal"
 		"accessibility"
@@ -372,6 +379,7 @@ User_setup() {
 		"bookmark_nautilus"
 		# "autostart_edge"
 		# "autostart_vscode"
+		"podman_service"
 	)
 
 	for task in "${tasks[@]}"; do
