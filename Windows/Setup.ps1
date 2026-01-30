@@ -43,14 +43,22 @@ Copy-Item -Path "Profile.ps1" -Destination "$PSHOME" -Recurse -force
 
 
 # Tải và chạy script cài đặt Oh My Posh
-$currentdir = $PWD.Path
-$webClient = New-Object System.Net.WebClient
-$url = "https://ohmyposh.dev/install.ps1"  # Thay thế bằng URL của tệp bạn muốn tải xuống
-$outputFile = "$currentdir\install.ps1"  # Đặt tên tệp muốn lưu trên máy tính
+# $currentdir = $PWD.Path
+# $webClient = New-Object System.Net.WebClient
+# $url = "https://ohmyposh.dev/install.ps1"  # Thay thế bằng URL của tệp bạn muốn tải xuống
+# $outputFile = "$currentdir\install.ps1"  # Đặt tên tệp muốn lưu trên máy tính
 
-$webClient.DownloadFile($url, $outputFile)
-./install.ps1 -AllUsers
-Remove-Item .\install.ps1
+# $webClient.DownloadFile($url, $outputFile)
+# ./install.ps1 -AllUsers
+# Remove-Item .\install.ps1
+
+$dest = "C:\Program Files\oh-my-posh"
+$exe = "$dest\oh-my-posh.exe"
+
+New-Item $dest -ItemType Directory -Force | Out-Null
+Invoke-WebRequest https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-windows-amd64.exe -OutFile $exe
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$dest", "Machine")
+
 
 $scriptDir = $PSScriptRoot
 $scriptPath = Join-Path -Path $scriptDir -ChildPath "Set-Edge.ps1"
