@@ -223,7 +223,7 @@ pcr_oracle_tpm2_seal() {
 
 			cd /keys/key_luks2_tpm2_pcr || return
 
-			pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7,14
+			pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,2,4,7,14
 
 			pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 

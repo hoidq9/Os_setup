@@ -411,7 +411,7 @@ fedora_system() {
 	}
 	packages() {
 		dnf install ptyxis podman xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software shfmt xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel microsoft-edge-stable -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab gnome-terminal gnome-terminal-nautilus flatpak kernel-devel systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager google-chrome-stable yandex-browser-stable
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                                                                                                                                      # "firefox"
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                                                                                                                 # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
@@ -445,6 +445,7 @@ rhel_system() {
 		if ! rpm -q epel-release; then
 			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 		fi
+		crb enable
 	}
 
 	flatpak_repo() {
@@ -452,7 +453,7 @@ rhel_system() {
 	}
 
 	packages() {
-		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel microsoft-edge-stable -y # dconf-editor gnome-extensions-app.x86_64 gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable yandex-browser-stable
+		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit kernel-devel code xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel microsoft-edge-stable rpcbind portmap -y # dconf-editor gnome-extensions-app.x86_64 gnome-terminal gnome-terminal-nautilus chrome-gnome-shell podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara google-chrome-stable yandex-browser-stable
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
 		# systemctl restart libvirtd
