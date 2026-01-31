@@ -223,11 +223,11 @@ pcr_oracle_tpm2_seal() {
 
 			cd /keys/key_luks2_tpm2_pcr || return
 
-			pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,2,4,7,14
+			pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,1,4,7,14
 
 			pcr-oracle --target-platform tpm2.0 --authorized-policy my-auth.policy --input key.bin --output unsigned.tpm seal-secret
 
-			pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,4,7,14
+			pcr-oracle --policy-name authorized-policy-test --input unsigned.tpm --output sealed.tpm --target-platform tpm2.0 --algorithm sha256 --private-key my-priv.pem --from eventlog --stop-event "grub-file=grub.cfg" --before sign 0,1,4,7,14
 
 			if mountpoint -q /boot/efi; then
 				cp sealed.tpm /boot/efi
@@ -430,13 +430,13 @@ create_luks2_boot_partition() {
 			chmod +x /etc/grub.d/1_fedora
 
 		elif [ "$os_id" == "rhel" ]; then
-			cp "$REPO_DIR"/69_redhat /etc/grub.d/
-			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
-			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
-			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
-			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
-			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
-			chmod +x /etc/grub.d/69_redhat
+			cp "$REPO_DIR"/01_redhat /etc/grub.d/
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_redhat
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_redhat
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_redhat
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/01_redhat
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/01_redhat
+			chmod +x /etc/grub.d/01_redhat
 		fi
 
 		grub2-mkconfig -o /boot/grub2/grub.cfg
