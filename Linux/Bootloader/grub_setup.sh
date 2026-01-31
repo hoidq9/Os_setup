@@ -73,13 +73,13 @@ grub_new() {
 		done
 		dnf autoremove -y
 
-		cp $REPO_DIR/69_redhat /etc/grub.d/
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
-		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
-		sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
-		sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
-		chmod +x /etc/grub.d/69_redhat
+		cp $REPO_DIR/01_redhat /etc/grub.d/
+		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_redhat
+		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_redhat
+		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_redhat
+		sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/01_redhat
+		sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/01_redhat
+		chmod +x /etc/grub.d/01_redhat
 
 	elif [ "$os_id" = "fedora" ]; then
 		if blkid | grep -q "btrfs"; then
