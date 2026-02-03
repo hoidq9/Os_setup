@@ -116,3 +116,8 @@ mv grubx64_new.efi grubx64.efi
 
 cp $REPO_DIR/rhel.conf ${efi_path}/loader/entries/rhel.conf
 cp $REPO_DIR/loader.conf ${efi_path}/loader/loader.conf
+
+if [ ! -d /etc/kernel ]; then
+	mkdir -p /etc/kernel
+fi
+cp $REPO_DIR/install.conf /etc/kernel/install.conf
