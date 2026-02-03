@@ -1,4 +1,10 @@
 #!/bin/bash
+
+if [ "$EUID" -ne 0 ]; then
+	echo -e "${RED}This script must be run as root.${NC}"
+	exit 1
+fi
+
 cd /keys/key_luks2_tpm2_pcr || return
 
 pcr-oracle --rsa-generate-key --private-key my-priv.pem --authorized-policy my-auth.policy create-authorized-policy 0,4,7,14
