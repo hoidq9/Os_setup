@@ -162,17 +162,17 @@ main_script() {
 		fi
 
 		if [ "$os_id" = "rhel" ]; then
-			cp $REPO_DIR/69_redhat /etc/grub.d/
-			# sed -i 's|\$os_version|(os_version)|g; s|\$os_id|(os_name)|g; s|\$uuid_boot_locked|(boot_uuid)|g; s|\$uuid_boot_unlocked|(boot_mapper_uuid)|g; s|'"$(uname -r)"'|(kernel_version)|g; s|'"$(dracut --print-cmdline)"'|(kernel_parameters)|g; s|\$efi_uuid|(efi_uuid)|g' /etc/grub.d/69_redhat
+			cp $REPO_DIR/01_redhat /etc/grub.d/
+			# sed -i 's|\$os_version|(os_version)|g; s|\$os_id|(os_name)|g; s|\$uuid_boot_locked|(boot_uuid)|g; s|\$uuid_boot_unlocked|(boot_mapper_uuid)|g; s|'"$(uname -r)"'|(kernel_version)|g; s|'"$(dracut --print-cmdline)"'|(kernel_parameters)|g; s|\$efi_uuid|(efi_uuid)|g' /etc/grub.d/01_redhat
 
-			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/69_redhat
-			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/69_redhat
-			sed -i "s/(boot_uuid)/$uuid_boot_locked/g" /etc/grub.d/69_redhat
-			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/69_redhat
-			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/69_redhat
-			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/69_redhat
-			sed -i "s/(efi_uuid)/$efi_uuid/g" /etc/grub.d/69_redhat
-			chmod +x /etc/grub.d/69_redhat
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_redhat
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_redhat
+			sed -i "s/(boot_uuid)/$uuid_boot_locked/g" /etc/grub.d/01_redhat
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_redhat
+			sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/01_redhat
+			sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/01_redhat
+			sed -i "s/(efi_uuid)/$efi_uuid/g" /etc/grub.d/01_redhat
+			chmod +x /etc/grub.d/01_redhat
 
 		elif [ "$os_id" = "fedora" ]; then
 			cp $REPO_DIR/1_fedora /etc/grub.d/
