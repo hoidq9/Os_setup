@@ -15,8 +15,8 @@ fedora_bootloader() {
 }
 
 rhel_bootloader() {
-	# cp -r $REPO_DIR/distro /boot/grub2/themes
-	# grep -q "/boot/grub2/themes/distro/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/distro/theme.txt\"" >>/etc/default/grub
+	cp -r $REPO_DIR/distro /boot/grub2/themes
+	grep -q "/boot/grub2/themes/distro/theme.txt" /etc/default/grub || echo "GRUB_THEME=\"/boot/grub2/themes/distro/theme.txt\"" >>/etc/default/grub
 	dracut -f -v --regenerate-all
 
 	sed -i 's/^GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/' /etc/default/grub
