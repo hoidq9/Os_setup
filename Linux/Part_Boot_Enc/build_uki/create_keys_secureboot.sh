@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set -euo pipefail
-DAYS_VALID=1825 # 5 years expriry
+DAYS_VALID=3650 # 10 years expriry
 os_id=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 user_current=$(logname)
 

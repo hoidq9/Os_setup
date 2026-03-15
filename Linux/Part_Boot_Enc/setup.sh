@@ -258,7 +258,7 @@ pcr_oracle_tpm2_seal() {
 
 create_keys_secureboot() {
 	# set -euo pipefail
-	DAYS_VALID=1825 # 5 years expriry
+	DAYS_VALID=3650 # 10 years expriry
 
 	# Nếu chưa có thư mục /keys/secureboot, tạo mới với quyền 700 ngay từ đầu
 	if [ ! -d /keys/secureboot ]; then
