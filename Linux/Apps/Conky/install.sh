@@ -50,8 +50,10 @@ Apps_Conky() {
 
 		cd $os_id
 
-		cp conky_graph.conf $HOME/Conky
-		cp conky_text.conf $HOME/Conky
+		if [ ! -f $HOME/Conky/conky_graph.conf ] && [ ! -f $HOME/Conky/conky_text.conf ]; then
+			cp conky_graph.conf $HOME/Conky
+			cp conky_text.conf $HOME/Conky
+		fi
 
 		curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
 			grep "browser_download_url.*\\.AppImage\"" |
