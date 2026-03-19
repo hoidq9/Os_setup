@@ -15,9 +15,9 @@ fi
 
 ./create_keys_secureboot.sh
 
-if [ ! -f /etc/systemd/tpm2-pcr-private-key.pem ]; then
-	openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /etc/systemd/tpm2-pcr-private-key.pem
-	openssl rsa -pubout -in /etc/systemd/tpm2-pcr-private-key.pem -out /etc/systemd/tpm2-pcr-public-key.pem
+if [ ! -f /keys/secureboot/tpm2-pcr-private-key.pem ]; then
+	openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /keys/secureboot/tpm2-pcr-private-key.pem
+	openssl rsa -pubout -in /keys/secureboot/tpm2-pcr-private-key.pem -out /etc/systemd/tpm2-pcr-public-key.pem
 fi
 
 dnf install systemd-ukify -y &>/dev/null 2>&1
