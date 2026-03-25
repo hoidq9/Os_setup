@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO_DIR="$(dirname "$(readlink -m "${0}")")"
+REPO_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 user_current=$(logname)
@@ -35,5 +35,6 @@ sed -i "s|(cmdline)|${cmdline_path}|g" setup.cfg
 sed -i "s|(private-key)|${private_key_path}|g" setup.cfg
 sed -i "s|(certificate)|${certificate_path}|g" setup.cfg
 
+dracut -f -v --regenerate-all
 ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 rm -rf $REPO_DIR/setup.cfg
