@@ -445,7 +445,10 @@ rhel_system() {
 		if ! rpm -q epel-release; then
 			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 		fi
-		crb enable
+
+		if ! dnf repolist --enabled | grep -q codeready-builder; then
+			crb enable
+		fi
 	}
 
 	flatpak_repo() {
@@ -479,6 +482,10 @@ rhel_system() {
 		# vscode_custom
 		# windsurf_custom
 		# sign_kernel_ubuntu
+
+		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		sh build.sh
+		cd $REPO_DIR
 	}
 
 	main
