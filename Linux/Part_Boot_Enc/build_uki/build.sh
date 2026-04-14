@@ -24,7 +24,7 @@ dnf install systemd-ukify -y &>/dev/null 2>&1
 
 vmlinuz_path="/usr/lib/modules/${latest_kernel}/vmlinuz"
 initramfs_path="/boot/initramfs-${latest_kernel}.img"
-cmdline_path="${parameters} rhgb lockdown=confidentiality intel_iommu=on efi=disable_early_pci_dma module.sig_enforce=1 slab_nomerge page_alloc.shuffle=1 pti=on spectre_v2=on spec_store_bypass_disable=on vsyscall=none randomize_kstack_offset=on random.trust_cpu=off rd.systemd.show_status=1 loglevel=7 plymouth.enable=1 rd.plymouth=1 init_on_alloc=1 init_on_free=1 audit=1"
+cmdline_path="${parameters} rhgb lockdown=confidentiality intel_iommu=on efi=disable_early_pci_dma module.sig_enforce=1 slab_nomerge page_alloc.shuffle=1 pti=on spectre_v2=on spec_store_bypass_disable=on vsyscall=none randomize_kstack_offset=on random.trust_cpu=off rd.systemd.show_status=1 loglevel=7 plymouth.enable=1 rd.plymouth=1 init_on_alloc=1 init_on_free=1 audit=1 crashkernel=512M nosmt=1"
 
 private_key_path="/keys/secureboot/${os_id}-${user_current}.key"
 certificate_path="/keys/secureboot/${os_id}-${user_current}.x509"
