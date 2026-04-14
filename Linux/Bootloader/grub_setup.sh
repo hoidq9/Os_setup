@@ -87,8 +87,8 @@ grub_new() {
 		sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/02_redhat
 		chmod +x /etc/grub.d/02_redhat
 
-		chmod -x /etc/grub.d/10_linux
-		chmod -x /etc/grub.d/20_linux_xen
+		# chmod -x /etc/grub.d/10_linux
+		# chmod -x /etc/grub.d/20_linux_xen
 
 	elif [ "$os_id" = "fedora" ]; then
 		if blkid | grep -q "btrfs"; then
