@@ -99,4 +99,6 @@ Apps_Conky() {
 	fi
 }
 
-check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+if systemd-detect-virt | grep -q "none"; then
+	check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+fi

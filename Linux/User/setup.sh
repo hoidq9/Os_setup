@@ -387,7 +387,9 @@ User_setup() {
 	done
 
 	check_and_run Ohmyzsh_User "$REPO_DIR/../logs/Ohmyzsh_User.log" "$REPO_DIR/../logs/Result.log"
-	check_and_run User_gnome_extensions "$REPO_DIR/../logs/User_gnome_extensions.log" "$REPO_DIR/../logs/Result.log"
+	if systemd-detect-virt | grep -q "none"; then
+		check_and_run User_gnome_extensions "$REPO_DIR/../logs/User_gnome_extensions.log" "$REPO_DIR/../logs/Result.log"
+	fi
 
 }
 
