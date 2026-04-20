@@ -99,13 +99,11 @@ grub_new() {
 			fi
 		fi
 
-		cp $REPO_DIR/1_fedora /etc/grub.d/
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/1_fedora
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/1_fedora
-		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/1_fedora
-		sed -i "s/(kernel_version)/$kernel_ver/g" /etc/grub.d/1_fedora
-		sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/1_fedora
-		chmod +x /etc/grub.d/1_fedora
+		cp $REPO_DIR/01_fedora /etc/grub.d/
+		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_fedora
+		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_fedora
+		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_fedora
+		chmod +x /etc/grub.d/01_fedora
 
 	fi
 
