@@ -411,7 +411,7 @@ fedora_system() {
 	}
 	packages() {
 		dnf install ptyxis podman xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software shfmt xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel google-chrome-stable -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab flatpak kernel-devel systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager yandex-browser-stable microsoft-edge-stable
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                                                                                                                 # "firefox"
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                                                                                                                # "firefox"
 		if blkid | grep -q "btrfs"; then
 			dnf install btrfs-progs -y
 		else
@@ -436,6 +436,9 @@ fedora_system() {
 		# vscode_custom
 		services
 		# create_uki_os_based_redhat
+		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		sh build.sh
+		cd $REPO_DIR
 	}
 	main
 }
