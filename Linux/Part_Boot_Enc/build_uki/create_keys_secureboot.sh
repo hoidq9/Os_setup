@@ -32,9 +32,9 @@ if [ "${NEED_NEW_CERT}" = true ]; then
 	# ==== CẤU HÌNH CHUNG ====
 	SUBJECT="/C=Vn/ST=Hanoi/L=Hanoi/O=VnH/OU=VnW/CN=${os_id}-${user_current}.com"
 
-	# 1. Tạo private key (RSA 2048 bit) và self-signed certificate (X.509, SHA-512)
+	# 1. Tạo private key (RSA 4096 bit) và self-signed certificate (X.509, SHA-512)
 	openssl req -x509 \
-		-newkey rsa:2048 \
+		-newkey rsa:4096 \
 		-sha256 \
 		-days "${DAYS_VALID}" \
 		-nodes \
