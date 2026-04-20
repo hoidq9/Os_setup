@@ -4,8 +4,8 @@ exec tail -n +3 $0
 # menu entries you want to add after this comment.  Be careful not to change
 # the 'exec tail' line above.
 
-menuentry "Fedora Linux LUKS2 (os_version)" --class (os_name) {
+menuentry "Fedora Linux LUKS2 (os_version) UKI" --class (os_name) {
 	search --no-floppy --fs-uuid --set=root (boot_mapper_uuid)
-	linux /vmlinuz-(kernel_version) lockdown=confidentiality rd.shell=0 rhgb (kernel_parameters)
-	initrd /initramfs-(kernel_version).img
+	chainloader ($root)/ukify-linux.efi
+    boot
 }
