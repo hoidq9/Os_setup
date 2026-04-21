@@ -2,12 +2,12 @@
 set -euo pipefail
 
 if dnf check-update --refresh >/dev/null 2>&1; then
-    echo " System is up to date "
+    echo " Up to date "
 else
     status=$?
     if [ $status -eq 100 ]; then
-        echo " Run ./run.sh in Os_setup "
+        echo " Run ./run.sh "
     else
-        echo " Error: dnf returned status $status"
+        echo " Error status $status "
     fi
 fi

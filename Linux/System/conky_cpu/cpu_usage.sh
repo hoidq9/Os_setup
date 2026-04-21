@@ -11,17 +11,17 @@ case $metric in
 "irq") column=7 ;;
 "softirq") column=8 ;;
 *)
-    echo "Sử dụng: $0 [cpu] <metric>"
-    echo "metric: user, nice, system, idle, iowait, irq, softirq"
-    exit 1
-    ;;
+	echo "Sử dụng: $0 [cpu] <metric>"
+	echo "metric: user, nice, system, idle, iowait, irq, softirq"
+	exit 1
+	;;
 esac
 
 # Lấy giá trị ban đầu cho metric và tổng
 s1=$(awk -v cpu="$cpu" '$1 == cpu {for (i=2; i<=8; i++) sum+=$i; print sum}' /proc/stat)
 m1=$(awk -v cpu="$cpu" -v col=$column '$1 == cpu {print $col}' /proc/stat)
 
-# Chờ 1 giây
+# Chờ 0.3 giây
 sleep 0.3
 
 # Lấy giá trị mới cho metric và tổng
@@ -34,9 +34,9 @@ dt=$((s2 - s1))
 usage=$(awk "BEGIN {printf \"%.1f\", ($dm*100/$dt)}")
 
 if (($(echo "$usage < 10" | bc -l))); then
-    printf "%.3f\n" "$usage"
+	printf "%.3f\n" "$usage"
 elif (($(echo "$usage >= 10 && $usage < 100" | bc -l))); then
-    printf "%.2f\n" "$usage"
+	printf "%.2f\n" "$usage"
 else
-    printf "%.1f\n" "$usage"
+	printf "%.1f\n" "$usage"
 fi
