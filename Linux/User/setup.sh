@@ -255,7 +255,7 @@ User_setup() {
 			# if systemd-detect-virt | grep -q "none"; then
 			# 	extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733' '5928' '6580' '1319' '2224')
 			# else
-			extensions=('3628' '6682' '1160' '3843' '3010' '3733' '5928' '6580' '2932' '1500')
+			extensions=('3628' '6682' '1160' '3843' '3733' '5928' '6580' '2932') # '3010' '1500'
 			# fi
 		elif [ "$os_id" == "almalinux" ]; then
 			extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
@@ -371,10 +371,21 @@ User_setup() {
 		fi
 	}
 
+	argos() {
+		if [ ! -f "$HOME/.config/argos/voltage.1s.sh" ]; then
+			rm -rf $HOME/.config/argos/*.sh
+			mkdir -p $HOME/.config/argos
+			cd $REPO_DIR/extensions_gnome/argos
+			cp -r *.sh $HOME/.config/argos/
+			chmod +x $HOME/.config/argos/*.sh
+		fi
+	}
+
 	tasks=(
 		"terminal"
 		"accessibility"
 		"keybinding"
+		"argos"
 		# "update_firefox_userChrome"
 		"bookmark_nautilus"
 		# "autostart_edge"
