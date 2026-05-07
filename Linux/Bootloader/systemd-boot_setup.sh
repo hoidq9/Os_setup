@@ -99,7 +99,7 @@ if [ "${NEED_NEW_CERT}" = true ]; then
 	echo "  • ${os_id}-${user_current}.pem   (Certificate PEM xuất từ DER)"
 	echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
 
-	mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
+	# mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
 fi
 
 efi_path=$(bootctl --print-path)

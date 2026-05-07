@@ -348,7 +348,7 @@ create_keys_secureboot() {
 		echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
 	fi
 
-	mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
+	# mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
 }
 
 create_luks2_boot_partition() {

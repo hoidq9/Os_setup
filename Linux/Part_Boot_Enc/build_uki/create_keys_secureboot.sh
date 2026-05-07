@@ -93,4 +93,4 @@ if [ "${NEED_NEW_CERT}" = true ]; then
 	echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
 fi
 
-mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
+# mokutil --import /keys/secureboot/"${os_id}-${user_current}.der"
