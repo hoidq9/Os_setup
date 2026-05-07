@@ -126,6 +126,10 @@ create_keys_secureboot() {
 		echo "  • ${os_id}-${user_current}.p12   (PKCS#12, chứa cả private key và certificate)"
 
 	fi
+
+	if [ ! -f /boot/"${os_id}-${user_current}".der ]; then
+		cp /keys/secureboot/"${os_id}-${user_current}".der /boot/
+	fi
 }
 nvidia_drivers() {
 
