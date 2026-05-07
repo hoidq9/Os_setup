@@ -103,7 +103,7 @@ if [[ "$enroll_tpm2" == "y" ]]; then
 	# awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
 	# chown -R "$user_current":"$user_current" /home/$user_current/pcr_result_luks_tpm
 	# else
-	systemd-cryptenroll --tpm2-pcrs=7 --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
+	systemd-cryptenroll --tpm2-pcrs="" --tpm2-device=$tpm2_device_path --tpm2-with-pin=no $luks2_disk_path
 	# fi
 	echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
 fi
