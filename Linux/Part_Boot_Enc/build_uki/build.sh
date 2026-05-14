@@ -35,10 +35,10 @@ sed -i "s|(initramfs)|${initramfs_path}|g" setup.cfg
 sed -i "s|(cmdline)|${cmdline_path}|g" setup.cfg
 sed -i "s|(private-key)|${private_key_path}|g" setup.cfg
 sed -i "s|(certificate)|${certificate_path}|g" setup.cfg
-# [[ "$(plymouth-set-default-theme)" != "details" ]] && plymouth-set-default-theme details -R || echo "Not changed."
+[[ "$(plymouth-set-default-theme)" != "details" ]] && plymouth-set-default-theme details -R || echo "Not changed."
 
 result=$($REPO_DIR/../../Tools/check_UKI.sh)
-if [[ "$result" == " UKI: ❌ " ]]; then
+if [[ "$result" == " UKI: ❌ " ]] || [ ! -f /boot/ukify-linux.efi ]; then
 	dracut -f -v --regenerate-all
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
