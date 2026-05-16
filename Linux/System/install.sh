@@ -127,9 +127,9 @@ create_keys_secureboot() {
 
 	fi
 
-	if [ ! -f /boot/"${os_id}-${user_current}".der ]; then
-		cp /keys/secureboot/"${os_id}-${user_current}".der /boot/
-	fi
+	# if [ ! -f /boot/"${os_id}-${user_current}".der ]; then
+	# 	cp /keys/secureboot/"${os_id}-${user_current}".der /boot/
+	# fi
 }
 nvidia_drivers() {
 
