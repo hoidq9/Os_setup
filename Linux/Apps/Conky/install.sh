@@ -42,40 +42,40 @@ Apps_Conky() {
 
 	elif [ "$os_id" == "rhel" ] && systemd-detect-virt | grep -q "none"; then
 
-		# mkdir -p /home/$user_current/Conky
+		mkdir -p /home/$user_current/Conky
 
-		# if [ ! -d /home/$user_current/.config/autostart ]; then
-		# 	mkdir -p /home/$user_current/.config/autostart
-		# fi
+		if [ ! -d /home/$user_current/.config/autostart ]; then
+			mkdir -p /home/$user_current/.config/autostart
+		fi
 
-		# cd $os_id
+		cd $os_id
 
-		# if [ ! -f $HOME/Conky/conky_graph.conf ] && [ ! -f $HOME/Conky/conky_text.conf ]; then
-		# 	cp conky_graph.conf $HOME/Conky
-		# 	cp conky_text.conf $HOME/Conky
-		# fi
+		if [ ! -f $HOME/Conky/conky_text.conf ]; then # [ ! -f $HOME/Conky/conky_graph.conf ] &&
+			# cp conky_graph.conf $HOME/Conky
+			cp conky_text.conf $HOME/Conky
+		fi
 
-		# curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
-		# 	grep "browser_download_url.*\\.AppImage\"" |
-		# 	head -n1 |
-		# 	cut -d '"' -f4 |
-		# 	xargs curl -L -o conky.AppImage
+		curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
+			grep "browser_download_url.*\\.AppImage\"" |
+			head -n1 |
+			cut -d '"' -f4 |
+			xargs curl -L -o conky.AppImage
 
-		# mv conky.AppImage $HOME/Conky
-		# chmod +x $HOME/Conky/conky.AppImage
-		# cp conky_rhel.desktop conky.desktop
-		# sed -i "s/name_user_h/$user_current/g" conky.desktop
-		# if [ ! -d $HOME/.local/share/applications ]; then
-		# 	mkdir -p $HOME/.local/share/applications
-		# fi
-		# cp conky.desktop $HOME/.local/share/applications
+		mv conky.AppImage $HOME/Conky
+		chmod +x $HOME/Conky/conky.AppImage
+		cp conky_rhel.desktop conky.desktop
+		sed -i "s/name_user_h/$user_current/g" conky.desktop
+		if [ ! -d $HOME/.local/share/applications ]; then
+			mkdir -p $HOME/.local/share/applications
+		fi
+		cp conky.desktop $HOME/.local/share/applications
 
 		# cp conky_graph.desktop /home/$user_current/.config/autostart
-		# cp conky_text.desktop /home/$user_current/.config/autostart
+		cp conky_text.desktop /home/$user_current/.config/autostart
 		# sed -i "s/name_user_h/$user_current/g" /home/$user_current/.config/autostart/conky_graph.desktop
-		# sed -i "s/name_user_h/$user_current/g" /home/$user_current/.config/autostart/conky_text.desktop
+		sed -i "s/name_user_h/$user_current/g" /home/$user_current/.config/autostart/conky_text.desktop
 
-		# rm -rf conky.desktop
+		rm -rf conky.desktop
 
 		# if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
 		# 	environment_display="wayland"
@@ -88,15 +88,15 @@ Apps_Conky() {
 		# 	cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
 		# fi
 
-		# mkdir -p ~/.config/systemd/user
-		# systemctl --user enable conky_text.service
+		mkdir -p ~/.config/systemd/user
+		systemctl --user enable conky_text.service
 		# systemctl --user enable conky_graph.service
-		# systemctl --user start conky_text.service
+		systemctl --user start conky_text.service
 		# systemctl --user start conky_graph.service
 
-		# loginctl enable-linger $user_current
+		loginctl enable-linger $user_current
 
-		echo "Hehe"
+		# echo "Hehe"
 	fi
 }
 
