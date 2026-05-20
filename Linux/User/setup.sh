@@ -385,7 +385,7 @@ User_setup() {
 		"terminal"
 		"accessibility"
 		"keybinding"
-		"argos"
+		# "argos"
 		# "update_firefox_userChrome"
 		"bookmark_nautilus"
 		# "autostart_edge"
