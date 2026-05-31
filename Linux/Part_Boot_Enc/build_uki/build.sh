@@ -38,7 +38,9 @@ sed -i "s|(certificate)|${certificate_path}|g" setup.cfg
 [[ "$(plymouth-set-default-theme)" != "details" ]] && plymouth-set-default-theme details -R || echo "Not changed."
 
 result=$($REPO_DIR/../../Tools/check_UKI.sh)
-if [[ "$result" == " UKI: ❌ " ]] || [ ! -f /boot/ukify-linux.efi ]; then
+result_NVIDIA=$($REPO_DIR/../../Tools/check_nvidia_driver.sh)
+
+if [[ "$result" == " UKI: ❌ " ]] || [[ "$result_NVIDIA" == "NVIDIA: ❌ " ]] || [ ! -f /boot/ukify-linux.efi ]; then
 	dracut -f -v --regenerate-all
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
