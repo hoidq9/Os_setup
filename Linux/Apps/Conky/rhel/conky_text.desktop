@@ -6,4 +6,3 @@ StartupNotify=false
 Terminal=false
 Icon=/usr/share/icons/rhel_icons/apps/scalable/indicator-cpufreq.svg
 Categories=System;Monitor;
-X-GNOME-Autostart-enabled=true
