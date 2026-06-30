@@ -3,11 +3,11 @@ source $(pwd)/variables.sh
 flatpak update -y &>/dev/null
 
 if systemd-detect-virt | grep -q "none"; then
-    cd $REPO_DIR/Graphics/themes
-    sh install.sh
+	cd $REPO_DIR/Graphics/themes
+	sh install.sh
 
-    cd $REPO_DIR/Apps/Gcm
-    sh install.sh
+	cd $REPO_DIR/Apps/Gcm
+	sh install.sh
 fi
 
 cd $REPO_DIR/Graphics/icons
@@ -26,6 +26,9 @@ cd $REPO_DIR/Apps/Conky
 sh install.sh
 
 cd $REPO_DIR/Apps/Chrome
+sh install.sh
+
+cd $REPO_DIR/Apps/Bazaar_Store
 sh install.sh
 
 cd $REPO_DIR/User
