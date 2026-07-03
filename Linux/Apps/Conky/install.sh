@@ -31,7 +31,6 @@ Apps_Conky() {
 				elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
 					cp -f conky_x11.conf /home/$user_current/.config/conky/conky.conf
 				fi
-
 			fi
 
 		elif [ "$os_id" == "almalinux" ]; then
