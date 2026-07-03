@@ -1,4 +1,5 @@
 #!/bin/bash
+echo $XDG_CURRENT_DESKTOP > DE.txt
 source "$(pwd)/variables.sh"
 
 if [ ! -d "$REPO_DIR"/logs ]; then
