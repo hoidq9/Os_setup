@@ -44,6 +44,9 @@ os_themes() {
 }
 
 Graphics_themes() {
+	if [ $(cat ../../DE.txt) != "GNOME" ]; then
+		exit 0
+	fi
 	os_themes "$os_id"
 }
 

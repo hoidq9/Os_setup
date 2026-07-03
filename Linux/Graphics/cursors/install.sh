@@ -29,6 +29,9 @@ cursors() {
 }
 
 Graphics_cursors() {
+	if [ $(cat ../../DE.txt) != "GNOME" ]; then
+		exit 0
+	fi
 	cursors "$os_id"
 }
 

@@ -22,8 +22,10 @@ sh install.sh
 cd $REPO_DIR/Apps/Font
 sh install.sh
 
-cd $REPO_DIR/System/gdm
-sh install.sh
+if [ $(cat $REPO_DIR/DE.txt) == "GNOME" ]; then
+	cd $REPO_DIR/System/gdm
+	sh install.sh
+fi
 
 # cd $REPO_DIR/Apps/Cursor
 # sh install.sh
