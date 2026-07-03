@@ -32,7 +32,11 @@ source ../variables.sh
 [ ! -d /Os_H ] && mkdir -p /Os_H
 grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive clean_requirements_on_remove=1" >>/etc/dnf/dnf.conf
 cd $REPO_DIR/repo || return
-cp vscode.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo microsoft-edge.repo
+cp vscode.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
+
+if [ "$os_id" == "fedora" ]; then
+	cp microsoft-edge.repo /etc/yum.repos.d/
+fi
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -414,28 +418,31 @@ fedora_system() {
 		cp $REPO_DIR/repo/fedora_repositories.repo /etc/yum.repos.d/
 	}
 	packages() {
-		dnf install ptyxis podman xapps gnome-shell git nautilus gnome-browser-connector gnome-system-monitor gdm git ibus-m17n zsh msr-tools conky dbus-x11 code gnome-disk-utility cockpit-podman cockpit kernel-devel flatpak gnome-software shfmt xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel google-chrome-stable -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab flatpak kernel-devel systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager yandex-browser-stable microsoft-edge-stable
-		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y                                                                                                                                                                                                                                                                                                # "firefox"
-		if blkid | grep -q "btrfs"; then
-			dnf install btrfs-progs -y
-		else
-			if rpm -q btrfs-progs; then
-				dnf remove btrfs-progs -y
+		if [ $(cat $REPO_DIR/../DE.txt) == "GNOME" ]; then
+			dnf install ptyxis xapps gnome-shell nautilus gnome-browser-connector gnome-system-monitor gdm ibus-m17n dbus-x11 gnome-disk-utility kernel-devel flatpak gnome-software xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab flatpak systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager yandex-browser-stable
+			if blkid | grep -q "btrfs"; then
+				dnf install btrfs-progs -y
+			else
+				if rpm -q btrfs-progs; then
+					dnf remove btrfs-progs -y
+				fi
 			fi
 		fi
-		dnf upgrade -y
 	}
 
 	main() {
-		repo_setup
+		# repo_setup
+		dnf upgrade -y
+		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y
+		dnf install podman cockpit-podman cockpit git zsh msr-tools conky code shfmt google-chrome-stable microsoft-edge-stable -y
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
 		run
 		flatpak_repo
 		create_keys_secureboot
-		install_gpu_driver
-		change_policy_keyring
+		# install_gpu_driver
+		# change_policy_keyring
 		# sign_kernel_garuda
 		# vscode_custom
 		services
