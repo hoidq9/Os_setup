@@ -1,0 +1,5 @@
+{
+	// "disable-hardware-acceleration": true,
+	"enable-crash-reporter": true,
+	"password-store": "gnome-libsecret"
+}
