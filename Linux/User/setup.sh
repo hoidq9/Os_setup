@@ -381,6 +381,16 @@ User_setup() {
 		fi
 	}
 
+	kde_keyring() {
+		mkdir -p ~/.config/xdg-desktop-portal
+		cp $REPO_DIR/keyring/kde-portals.conf ~/.config/xdg-desktop-portal
+		cp $REPO_DIR/keyring/kwalletrc ~/.config
+
+		if pidof ksecretd >/dev/null; then
+			pkill ksecretd
+		fi
+	}
+
 	tasks=(
 		"terminal"
 		"accessibility"
@@ -403,6 +413,10 @@ User_setup() {
 	if [ systemd-detect-virt | grep -q "none" ] && [ $(cat ../DE.txt) == "GNOME" ]; then
 		check_and_run User_gnome_extensions "$REPO_DIR/../logs/User_gnome_extensions.log" "$REPO_DIR/../logs/Result.log"
 	fi
+
+	# if [ $(cat ../DE.txt) == "KDE" ]; then
+	# 	kde_keyring
+	# fi
 
 }
 
