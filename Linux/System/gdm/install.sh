@@ -24,7 +24,7 @@ System_gdm() {
         "org.gnome.desktop.interface clock-show-weekday true"
         "org.gnome.settings-daemon.plugins.power power-button-action 'action'"
         "org.gnome.desktop.peripherals.touchpad tap-to-click true"
-        "org.gnome.login-screen disable-user-list true"
+        "org.gnome.login-screen disable-user-list false"
         "org.gnome.settings-daemon.plugins.color night-light-schedule-automatic false"
         "org.gnome.settings-daemon.plugins.color night-light-enabled true"
         "org.gnome.settings-daemon.plugins.color night-light-temperature 2595"
