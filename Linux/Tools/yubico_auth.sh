@@ -46,14 +46,14 @@ check_and_add_pam_u2f() {
 }
 
 authselect_auth() {
-	if [ ! -d /etc/authselect/custom/user_auth ]; then
-		sudo authselect create-profile user_auth --base-on=sssd
-		sudo authselect select custom/user_auth --force
+	if [ ! -d /etc/authselect/custom/useauth ]; then
+		sudo authselect create-profile useauth --base-on=sssd
+		sudo authselect select custom/useauth --force
 
-		FILE1="/etc/authselect/custom/user_auth/password-auth"
-		FILE2="/etc/authselect/custom/user_auth/system-auth"
-		LINE1='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
-		LINE2='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
+		FILE1="/etc/authselect/custom/useauth/password-auth"
+		FILE2="/etc/authselect/custom/useauth/system-auth"
+		LINE1='auth        sufficient pam_u2f.so  cue [cue_prompt=Tap the Yubikey to authenticate]'
+		LINE2='auth        sufficient pam_u2f.so  cue [cue_prompt=Tap the Yubikey to authenticate]'
 
 		if ! sudo grep -Fxq "$LINE1" "/etc/pam.d/password-auth" && ! sudo grep -Fxq "$LINE2" "/etc/pam.d/password-auth"; then
 			if ! sudo grep -Fxq "$LINE1" "$FILE1" && ! sudo grep -Fxq "$LINE2" "$FILE1"; then
@@ -106,18 +106,13 @@ if [[ -n "$devices" ]]; then
 		echo
 		echo -e "${GREEN}--- Enroll FIDO2 device... ---${NC}"
 
-		if [ ! -f "/Os_H/Yubico_Auth" ]; then
-			sudo mkdir /Os_H >/dev/null 2>&1
-			sudo touch /Os_H/Yubico_Auth
-		fi
+		mkdir -p $HOME/.config/Yubico >/dev/null 2>&1
+		pamu2fcfg -V >$HOME/.config/Yubico/u2f_keys
 
-		if grep -q "$user_current" /Os_H/Yubico_Auth 2>/dev/null; then
-			echo "Thiết bị FIDO2 đã được đăng ký cho người dùng $user_current."
-		else
-			echo "Đăng ký thiết bị FIDO2 cho người dùng $user_current..."
-			pamu2fcfg -u -V "$user_current" | sudo tee -a /Os_H/Yubico_Auth >/dev/null
-		fi
-
+		# if [ ! -d "/Os_H" ]; then
+		# 	sudo mkdir /Os_H
+		# fi
+		# sudo mv u2f_keys /Os_H/Yubico_Auth
 		# add_pam_u2f_gdm_password
 		# check_and_add_pam_u2f
 		authselect_auth
