@@ -87,10 +87,10 @@ Apps_Conky() {
 		# 	cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
 		# fi
 
-		mkdir -p ~/.config/systemd/user
-		systemctl --user enable conky_text.service
+		# mkdir -p ~/.config/systemd/user
+		# systemctl --user enable conky_text.service
 		# systemctl --user enable conky_graph.service
-		systemctl --user start conky_text.service
+		# systemctl --user start conky_text.service
 		# systemctl --user start conky_graph.service
 
 		loginctl enable-linger $user_current
