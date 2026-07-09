@@ -46,19 +46,18 @@ check_and_add_pam_u2f() {
 }
 
 authselect_auth() {
-	if [ ! -d /etc/authselect/custom/$user_current ]; then
-		sudo authselect create-profile $user_current --base-on=sssd
-	fi
-	sudo authselect select custom/$user_current --force
+	if [ ! -d /etc/authselect/custom/user_auth ]; then
+		sudo authselect create-profile user_auth --base-on=sssd
+		sudo authselect select custom/user_auth --force
 
-	FILE1="/etc/authselect/custom/$user_current/password-auth"
-	FILE2="/etc/authselect/custom/$user_current/system-auth"
-	LINE1='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
-	LINE2='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
+		FILE1="/etc/authselect/custom/user_auth/password-auth"
+		FILE2="/etc/authselect/custom/user_auth/system-auth"
+		LINE1='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
+		LINE2='auth        sufficient pam_u2f.so  authfile=/Os_H/Yubico_Auth  cue [cue_prompt=Tap the Yubikey to authenticate]'
 
-	if ! sudo grep -Fxq "$LINE1" "/etc/pam.d/password-auth" && ! sudo grep -Fxq "$LINE2" "/etc/pam.d/password-auth"; then
-		if ! sudo grep -Fxq "$LINE1" "$FILE1" && ! sudo grep -Fxq "$LINE2" "$FILE1"; then
-			sudo awk -v l1="$LINE1" -v l2="$LINE2" '
+		if ! sudo grep -Fxq "$LINE1" "/etc/pam.d/password-auth" && ! sudo grep -Fxq "$LINE2" "/etc/pam.d/password-auth"; then
+			if ! sudo grep -Fxq "$LINE1" "$FILE1" && ! sudo grep -Fxq "$LINE2" "$FILE1"; then
+				sudo awk -v l1="$LINE1" -v l2="$LINE2" '
         {
             print
             if ($0 ~ /auth[[:space:]]+sufficient[[:space:]]+pam_u2f\.so[[:space:]]+cue/) {
@@ -67,16 +66,13 @@ authselect_auth() {
             }
         }
     ' "$FILE1" | sudo tee "${FILE1}.tmp" >/dev/null
-			sudo mv "${FILE1}.tmp" "$FILE1"
+				sudo mv "${FILE1}.tmp" "$FILE1"
+			fi
 		fi
-		sudo authselect apply-changes
-	else
-		echo "2 dòng pam_u2f.so đã tồn tại trong /etc/pam.d/password-auth, không thay đổi."
-	fi
 
-	if ! sudo grep -Fxq "$LINE1" "/etc/pam.d/system-auth" && ! sudo grep -Fxq "$LINE2" "/etc/pam.d/system-auth"; then
-		if ! sudo grep -Fxq "$LINE1" "$FILE2" && ! sudo grep -Fxq "$LINE2" "$FILE2"; then
-			sudo awk -v l1="$LINE1" -v l2="$LINE2" '
+		if ! sudo grep -Fxq "$LINE1" "/etc/pam.d/system-auth" && ! sudo grep -Fxq "$LINE2" "/etc/pam.d/system-auth"; then
+			if ! sudo grep -Fxq "$LINE1" "$FILE2" && ! sudo grep -Fxq "$LINE2" "$FILE2"; then
+				sudo awk -v l1="$LINE1" -v l2="$LINE2" '
         {
             print
             if ($0 ~ /auth[[:space:]]+sufficient[[:space:]]+pam_u2f\.so[[:space:]]+cue/) {
@@ -85,11 +81,10 @@ authselect_auth() {
             }
         }
     ' "$FILE2" | sudo tee "${FILE2}.tmp" >/dev/null
-			sudo mv "${FILE2}.tmp" "$FILE2"
+				sudo mv "${FILE2}.tmp" "$FILE2"
+			fi
 		fi
 		sudo authselect apply-changes
-	else
-		echo "2 dòng pam_u2f.so đã tồn tại trong /etc/pam.d/system-auth, không thay đổi."
 	fi
 }
 
@@ -110,11 +105,19 @@ if [[ -n "$devices" ]]; then
 		fi
 		echo
 		echo -e "${GREEN}--- Enroll FIDO2 device... ---${NC}"
-		pamu2fcfg >u2f_keys
-		if [ ! -d "/Os_H" ]; then
-			sudo mkdir /Os_H
+
+		if [ ! -f "/Os_H/Yubico_Auth" ]; then
+			sudo mkdir /Os_H >/dev/null 2>&1
+			sudo touch /Os_H/Yubico_Auth
 		fi
-		sudo mv u2f_keys /Os_H/Yubico_Auth
+
+		if grep -q "$user_current" /Os_H/Yubico_Auth 2>/dev/null; then
+			echo "Thiết bị FIDO2 đã được đăng ký cho người dùng $user_current."
+		else
+			echo "Đăng ký thiết bị FIDO2 cho người dùng $user_current..."
+			pamu2fcfg -u -V "$user_current" | sudo tee -a /Os_H/Yubico_Auth >/dev/null
+		fi
+
 		# add_pam_u2f_gdm_password
 		# check_and_add_pam_u2f
 		authselect_auth
