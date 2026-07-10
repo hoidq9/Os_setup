@@ -26,8 +26,8 @@ vmlinuz_path="/usr/lib/modules/${latest_kernel}/vmlinuz"
 initramfs_path="/boot/initramfs-${latest_kernel}.img"
 cmdline_path="${parameters} rhgb lockdown=confidentiality intel_iommu=on efi=disable_early_pci_dma module.sig_enforce=1 slab_nomerge page_alloc.shuffle=1 pti=on spectre_v2=on spec_store_bypass_disable=on vsyscall=none randomize_kstack_offset=on random.trust_cpu=off rd.systemd.show_status=1 init_on_alloc=1 init_on_free=1 audit=1 crashkernel=512M quiet rd.luks.options=password-echo=none,tries=3 plymouth.enable=0 rd.plymouth=0" # nosmt=1 loglevel=7
 
-private_key_path="/keys/secureboot/${os_id}-${user_current}.key"
-certificate_path="/keys/secureboot/${os_id}-${user_current}.x509"
+private_key_path="/keys/secureboot/${os_id}-auth.key"
+certificate_path="/keys/secureboot/${os_id}-auth.x509"
 
 cp uki.cfg setup.cfg
 sed -i "s|(vmlinuz)|${vmlinuz_path}|g" setup.cfg
@@ -41,6 +41,7 @@ result=$($REPO_DIR/../../Tools/check_UKI.sh)
 result_NVIDIA=$($REPO_DIR/../../Tools/check_nvidia_driver.sh)
 
 if [[ "$result" == " UKI: ❌ " ]] || [[ "$result_NVIDIA" == "NVIDIA: ❌ " ]] || [ ! -f /boot/ukify-linux.efi ]; then
+	mpathconf --enable
 	dracut -f -v --regenerate-all
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
