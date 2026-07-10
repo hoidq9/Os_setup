@@ -354,7 +354,9 @@ cockpit_browser() {
 	if rpm -q cockpit; then
 
 		touch /etc/cockpit/allowed
-		echo "$user_current" >/etc/cockpit/allowed
+		if ! grep -q "$user_current" /etc/cockpit/allowed; then
+			echo "$user_current" >>/etc/cockpit/allowed
+		fi
 		chown root:root /etc/cockpit/allowed
 		chmod 600 /etc/cockpit/allowed
 
