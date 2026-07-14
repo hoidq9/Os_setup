@@ -192,8 +192,8 @@ dkms_config() {
 		if [ ! -f /etc/dkms/framework.conf ]; then
 			touch /etc/dkms/framework.conf
 		else
-			grep -qxF 'mok_signing_key=/keys/secureboot/'${os_id}-${user_current}'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/secureboot/'${os_id}-${user_current}'.key' | tee -a /etc/dkms/framework.conf
-			grep -qxF 'mok_certificate=/keys/secureboot/'${os_id}-${user_current}'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/secureboot/'${os_id}-${user_current}'.x509' | tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' | tee -a /etc/dkms/framework.conf
+			grep -qxF 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' | tee -a /etc/dkms/framework.conf
 		fi
 	fi
 }
@@ -253,13 +253,13 @@ sign_kernel_garuda() {
 
 				for kernel_path in "${kernel_paths[@]}"; do
 					if [ -f "$kernel_path" ]; then
-						sbverify --cert /keys/secureboot/${os_id}-${user_current}.x509 "$kernel_path" &>/dev/null
+						sbverify --cert /keys/secureboot/${os_id}-auth.x509 "$kernel_path" &>/dev/null
 
 						if [ $? -eq 0 ]; then
-							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/secureboot/${os_id}-${user_current}.der)"
+							echo "✓ Kernel đã được ký với khóa MOK: $(basename /keys/secureboot/${os_id}-auth.der)"
 							continue
 						elif [ $? -ne 0 ]; then
-							sbsign --key /keys/secureboot/${os_id}-${user_current}.priv --cert /keys/secureboot/${os_id}-${user_current}.crt --output "${kernel_path}.signed" "$kernel_path"
+							sbsign --key /keys/secureboot/${os_id}-auth.priv --cert /keys/secureboot/${os_id}-auth.crt --output "${kernel_path}.signed" "$kernel_path"
 							mv "${kernel_path}.signed" "${kernel_path}"
 						fi
 
@@ -285,10 +285,10 @@ sign_kernel_ubuntu() {
 			find $mount_point/boot/ -maxdepth 1 -type f -name 'vmlinuz-*-generic' -print0 |
 				while IFS= read -r -d '' k; do
 					# k có đường dẫn (./vmlinuz-...)
-					if grep -q "${os_id}-${user_current}" <<<"$(pesign -S -i "$k")"; then
+					if grep -q "${os_id}-auth" <<<"$(pesign -S -i "$k")"; then
 						echo "✅ Đã ký thành công: $k"
 					else
-						pesign --certificate "${os_id}-${user_current}" --in "$k" --sign --out "$k".signed
+						pesign --certificate "${os_id}-auth" --in "$k" --sign --out "$k".signed
 						mv "$k".signed "$k"
 					fi
 				done
@@ -397,11 +397,11 @@ create_uki_os_based_redhat() {
 		dracut -v --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$latest_kernel/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
 
 		if [ "$os_id" == "rhel" ]; then
-			pesign --in /boot/linux_uki_based_redhat.efi --out /boot/linux_uki_based_redhat.efi.signed --force --certificate "${os_id}-${user_current}" --sign
+			pesign --in /boot/linux_uki_based_redhat.efi --out /boot/linux_uki_based_redhat.efi.signed --force --certificate "${os_id}-auth" --sign
 
 		elif [ "$os_id" == "fedora" ]; then
 			dnf install sbsigntools -y
-			sbsign --key /keys/secureboot/"${os_id}-${user_current}".key --cert /keys/secureboot/"${os_id}-${user_current}".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
+			sbsign --key /keys/secureboot/"${os_id}-auth".key --cert /keys/secureboot/"${os_id}-auth".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
 		fi
 
 		mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
@@ -470,6 +470,17 @@ rhel_system() {
 
 	flatpak_repo() {
 		flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	}
+
+	KDE_Desktop() {
+		if rpm -q epel-release; then
+			dnf install plasma-desktop plasma-nm -y
+		fi
+
+		if rpm -q flatpak; then
+			flatpak install flathub org.fcitx.Fcitx5 -y
+			flatpak install flathub org.fcitx.Fcitx5.Addon.M17N -y
+		fi
 	}
 
 	packages() {

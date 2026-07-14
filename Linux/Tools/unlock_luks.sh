@@ -69,7 +69,7 @@ if [[ "$enroll_fido2" == "y" ]]; then
 	# dnf install sbsigntools -y &>/dev/null
 	# parameters=$(dracut --fstab --print-cmdline)
 	# dracut --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$(uname -r)/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
-	# sbsign --key /keys/"${os_id}-${user_current}".key --cert /keys/"${os_id}-${user_current}".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
+	# sbsign --key /keys/"${os_id}-auth".key --cert /keys/"${os_id}-auth".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
 	# mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
 
 	# if bootctl status | grep -q "Measured UKI: yes"; then
