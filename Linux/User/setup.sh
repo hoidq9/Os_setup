@@ -391,6 +391,13 @@ User_setup() {
 		fi
 	}
 
+	KDE_Desktop() {
+		if rpm -q flatpak; then
+			flatpak install flathub org.fcitx.Fcitx5 -y
+			flatpak install flathub org.fcitx.Fcitx5.Addon.Unikey -y
+		fi
+	}
+
 	tasks=(
 		"terminal"
 		"accessibility"
@@ -414,9 +421,10 @@ User_setup() {
 		check_and_run User_gnome_extensions "$REPO_DIR/../logs/User_gnome_extensions.log" "$REPO_DIR/../logs/Result.log"
 	fi
 
-	# if [ $(cat ../DE.txt) == "KDE" ]; then
-	# 	kde_keyring
-	# fi
+	if [ $(cat $REPO_DIR/../DE.txt) == "KDE" ]; then
+		# kde_keyring
+		KDE_Desktop
+	fi
 
 }
 

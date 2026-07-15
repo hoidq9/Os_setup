@@ -472,17 +472,6 @@ rhel_system() {
 		flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 	}
 
-	KDE_Desktop() {
-		if rpm -q epel-release; then
-			dnf install plasma-desktop plasma-nm -y
-		fi
-
-		if rpm -q flatpak; then
-			flatpak install flathub org.fcitx.Fcitx5 -y
-			flatpak install flathub org.fcitx.Fcitx5.Addon.M17N -y
-		fi
-	}
-
 	packages() {
 		dnf install zsh gnome-shell gnome-browser-connector ptyxis nautilus PackageKit-command-not-found gnome-software gdm git dbus-x11 gnome-disk-utility gdb gcc seahorse gnome-system-monitor gnome-tweaks gnome-software flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code xisxwayland xorg-x11-server-Xwayland xwayland-run xorg-x11-server-Xwayland-devel google-chrome-stable rpcbind portmap xwaylandvideobridge -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
@@ -501,6 +490,7 @@ rhel_system() {
 		# change_policy_keyring
 		shfmt_install
 		services
+
 		# if systemd-detect-virt | grep -q "none"; then
 		# 	cd $REPO_DIR/repo || return
 		# 	cp vscode.repo microsoft-edge.repo /etc/yum.repos.d/
