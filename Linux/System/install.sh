@@ -479,6 +479,14 @@ rhel_system() {
 		# systemctl restart libvirtd
 	}
 
+	KDE_Connect() {
+		if rpm -q epel-release && [ $(cat $REPO_DIR/../DE.txt) == "KDE" ]; then
+			dnf install kdeconnectd sshfs -y
+		fi
+		firewall-cmd --permanent --zone=public --add-service=kdeconnect
+		firewall-cmd --reload
+	}
+
 	main() {
 		# cp $REPO_DIR/checksum/SHA1.pmod /etc/crypto-policies/policies/modules
 		# update-crypto-policies --set LEGACY
@@ -490,6 +498,7 @@ rhel_system() {
 		# change_policy_keyring
 		shfmt_install
 		services
+		KDE_Connect
 
 		# if systemd-detect-virt | grep -q "none"; then
 		# 	cd $REPO_DIR/repo || return
