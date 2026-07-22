@@ -22,7 +22,7 @@ sh install.sh
 cd $REPO_DIR/Apps/Font
 sh install.sh
 
-if [ $(cat $REPO_DIR/DE.txt) == "GNOME" ]; then
+if rpm -q gdm &>/dev/null; then
 	cd $REPO_DIR/System/gdm
 	sh install.sh
 fi
