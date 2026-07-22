@@ -495,7 +495,7 @@ rhel_system() {
 		run
 		flatpak_repo
 		install_gpu_driver
-		# change_policy_keyring
+		change_policy_keyring
 		shfmt_install
 		services
 		KDE_Connect
