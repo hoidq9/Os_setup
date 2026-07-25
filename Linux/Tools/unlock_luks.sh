@@ -60,12 +60,29 @@ if [[ "$enroll_fido2" == "y" ]]; then
 
 	echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
 	read -r fido2_device_path
+
+	echo -ne "${YELLOW}Do you want to use PIN FIDO2? (y/n): ${NC}"
+	read -r fido2_pin_option
+
 	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
 	read -r luks2_disk_path
 
-	systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
-	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=no --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+	if [[ "$fido2_pin_option" == "y" ]] || [[ "$fido2_pin_option" == "Y" ]] || [[ "$fido2_pin_option" == "yes" ]] || [[ "$fido2_pin_option" == "YES" ]] || [[ "$fido2_pin_option" == "Yes" ]]; then
+		fido2_with_pin=yes
+	else
+		fido2_with_pin=no
+	fi
 
+	# systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
+	# if systemd-cryptenroll $luks2_disk_path | grep -q "fido2"; then
+	# 	option="--unlock-fido2-device=auto"
+	# elif systemd-cryptenroll $luks2_disk_path | grep -q "tpm2"; then
+	# 	option="--unlock-tpm2-device=auto"
+	# fi
+
+	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=$fido2_with_pin --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+
+	# --unlock-tpm2-device=auto
 	# dnf install sbsigntools -y &>/dev/null
 	# parameters=$(dracut --fstab --print-cmdline)
 	# dracut --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$(uname -r)/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
@@ -79,7 +96,13 @@ if [[ "$enroll_fido2" == "y" ]]; then
 	# 	chown -R $user_current:$user_current /home/$user_current/pcr_result_luks_tpm
 	# fi
 
-	echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
+	LAST_COMMAND=$?
+
+	if [ $LAST_COMMAND -eq 0 ]; then
+		echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
+	else
+		echo -e "${RED}Failed to enroll FIDO2 device.${NC}"
+	fi
 fi
 
 echo
@@ -103,9 +126,20 @@ if [[ "$enroll_tpm2" == "y" ]]; then
 	# awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
 	# chown -R "$user_current":"$user_current" /home/$user_current/pcr_result_luks_tpm
 	# else
-	systemd-cryptenroll --tpm2-pcrs="7" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes --tpm2-public-key=/etc/systemd/tpm2-pcr-public-key.pem $luks2_disk_path
+	# /usr/lib/systemd/systemd-pcrlock lock-firmware-code
+	# /usr/lib/systemd/systemd-pcrlock make-policy
+	# --tpm2-pcrlock=/var/lib/systemd/pcrlock.json
+	# --unlock-fido2-device=auto
+
+	systemd-cryptenroll --tpm2-pcrs="" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
 	# fi
-	echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
+	LAST_COMMAND=$?
+
+	if [ $LAST_COMMAND -eq 0 ]; then
+		echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
+	else
+		echo -e "${RED}Failed to enroll TPM2 device.${NC}"
+	fi
 fi
 
 dnf autoremove -y &>/dev/null
