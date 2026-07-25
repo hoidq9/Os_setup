@@ -46,7 +46,7 @@ check_and_add_pam_u2f() {
 }
 
 authselect_auth() {
-	if [ ! -d /etc/authselect/custom/useauth ]; then
+	if ! authselect current | grep -q "custom/useauth"; then
 		sudo authselect create-profile useauth --base-on=sssd
 		sudo authselect select custom/useauth --force
 
