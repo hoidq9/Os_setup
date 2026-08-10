@@ -1,9 +1,9 @@
 #!/bin/bash
-echo $XDG_CURRENT_DESKTOP > DE.txt
+echo $XDG_CURRENT_DESKTOP >DE.txt
 source "$(pwd)/variables.sh"
 
 if [ ! -d "$REPO_DIR"/logs ]; then
-    mkdir -p "$REPO_DIR/logs"
+	mkdir -p "$REPO_DIR/logs"
 fi
 
 touch "$REPO_DIR"/logs/Result.log
@@ -11,37 +11,37 @@ touch "$REPO_DIR"/logs/Result.log
 find "$REPO_DIR" -type f -print0 | xargs -0 dos2unix -- &>/dev/null
 
 if grep -q "Done" "$REPO_DIR/logs/Result.log" &>/dev/null; then
-    rm -rf "$REPO_DIR"/logs/*
-    echo "" >"$REPO_DIR/logs/Result.log"
+	rm -rf "$REPO_DIR"/logs/*
+	echo "" >"$REPO_DIR/logs/Result.log"
 fi
 
 if [ ! -s "$REPO_DIR/logs/Result.log" ]; then
-    rm -rf "$REPO_DIR"/logs/*
+	rm -rf "$REPO_DIR"/logs/*
 fi
 
 if grep -q "Failed" "$REPO_DIR/logs/Result.log" &>/dev/null; then
-    grep "Failed" "$REPO_DIR/logs/Result.log" | while read -r line; do
-        task_name=$(echo "$line" | awk -F': ' '{print $1}')
-        log_file="$REPO_DIR/logs/$task_name.log"
-        if [ -f "$log_file" ]; then
-            rm -rf "$log_file"
-        fi
-    done
-    sed -i '/Failed/d' "$REPO_DIR/logs/Result.log"
+	grep "Failed" "$REPO_DIR/logs/Result.log" | while read -r line; do
+		task_name=$(echo "$line" | awk -F': ' '{print $1}')
+		log_file="$REPO_DIR/logs/$task_name.log"
+		if [ -f "$log_file" ]; then
+			rm -rf "$log_file"
+		fi
+	done
+	sed -i '/Failed/d' "$REPO_DIR/logs/Result.log"
 fi
 
 [ ! -d "$HOME/Prj" ] && mkdir -p "$HOME/Prj"
 
 cd "$REPO_DIR" || return
 if id -nG "$user_current" | grep -q '\wheel\b'; then
-    sudo sh super.sh
-    sh normal.sh
+	sudo sh super.sh
+	sh normal.sh
 else
-    sh normal.sh
+	sh normal.sh
 fi
 
 if ! grep -q "Failed" "$REPO_DIR/logs/Result.log" &>/dev/null; then
-    echo "Done" >>"$REPO_DIR/logs/Result.log"
+	echo "Done" >>"$REPO_DIR/logs/Result.log"
 fi
 
 cd "$REPO_DIR" || exit
