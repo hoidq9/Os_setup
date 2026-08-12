@@ -7,7 +7,12 @@ kver_uki=$(bootctl kernel-inspect "$UKI_PATH" | awk -F: '/Version:/ {gsub(/^[ \t
 kver_latest=$(ls -1 /lib/modules | sort -V | tail -n1)
 
 if [ "$kver_uki" = "$kver_latest" ]; then
-  echo " UKI: ✅ "
+	uki_var=✅
 else
-  echo " UKI: ❌ "
+	uki_var=❌
 fi
+
+grep -q "\[confidentiality\]" /sys/kernel/security/lockdown &&
+	lockdown_var=✅ || lockdown_var=❌
+
+echo " UKI: $uki_var Lockdown: $lockdown_var "
