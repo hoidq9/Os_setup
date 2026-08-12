@@ -41,7 +41,7 @@ if "$REPO_DIR/../../Tools/check_UKI_lockdown.sh" | grep -q "UKI: ❌"; then
 	result_UKI="No_UKI"
 fi
 
-if "$REPO_DIR/../../Tools/dnf_check_update.sh" | grep -q "NVIDIA: ❌"; then
+if "$REPO_DIR/../../User/extensions_gnome/argos/nvidia_latest.3l.1h.sh" | grep -q "NVIDIA: ❌"; then
 	result_NVIDIA="No_NVIDIA"
 fi
 
