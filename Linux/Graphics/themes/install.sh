@@ -20,7 +20,7 @@ os_themes() {
 		done
 		gawk -i inplace '!/Yaru/' src/main/gnome-shell/gnome-shell-theme.gresource.xml
 		./install.sh -n 'WoW' -o normal -c light -a alt -t default -s standard -m -N mojave -HD --round --shell -b default -p 30 -h bigger -normal -sf
-		./tweaks.sh -o solid -c light -t default -s standard -g -b default -p 30 -h bigger -sf
+		# ./tweaks.sh -o solid -c light -t default -s standard -g -b default -p 30 -h bigger -sf
 		cd /usr/share/themes/
 
 		if [ ! -z "$(ls -A WoW-Light-alt)" ]; then
@@ -50,4 +50,4 @@ Graphics_themes() {
 	os_themes "$os_id"
 }
 
-# check_and_run Graphics_themes "$REPO_DIR/../../logs/Graphics_themes.log" "$REPO_DIR/../../logs/Result.log"
+check_and_run Graphics_themes "$REPO_DIR/../../logs/Graphics_themes.log" "$REPO_DIR/../../logs/Result.log"
