@@ -6,9 +6,9 @@ for dir in /sys/class/thermal/thermal_zone*; do
 
 		# Nếu trên 80 độ thì hiện màu đỏ
 		if [ $temp -gt 80 ]; then
-			echo " ${temp}°C | color=red"
+			echo "🧠 ${temp}°C | color=red"
 		else
-			echo " ${temp}°C | color=green"
+			echo "🧠 ${temp}°C | color=green"
 		fi
 	fi
 done
