@@ -164,8 +164,8 @@ User_setup() {
 			gsettings set org.gnome.desktop.interface document-font-name 'Adwaita Sans 11'  # Red Hat Text Medium 11 @wght=500
 			gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'           # Red Hat Text Semi-Bold 11 @wght=600
 			gsettings set org.gnome.desktop.interface monospace-font-name 'Adwaita Mono 11' # Red Hat Mono Semi-Bold 11 @wght=600
-			gsettings set org.gnome.shell favorite-apps "['org.gnome.Ptyxis.desktop', 'code.desktop', 'org.gnome.Settings.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop', 'org.cockpit_project.CockpitClient.desktop']"
-			# "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop']"
+			gsettings set org.gnome.shell favorite-apps "['code.desktop', 'code-insiders.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Settings.desktop', 'org.gnome.Software.desktop', 'microsoft-edge.desktop', 'google-chrome.desktop', 'org.gnome.SystemMonitor.desktop']"
+			# "['org.gnome.Terminal.desktop', 'org.cockpit_project.CockpitClient.desktop', 'gnome-control-center.desktop', 'conky.desktop', 'gnome-system-monitor.desktop', 'virt-manager.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.tweaks.desktop', 'nvidia-settings.desktop', 'org.gnome.seahorse.Application.desktop', 'com.yubico.yubioath.desktop', 'org.gnome.Extensions.desktop', 'yandex-browser.desktop', 'ca.desrt.dconf-editor.desktop', 'org.cockpit_project.CockpitClient.desktop']"
 		elif [ "$os_id" == "fedora" ]; then
 
 			cp $REPO_DIR/backgrounds/king.jpg $HOME/.local/share/backgrounds
@@ -255,7 +255,7 @@ User_setup() {
 			# if systemd-detect-virt | grep -q "none"; then
 			# 	extensions=('3628' '6682' '1500' '1160' '3843' '3010' '3733' '5928' '6580' '1319' '2224')
 			# else
-			extensions=('3628' '6682' '1160' '3843' '3733' '5928' '6580' '2932') # '3010' '1500'
+			extensions=('3628' '6682' '1160' '3843' '3733' '5928' '6580' '2932' '1319') # '3010' '1500'
 			# fi
 		elif [ "$os_id" == "almalinux" ]; then
 			extensions=('3628' '3843' '3010' '3733' '1160') # '3628' '1486' '3843' '4405' '3010' '4679' '3733' '4670' '1082'
