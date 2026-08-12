@@ -477,6 +477,7 @@ rhel_system() {
 	}
 
 	packages() {
+		packages_gnome
 		dnf install zsh PackageKit-command-not-found git dbus-x11 gdb gcc flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code xisxwayland xorg-x11-server-Xwayland xwayland-run xorg-x11-server-Xwayland-devel google-chrome-stable rpcbind portmap xwaylandvideobridge -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos
 		# systemctl restart libvirtd
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
@@ -499,11 +500,11 @@ rhel_system() {
 		run
 		flatpak_repo
 
-		if ! rpm -q plasma-desktop; then
-			packages_gnome
-		else
-			dnf install plasma-desktop plasma-nm sddm sddm-kcm NetworkManager-wifi wpa_supplicant -y
-		fi
+		# if ! rpm -q plasma-desktop; then
+		# 	packages_gnome
+		# else
+		# 	dnf install plasma-desktop plasma-nm sddm sddm-kcm NetworkManager-wifi wpa_supplicant -y
+		# fi
 
 		install_gpu_driver
 		change_policy_keyring
