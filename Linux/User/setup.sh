@@ -372,13 +372,26 @@ User_setup() {
 	}
 
 	argos() {
-		if [ ! -f "$HOME/.config/argos/voltage.1s.sh" ]; then
-			rm -rf $HOME/.config/argos/*.sh
-			mkdir -p $HOME/.config/argos
-			cd $REPO_DIR/extensions_gnome/argos
-			cp -r *.sh $HOME/.config/argos/
-			chmod +x $HOME/.config/argos/*.sh
+		if rpm -q git >/dev/null 2>&1; then
+			mkdir -p $HOME/Prj
+			cd $HOME/Prj
+
+			if [ ! -d "$HOME/Prj/argos" ]; then
+				git clone https://github.com/p-e-w/argos
+			else
+				cd $HOME/Prj/argos
+				git pull
+			fi
+
+			ln -s $HOME/Prj/argos/argos@pew.worldwidemann.com ~/.local/share/gnome-shell/extensions/argos@pew.worldwidemann.com
 		fi
+
+		mkdir -p $HOME/.config/argos
+		rm -rf $HOME/.config/argos/*.sh
+		cd $REPO_DIR/extensions_gnome/argos
+		cp -r *.sh $HOME/.config/argos/
+		chmod +x $HOME/.config/argos/*.sh
+		gnome-extensions enable argos@pew.worldwidemann.com
 	}
 
 	kde_keyring() {
@@ -402,7 +415,7 @@ User_setup() {
 		"terminal"
 		"accessibility"
 		"keybinding"
-		# "argos"
+		"argos"
 		# "update_firefox_userChrome"
 		"bookmark_nautilus"
 		# "autostart_edge"
