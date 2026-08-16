@@ -29,10 +29,9 @@ cursors() {
 }
 
 Graphics_cursors() {
-	if [ $(cat ../../DE.txt) != "GNOME" ]; then
-		exit 0
+	if [ $(cat ../../DE.txt) == "GNOME" ]; then
+		cursors "$os_id"
 	fi
-	cursors "$os_id"
 }
 
 check_and_run Graphics_cursors "$REPO_DIR/../../logs/Graphics_cursors.log" "$REPO_DIR/../../logs/Result.log"

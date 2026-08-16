@@ -44,10 +44,9 @@ os_themes() {
 }
 
 Graphics_themes() {
-	if [ $(cat ../../DE.txt) != "GNOME" ]; then
-		exit 0
+	if [ $(cat ../../DE.txt) == "GNOME" ]; then
+		os_themes "$os_id"
 	fi
-	os_themes "$os_id"
 }
 
 check_and_run Graphics_themes "$REPO_DIR/../../logs/Graphics_themes.log" "$REPO_DIR/../../logs/Result.log"

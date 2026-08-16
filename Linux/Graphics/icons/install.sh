@@ -35,10 +35,9 @@ icons() {
 }
 
 Graphics_icons() {
-	if [ $(cat ../../DE.txt) != "GNOME" ]; then
-		exit 0
+	if [ $(cat ../../DE.txt) == "GNOME" ]; then
+		icons "$os_id"
 	fi
-	icons "$os_id"
 }
 
 check_and_run Graphics_icons "$REPO_DIR/../../logs/Graphics_icons.log" "$REPO_DIR/../../logs/Result.log"
