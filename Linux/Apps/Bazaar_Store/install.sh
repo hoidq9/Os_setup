@@ -7,4 +7,4 @@ Apps_Bazaar() {
 	fi
 }
 
-check_and_run Apps_Bazaar "$REPO_DIR/../../logs/Apps_Bazaar.log" "$REPO_DIR/../../logs/Result.log"
+# check_and_run Apps_Bazaar "$REPO_DIR/../../logs/Apps_Bazaar.log" "$REPO_DIR/../../logs/Result.log"
