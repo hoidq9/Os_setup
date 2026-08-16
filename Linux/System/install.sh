@@ -34,9 +34,9 @@ grep -q "clean_requirements_on_remove=1" /etc/dnf/dnf.conf || echo -e "directive
 cd $REPO_DIR/repo || return
 cp vscode.repo google-chrome.repo /etc/yum.repos.d/ # yandex-browser.repo
 
-if [ "$os_id" == "fedora" ]; then
-	cp microsoft-edge.repo /etc/yum.repos.d/
-fi
+# if [ "$os_id" == "fedora" ]; then
+# 	cp microsoft-edge.repo /etc/yum.repos.d/
+# fi
 
 create_keys_secureboot() {
 	set -euo pipefail
@@ -430,6 +430,11 @@ fedora_system() {
 					dnf remove btrfs-progs -y
 				fi
 			fi
+		elif [ $(cat $REPO_DIR/../DE.txt) == "KDE" ]; then
+			dnf install plasma-desktop plasma-nm sddm sddm-kcm NetworkManager-wifi wpa_supplicant konsole dolphin plasma-discover kwallet bluez bluez-tools bluedevil kdeconnectd sshfs -y
+
+			firewall-cmd --permanent --zone=public --add-service=kdeconnect
+			firewall-cmd --reload
 		fi
 	}
 
@@ -437,21 +442,21 @@ fedora_system() {
 		# repo_setup
 		dnf upgrade -y
 		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y
-		dnf install podman cockpit-podman cockpit git zsh msr-tools conky code shfmt google-chrome-stable microsoft-edge-stable -y
+		dnf install podman cockpit-podman cockpit git zsh msr-tools conky code shfmt google-chrome-stable -y # microsoft-edge-stable
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
 		run
 		flatpak_repo
-		create_keys_secureboot
+		# create_keys_secureboot
 		# install_gpu_driver
 		# change_policy_keyring
 		# sign_kernel_garuda
 		# vscode_custom
 		services
 		# create_uki_os_based_redhat
-		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
-		sh build.sh
+		# cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		# sh build.sh
 		cd $REPO_DIR
 	}
 	main
