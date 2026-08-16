@@ -22,8 +22,8 @@ sh install.sh
 cd $REPO_DIR/Apps/Cursor
 sh install.sh
 
-# cd $REPO_DIR/Apps/Conky
-# sh install.sh
+cd $REPO_DIR/Apps/Conky
+sh install.sh
 
 cd $REPO_DIR/Apps/Chrome
 sh install.sh
