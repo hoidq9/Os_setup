@@ -25,12 +25,12 @@ Apps_Conky() {
 			# fi
 
 			if [ ! -f $HOME/.config/conky/conky.conf ]; then
-
-				if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-					cp -f conky_wayland.conf /home/$user_current/.config/conky/conky.conf
-				elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-					cp -f conky_x11.conf /home/$user_current/.config/conky/conky.conf
-				fi
+				# if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
+				# 	cp -f conky_wayland.conf /home/$user_current/.config/conky/conky.conf
+				# elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
+				# 	cp -f conky_x11.conf /home/$user_current/.config/conky/conky.conf
+				# fi
+				cp -f conky_text.conf /home/$user_current/.config/conky/conky.conf
 			fi
 
 		elif [ "$os_id" == "almalinux" ]; then
@@ -100,5 +100,7 @@ Apps_Conky() {
 }
 
 if systemd-detect-virt | grep -q "none"; then
-	check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+	if [ "$os_id" == "fedora" ]; then
+		check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+	fi
 fi
