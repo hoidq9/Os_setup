@@ -99,12 +99,13 @@ grub_new() {
 			fi
 		fi
 
-		cp $REPO_DIR/01_fedora /etc/grub.d/
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_fedora
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_fedora
-		sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_fedora
-		chmod +x /etc/grub.d/01_fedora
-
+		if [ -f /boot/ukify-linux.efi ]; then
+			cp $REPO_DIR/01_fedora /etc/grub.d/
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/01_fedora
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/01_fedora
+			sed -i "s/(boot_mapper_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/01_fedora
+			chmod +x /etc/grub.d/01_fedora
+		fi
 	fi
 
 	# if [ "$os_id" = "fedora" ]; then
