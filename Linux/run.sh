@@ -1,6 +1,19 @@
 #!/bin/bash
-echo $XDG_CURRENT_DESKTOP >DE.txt
+# echo $XDG_CURRENT_DESKTOP >DE.txt
 source "$(pwd)/variables.sh"
+
+if [ "$os_id" == "fedora" ]; then
+	if [[ ! -f "$REPO_DIR/DE.txt" ]] ||
+		{ ! grep -q "KDE" "$REPO_DIR/DE.txt" &&
+			! grep -q "GNOME" "$REPO_DIR/DE.txt"; }; then
+		read -p "Enter your choice (KDE/GNOME): " de_choice
+		if [ "$de_choice" != "KDE" ] && [ "$de_choice" != "GNOME" ]; then
+			echo "Invalid choice. Please enter either 'KDE' or 'GNOME'."
+			exit 1
+		fi
+		echo "$de_choice" >"$REPO_DIR"/DE.txt
+	fi
+fi
 
 if [ ! -d "$REPO_DIR"/logs ]; then
 	mkdir -p "$REPO_DIR/logs"
