@@ -448,15 +448,15 @@ fedora_system() {
 		}
 		run
 		flatpak_repo
-		# create_keys_secureboot
+		create_keys_secureboot
 		# install_gpu_driver
 		# change_policy_keyring
 		# sign_kernel_garuda
 		# vscode_custom
 		services
 		# create_uki_os_based_redhat
-		# cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
-		# sh build.sh
+		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		sh build.sh
 		cd $REPO_DIR
 	}
 	main
