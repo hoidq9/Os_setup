@@ -7,6 +7,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # Không màu
+result_pass_fido2=""
+result_pass_tpm2=""
 
 # Kiểm tra quyền root
 if [ "$EUID" -ne 0 ]; then
@@ -49,97 +51,127 @@ systemd-cryptenroll --tpm2-device=list
 
 echo ""
 
-echo -ne "${YELLOW}Do you want to enroll a new FIDO2 device to unlock LUKS2? (y/n): ${NC}"
-read -r enroll_fido2
+enroll_device() {
+	echo -ne "${YELLOW}Do you want to enroll a new FIDO2 device to unlock LUKS2? (y/n): ${NC}"
+	read -r enroll_fido2
 
-if [[ "$enroll_fido2" == "y" ]]; then
+	if [[ "$enroll_fido2" == "y" ]]; then
 
-	# if [ "$os_id" == "rhel" ]; then
-	bash $REPO_DIR/edit_crypttab.sh
-	# fi
+		# if [ "$os_id" == "rhel" ]; then
+		# bash $REPO_DIR/edit_crypttab.sh
+		# fi
+		echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 
-	echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
-	read -r fido2_device_path
+		echo -ne "${YELLOW}Type the path to the FIDO2 device (Enter correctly, not contain spaces) (ex: /dev/hidraw?): ${NC}"
+		read -r fido2_device_path
 
-	echo -ne "${YELLOW}Do you want to use PIN FIDO2? (y/n): ${NC}"
-	read -r fido2_pin_option
+		echo -ne "${YELLOW}Do you want to use PIN FIDO2? (y/n): ${NC}"
+		read -r fido2_pin_option
 
-	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
-	read -r luks2_disk_path
+		echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
+		read -r luks2_disk_path
 
-	if [[ "$fido2_pin_option" == "y" ]] || [[ "$fido2_pin_option" == "Y" ]] || [[ "$fido2_pin_option" == "yes" ]] || [[ "$fido2_pin_option" == "YES" ]] || [[ "$fido2_pin_option" == "Yes" ]]; then
-		fido2_with_pin=yes
-	else
-		fido2_with_pin=no
+		if [[ "$fido2_pin_option" == "y" ]] || [[ "$fido2_pin_option" == "Y" ]] || [[ "$fido2_pin_option" == "yes" ]] || [[ "$fido2_pin_option" == "YES" ]] || [[ "$fido2_pin_option" == "Yes" ]]; then
+			fido2_with_pin=yes
+		else
+			fido2_with_pin=no
+		fi
+
+		# systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
+		# if systemd-cryptenroll $luks2_disk_path | grep -q "fido2"; then
+		# 	option="--unlock-fido2-device=auto"
+		# elif systemd-cryptenroll $luks2_disk_path | grep -q "tpm2"; then
+		# 	option="--unlock-tpm2-device=auto"
+		# fi
+
+		systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=$fido2_with_pin --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+
+		# --unlock-tpm2-device=auto
+		# dnf install sbsigntools -y &>/dev/null
+		# parameters=$(dracut --fstab --print-cmdline)
+		# dracut --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$(uname -r)/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
+		# sbsign --key /keys/"${os_id}-auth".key --cert /keys/"${os_id}-auth".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
+		# mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
+
+		# if bootctl status | grep -q "Measured UKI: yes"; then
+		# 	mkdir -p /home/$user_current/pcr_result_luks_tpm
+		# 	systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
+		# 	awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
+		# 	chown -R $user_current:$user_current /home/$user_current/pcr_result_luks_tpm
+		# fi
+
+		LAST_COMMAND=$?
+
+		if [ $LAST_COMMAND -eq 0 ]; then
+			echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
+			result_pass_fido2="pass"
+		else
+			echo -e "${RED}Failed to enroll FIDO2 device.${NC}"
+		fi
 	fi
 
-	# systemd-cryptenroll --wipe-slot=fido2 $luks2_disk_path
-	# if systemd-cryptenroll $luks2_disk_path | grep -q "fido2"; then
-	# 	option="--unlock-fido2-device=auto"
-	# elif systemd-cryptenroll $luks2_disk_path | grep -q "tpm2"; then
-	# 	option="--unlock-tpm2-device=auto"
-	# fi
+	echo
 
-	systemd-cryptenroll --fido2-device=$fido2_device_path --fido2-with-client-pin=$fido2_with_pin --fido2-with-user-verification=yes --fido2-with-user-presence=yes $luks2_disk_path
+	echo -ne "${YELLOW}Do you want to enroll a new TPM2 device to unlock LUKS2? (y/n): ${NC}"
+	read -r enroll_tpm2
 
-	# --unlock-tpm2-device=auto
-	# dnf install sbsigntools -y &>/dev/null
-	# parameters=$(dracut --fstab --print-cmdline)
-	# dracut --kernel-cmdline " $parameters lockdown=confidentiality rd.shell=0 rd.emergency=halt" --uefi --kernel-image /usr/lib/modules/$(uname -r)/vmlinuz --force --ro-mnt --fstab --squash-compressor zstd -v /boot/linux_uki_based_redhat.efi
-	# sbsign --key /keys/"${os_id}-auth".key --cert /keys/"${os_id}-auth".crt /boot/linux_uki_based_redhat.efi --output /boot/linux_uki_based_redhat.efi.signed
-	# mv /boot/linux_uki_based_redhat.efi.signed /boot/linux_uki_based_redhat.efi
+	if [[ "$enroll_tpm2" == "y" ]]; then
+		echo -ne "${YELLOW}Type the path to the TPM2 device (Enter correctly, not contain spaces) (ex: /dev/tpm0): ${NC}"
+		read -r tpm2_device_path
+		echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
+		read -r luks2_disk_path
 
-	# if bootctl status | grep -q "Measured UKI: yes"; then
-	# 	mkdir -p /home/$user_current/pcr_result_luks_tpm
-	# 	systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
-	# 	awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
-	# 	chown -R $user_current:$user_current /home/$user_current/pcr_result_luks_tpm
-	# fi
+		systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
+		# if systemd-detect-virt | grep -q "none"; then
+		# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-with-pin=yes --tpm2-public-key=/keys/"$os_id"-"$user_current".crt
+		# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=11 $luks2_disk_path # --tpm2-public-key=srk-public.pem --tpm2-seal-key-handle=0x81000009 --tpm2-public-key-pcrs=18 --unlock-fido2-device=auto
 
-	LAST_COMMAND=$?
+		# mkdir -p /home/$user_current/pcr_result_luks_tpm || true
+		# systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
+		# awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
+		# chown -R "$user_current":"$user_current" /home/$user_current/pcr_result_luks_tpm
+		# else
+		# /usr/lib/systemd/systemd-pcrlock lock-firmware-code
+		# /usr/lib/systemd/systemd-pcrlock make-policy
+		# --tpm2-pcrlock=/var/lib/systemd/pcrlock.json
+		# --unlock-fido2-device=auto
 
-	if [ $LAST_COMMAND -eq 0 ]; then
-		echo -e "${GREEN}FIDO2 device enrolled successfully.${NC}"
+		systemd-cryptenroll --tpm2-pcrs="" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
+		# fi
+		LAST_COMMAND=$?
+
+		if [ $LAST_COMMAND -eq 0 ]; then
+			echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
+			result_pass_tpm2="pass"
+		else
+			echo -e "${RED}Failed to enroll TPM2 device.${NC}"
+		fi
+	fi
+
+	dnf autoremove -y &>/dev/null
+
+}
+
+result=$(sh $REPO_DIR/check_UKI_boot_status.sh)
+
+if grep -q "[UKI_Booting]" <<<"$result"; then
+	echo -ne "${GREEN}The file UKI exists. Continue ${NC}"
+	echo ""
+	enroll_device
+	if [[ "$result_pass_fido2" == "pass" ]] || [[ "$result_pass_tpm2" == "pass" ]]; then
+		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		sh build.sh
+	fi
+
+else
+	echo -ne "${RED}The file UKI does not booting. Please ensure that the UKI file is present before enrolling FIDO2 or TPM2 devices.${NC}"
+	echo -ne "${YELLOW}Do you want to enroll a new device to unlock LUKS2? (y/n): ${NC}"
+	read -r enroll_device
+
+	if [[ "$enroll_device" == "y" ]] || [[ "$enroll_device" == "Y" ]] || [[ "$enroll_device" == "yes" ]] || [[ "$enroll_device" == "YES" ]] || [[ "$enroll_device" == "Yes" ]]; then
+		enroll_device
+		dracut -f -v
 	else
-		echo -e "${RED}Failed to enroll FIDO2 device.${NC}"
+		exit 0
 	fi
 fi
-
-echo
-
-echo -ne "${YELLOW}Do you want to enroll a new TPM2 device to unlock LUKS2? (y/n): ${NC}"
-read -r enroll_tpm2
-
-if [[ "$enroll_tpm2" == "y" ]]; then
-	echo -ne "${YELLOW}Type the path to the TPM2 device (Enter correctly, not contain spaces) (ex: /dev/tpm0): ${NC}"
-	read -r tpm2_device_path
-	echo -ne "${YELLOW}Type the disk path of the LUKS2 partition (Enter correctly, not contain spaces) (ex: /dev/nvme0n1p?): ${NC}"
-	read -r luks2_disk_path
-
-	systemd-cryptenroll --wipe-slot=tpm2 $luks2_disk_path
-	# if systemd-detect-virt | grep -q "none"; then
-	# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=7 $luks2_disk_path # --tpm2-with-pin=yes --tpm2-public-key=/keys/"$os_id"-"$user_current".crt
-	# systemd-cryptenroll --tpm2-device=$tpm2_device_path --tpm2-pcrs=11 $luks2_disk_path # --tpm2-public-key=srk-public.pem --tpm2-seal-key-handle=0x81000009 --tpm2-public-key-pcrs=18 --unlock-fido2-device=auto
-
-	# mkdir -p /home/$user_current/pcr_result_luks_tpm || true
-	# systemd-analyze pcrs >/home/$user_current/pcr_result_luks_tpm/result.txt
-	# awk '$1==4 || $1==7 || $1==11' /home/$user_current/pcr_result_luks_tpm/result.txt >/home/$user_current/pcr_result_luks_tpm/tmp && mv /home/$user_current/pcr_result_luks_tpm/tmp /home/$user_current/pcr_result_luks_tpm/result.txt
-	# chown -R "$user_current":"$user_current" /home/$user_current/pcr_result_luks_tpm
-	# else
-	# /usr/lib/systemd/systemd-pcrlock lock-firmware-code
-	# /usr/lib/systemd/systemd-pcrlock make-policy
-	# --tpm2-pcrlock=/var/lib/systemd/pcrlock.json
-	# --unlock-fido2-device=auto
-
-	systemd-cryptenroll --tpm2-pcrs="" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
-	# fi
-	LAST_COMMAND=$?
-
-	if [ $LAST_COMMAND -eq 0 ]; then
-		echo -e "${GREEN}TPM2 device enrolled successfully.${NC}"
-	else
-		echo -e "${RED}Failed to enroll TPM2 device.${NC}"
-	fi
-fi
-
-dnf autoremove -y &>/dev/null
