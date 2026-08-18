@@ -11,17 +11,20 @@ driver_version=$(
 )
 
 BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
-CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null || echo "0.0.0")
+if command -v nvidia-smi >/dev/null 2>&1; then
+	CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null)
+fi
 
 verlte() { printf '%s\n%s\n' "$1" "$2" | sort -V -C; }
 
-if [ -n "$device_id" ] &&
-	[ -n "$driver_version" ] &&
-	curl -s "$BASE_URL/$driver_version/README/supportedchips.html" | grep -qoiw "$device_id" &&
-	verlte "$driver_version" "$CURRENT_VERSION"; then
-	nvidia_var=✅
+if [ -n "$device_id" ] && [ -n "$driver_version" ] && command -v nvidia-smi >/dev/null 2>&1; then
+	if curl -s "$BASE_URL/$driver_version/README/supportedchips.html" | grep -qoiw "$device_id" && verlte "$driver_version" "$CURRENT_VERSION"; then
+		nvidia_var=✅
+	else
+		nvidia_var=❌
+	fi
 else
-	nvidia_var=❌
+	nvidia_var=?
 fi
 
 echo "NVIDIA: $nvidia_var"
