@@ -29,7 +29,8 @@ cmdline_path="${parameters} rhgb lockdown=confidentiality intel_iommu=on efi=dis
 private_key_path="/keys/secureboot/${os_id}-auth.key"
 certificate_path="/keys/secureboot/${os_id}-auth.x509"
 
-cp uki.cfg setup.cfg
+cp "$os_id"_uki.cfg setup.cfg
+
 sed -i "s|(vmlinuz)|${vmlinuz_path}|g" setup.cfg
 sed -i "s|(initramfs)|${initramfs_path}|g" setup.cfg
 sed -i "s|(cmdline)|${cmdline_path}|g" setup.cfg
@@ -45,9 +46,21 @@ if "$REPO_DIR/../../User/extensions_gnome/argos/nvidia_latest.3l.1h.sh" | grep -
 	result_NVIDIA="No_NVIDIA"
 fi
 
-if [[ "$result_UKI" == "No_UKI" ]] || [[ "$result_NVIDIA" == "No_NVIDIA" ]] || [ ! -f /boot/ukify-linux.efi ]; then
+bool_result_UKI=$(sh "$REPO_DIR/../../Tools/check_UKI_boot_status.sh" --print-is-booting)
+echo "bool_result_UKI=$bool_result_UKI"
+
+if [[ "$bool_result_UKI" == "true" ]]; then
+	if [[ "$result_UKI" == "No_UKI" ]] || [[ "$result_NVIDIA" == "No_NVIDIA" ]] || ! lsinitrd "$(sh "$REPO_DIR/../../Tools/check_UKI_boot_status.sh" --print-path-UKI)" 2>/dev/null | grep -qw "fido2"; then
+		mpathconf --enable
+		dracut -f -v --regenerate-all
+		ukify build --config=${REPO_DIR}/setup.cfg --output $(sh "$REPO_DIR/../../Tools/check_UKI_boot_status.sh" --print-path-UKI)
+	fi
+
+elif [[ "$bool_result_UKI" == "false" ]]; then
+	echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 	mpathconf --enable
 	dracut -f -v --regenerate-all
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
+
 rm -rf $REPO_DIR/setup.cfg
