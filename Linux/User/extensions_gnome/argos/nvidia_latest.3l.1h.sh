@@ -17,7 +17,7 @@ fi
 
 verlte() { printf '%s\n%s\n' "$1" "$2" | sort -V -C; }
 
-if [ -n "$device_id" ] && [ -n "$driver_version" ] && command -v nvidia-smi >/dev/null 2>&1; then
+if [ -n "$device_id" ] && command -v nvidia-smi >/dev/null 2>&1; then
 	if curl -s "$BASE_URL/$driver_version/README/supportedchips.html" | grep -qoiw "$device_id" && verlte "$driver_version" "$CURRENT_VERSION"; then
 		nvidia_var=✅
 	else
