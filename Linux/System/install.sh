@@ -442,7 +442,7 @@ fedora_system() {
 		# repo_setup
 		dnf upgrade -y
 		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y
-		dnf install podman cockpit-podman cockpit git zsh msr-tools conky code shfmt google-chrome-stable -y # microsoft-edge-stable
+		dnf install cockpit git zsh msr-tools conky code shfmt google-chrome-stable -y # microsoft-edge-stable podman cockpit-podman
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
