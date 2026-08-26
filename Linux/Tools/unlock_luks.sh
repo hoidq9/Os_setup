@@ -136,7 +136,7 @@ enroll_device() {
 		# --tpm2-pcrlock=/var/lib/systemd/pcrlock.json
 		# --unlock-fido2-device=auto
 
-		systemd-cryptenroll --tpm2-pcrs="" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
+		systemd-cryptenroll --tpm2-pcrs="0,7" --tpm2-device=$tpm2_device_path --tpm2-with-pin=yes $luks2_disk_path
 		# fi
 		LAST_COMMAND=$?
 
