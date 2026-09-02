@@ -138,53 +138,63 @@ create_keys_secureboot() {
 
 nvidia_drivers() {
 
-	mkdir -p /NVIDIA
-	device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
+	if [ "$os_id" == "rhel" ]; then
 
-	if [ -z "$device_id" ]; then
-		echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
-		return 1
-	fi
-
-	driver_version=$(
-		curl -s https://www.nvidia.com/en-us/drivers/unix/ |
-			grep "Latest Production Branch Version:" |
-			grep "Linux x86_64/AMD64/EM64T" |
-			grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
-			tr -d '\0[:space:]'
-	)
-	curl -s https://us.download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $REPO_DIR/supportedchips.html
-
-	if grep -qoiw "$device_id" $REPO_DIR/supportedchips.html; then
-		echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
-
-		CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader || echo "0.0.0")
-		BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
-
-		if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
-			cd /NVIDIA || return 1
-			RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
-			DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
-
-			if [[ ! -f "$RUN_FILE" ]]; then
-				wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
-			fi
-
-			if rpm -q dkms; then
-				dkms status | grep nvidia | awk '{print $1}' | while read module; do
-					dkms remove -m "$module" --all
-				done
-			fi
-
-			bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/secureboot/"${os_id}-auth".key --module-signing-public-key=/keys/secureboot/"${os_id}-auth".x509 --no-x-check --dkms --install-libglvnd
-
+		repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64/cuda-rhel10.repo"
+		if curl -fsL --range 0-0 "$repo_url" -o /dev/null; then
+			dnf config-manager --add-repo "$repo_url"
 		fi
-	else
-		echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
-		return 1
-	fi
+		dnf install kmod-nvidia-open nvidia-driver nvidia-open nvidia-driver-assistant nvidia-driver-selinux -y
 
-	rm -rf $REPO_DIR/supportedchips.html
+	else
+		mkdir -p /NVIDIA
+		device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/' | cut -d: -f2)
+
+		if [ -z "$device_id" ]; then
+			echo "❌ Không tìm thấy card NVIDIA nào trên hệ thống." >&2
+			return 1
+		fi
+
+		driver_version=$(
+			curl -s https://www.nvidia.com/en-us/drivers/unix/ |
+				grep "Latest Production Branch Version:" |
+				grep "Linux x86_64/AMD64/EM64T" |
+				grep -Pzo '(?s)<span[^>]*>Latest Production Branch Version:</span>.*?<a[^>]*>\K[^<]+' |
+				tr -d '\0[:space:]'
+		)
+		curl -s https://us.download.nvidia.com/XFree86/Linux-x86_64/$driver_version/README/supportedchips.html -o $REPO_DIR/supportedchips.html
+
+		if grep -qoiw "$device_id" $REPO_DIR/supportedchips.html; then
+			echo "✅ Card NVIDIA ($device_id) được hỗ trợ bởi driver $driver_version."
+
+			CURRENT_VERSION=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader || echo "0.0.0")
+			BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
+
+			if [[ "$CURRENT_VERSION" < "$driver_version" ]]; then
+				cd /NVIDIA || return 1
+				RUN_FILE="NVIDIA-Linux-x86_64-${driver_version}.run"
+				DOWNLOAD_URL="${BASE_URL}/${driver_version}/${RUN_FILE}"
+
+				if [[ ! -f "$RUN_FILE" ]]; then
+					wget --continue --show-progress "$DOWNLOAD_URL" -O "$RUN_FILE"
+				fi
+
+				if rpm -q dkms; then
+					dkms status | grep nvidia | awk '{print $1}' | while read module; do
+						dkms remove -m "$module" --all
+					done
+				fi
+
+				bash "$RUN_FILE" -s --systemd --rebuild-initramfs --install-compat32-libs --allow-installation-with-running-driver --module-signing-secret-key=/keys/secureboot/"${os_id}-auth".key --module-signing-public-key=/keys/secureboot/"${os_id}-auth".x509 --no-x-check --dkms --install-libglvnd
+
+			fi
+		else
+			echo "❌ Card NVIDIA ($device_id) không được hỗ trợ bởi driver $driver_version."
+			return 1
+		fi
+
+		rm -rf $REPO_DIR/supportedchips.html
+	fi
 }
 
 dkms_config() {
@@ -212,20 +222,20 @@ windsurf_custom() {
 
 # check if machine have nvidia gpu
 install_gpu_driver() {
-	if lspci | grep -qi nvidia; then
-		if rpm -q dkms; then
-			dnf upgrade dkms -y
-		else
-			dnf install dkms -y
-		fi
-		if rpm -q libglvnd-devel; then
-			dnf upgrade libglvnd-devel -y
-		else
-			dnf install libglvnd-devel -y
-		fi
-		create_keys_secureboot
-		dkms_config
-	fi
+	# if lspci | grep -qi nvidia; then
+	# 	if rpm -q dkms; then
+	# 		dnf upgrade dkms -y
+	# 	else
+	# 		dnf install dkms -y
+	# 	fi
+	# 	if rpm -q libglvnd-devel; then
+	# 		dnf upgrade libglvnd-devel -y
+	# 	else
+	# 		dnf install libglvnd-devel -y
+	# 	fi
+	# 	create_keys_secureboot
+	# 	dkms_config
+	# fi
 	nvidia_drivers
 }
 
@@ -463,14 +473,16 @@ fedora_system() {
 }
 
 rhel_system() {
-	epel_check() {
+	repo_check() {
 		if ! rpm -q epel-release; then
 			dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm -y # EPEL 10
 		fi
 
-		if ! dnf repolist --enabled | grep -q codeready-builder; then
+		if ! dnf repolist --enabled | grep -Eq 'codeready-builder|extensions-rpms'; then
 			crb enable
+			subscription-manager repos --enable rhel-10-for-x86_64-extensions-rpms
 		fi
+
 	}
 
 	flatpak_repo() {
@@ -483,25 +495,17 @@ rhel_system() {
 
 	packages() {
 		packages_gnome
-		dnf install zsh PackageKit-command-not-found git dbus-x11 gdb gcc flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code google-chrome-stable rpcbind portmap xorg-x11-server-Xwayland -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos xisxwayland xwayland-run xorg-x11-server-Xwayland-devel xwaylandvideobridge
+		dnf install zsh PackageKit-command-not-found git dbus-x11 gdb gcc flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code google-chrome-stable rpcbind portmap xorg-x11-server-Xwayland kdeconnectd sshfs -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos xisxwayland xwayland-run xorg-x11-server-Xwayland-devel xwaylandvideobridge
 		# systemctl restart libvirtd
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
-	}
-
-	KDE_Connect() {
-		if rpm -q epel-release && [ $(cat $REPO_DIR/../DE.txt) == "KDE" ]; then
-			dnf install kdeconnectd sshfs -y
-		fi
-		firewall-cmd --permanent --zone=public --add-service=kdeconnect
-		firewall-cmd --reload
 	}
 
 	main() {
 		# cp $REPO_DIR/checksum/SHA1.pmod /etc/crypto-policies/policies/modules
 		# update-crypto-policies --set LEGACY
 		# update-crypto-policies --set DEFAULT:SHA1
-		epel_check
+		repo_check
 		run
 		flatpak_repo
 
@@ -515,7 +519,9 @@ rhel_system() {
 		change_policy_keyring
 		shfmt_install
 		services
-		KDE_Connect
+
+		firewall-cmd --permanent --zone=public --add-service=kdeconnect
+		firewall-cmd --reload
 
 		# if systemd-detect-virt | grep -q "none"; then
 		# 	cd $REPO_DIR/repo || return
@@ -527,8 +533,8 @@ rhel_system() {
 		# windsurf_custom
 		# sign_kernel_ubuntu
 
-		cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
-		sh build.sh
+		# cd $REPO_DIR/../Part_Boot_Enc/build_uki || return
+		# sh build.sh
 		cd $REPO_DIR
 	}
 
