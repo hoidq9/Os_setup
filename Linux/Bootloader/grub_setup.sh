@@ -81,12 +81,13 @@ grub_new() {
 		# sed -i "s/(kernel_parameters)/$escaped_kernel_para/g" /etc/grub.d/01_redhat
 		# chmod +x /etc/grub.d/01_redhat
 
-		cp $REPO_DIR/02_redhat /etc/grub.d/
-		sed -i "s/(os_version)/$os_version/g" /etc/grub.d/02_redhat
-		sed -i "s/(os_name)/$os_id/g" /etc/grub.d/02_redhat
-		sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/02_redhat
-		chmod +x /etc/grub.d/02_redhat
-
+		if [ -f /boot/ukify-linux.efi ]; then 
+			cp $REPO_DIR/02_redhat /etc/grub.d/
+			sed -i "s/(os_version)/$os_version/g" /etc/grub.d/02_redhat
+			sed -i "s/(os_name)/$os_id/g" /etc/grub.d/02_redhat
+			sed -i "s/(boot_uuid)/$uuid_boot_unlocked/g" /etc/grub.d/02_redhat
+			chmod +x /etc/grub.d/02_redhat
+		fi
 		# chmod -x /etc/grub.d/10_linux
 		# chmod -x /etc/grub.d/20_linux_xen
 
