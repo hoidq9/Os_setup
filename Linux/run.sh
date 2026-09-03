@@ -13,6 +13,8 @@ if [ "$os_id" == "fedora" ]; then
 		fi
 		echo "$de_choice" >"$REPO_DIR"/DE.txt
 	fi
+elif [ "$os_id" == "rhel" ]; then
+	echo "GNOME" >"$REPO_DIR"/DE.txt
 fi
 
 if [ ! -d "$REPO_DIR"/logs ]; then
