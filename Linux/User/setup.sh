@@ -383,7 +383,7 @@ User_setup() {
 				git pull
 			fi
 
-			ln -s $HOME/Prj/argos/argos@pew.worldwidemann.com ~/.local/share/gnome-shell/extensions/argos@pew.worldwidemann.com
+			cp -rf $HOME/Prj/argos/argos@pew.worldwidemann.com ~/.local/share/gnome-shell/extensions/
 		fi
 
 		mkdir -p $HOME/.config/argos
