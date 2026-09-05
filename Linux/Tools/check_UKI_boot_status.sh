@@ -9,13 +9,17 @@ read_efi_string() {
 
 	[[ -f "$var" ]] || return 1
 
-	tail -c +5 "$var" 2>/dev/null |
+	dd if="$var" bs=1 skip=4 status=none 2>/dev/null |
 		iconv -f UTF-16LE -t UTF-8 2>/dev/null |
 		tr -d '\0'
 }
 
 normalize_efi_path() {
 	local path="$1"
+
+	if [[ "$path" =~ /File\((.*)\)$ ]]; then
+		path="${BASH_REMATCH[1]}"
+	fi
 
 	path="${path//\\//}"
 	path="${path#/}"
@@ -82,7 +86,6 @@ while IFS= read -r -d '' file; do
 
 		path_uki_found="$file"
 		current_uki_found=true
-
 	fi
 
 done < <(
@@ -98,7 +101,7 @@ case $1 in
 	echo "$path_uki_found"
 	;;
 --print-is-booting)
-	if $current_uki_found == true; then
+	if [[ "$current_uki_found" == true ]]; then
 		echo "true"
 	else
 		echo "false"
