@@ -152,9 +152,9 @@ enroll_device() {
 
 }
 
-result=$(sh $REPO_DIR/check_UKI_boot_status.sh)
+result=$(sh $REPO_DIR/check_UKI_boot_status.sh --print-is-booting)
 
-if grep -q "[UKI_Booting]" <<<"$result"; then
+if grep -q "true" <<<"$result"; then
 	echo -ne "${GREEN}The file UKI exists. Continue ${NC}"
 	echo ""
 	enroll_device
@@ -163,8 +163,9 @@ if grep -q "[UKI_Booting]" <<<"$result"; then
 		sh build.sh
 	fi
 
-else
+elif grep -q "false" <<<"$result"; then
 	echo -ne "${RED}The file UKI does not booting. Please ensure that the UKI file is present before enrolling FIDO2 or TPM2 devices.${NC}"
+	echo ""
 	echo -ne "${YELLOW}Do you want to enroll a new device to unlock LUKS2? (y/n): ${NC}"
 	read -r enroll_device
 
