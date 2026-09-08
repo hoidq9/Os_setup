@@ -63,4 +63,8 @@ elif [[ "$bool_result_UKI" == "false" ]]; then
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
 
+# mpathconf --enable
+# dracut -f -v --regenerate-all
+# ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
+
 rm -rf $REPO_DIR/setup.cfg
