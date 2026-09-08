@@ -432,7 +432,7 @@ fedora_system() {
 	}
 	packages() {
 		if [ $(cat $REPO_DIR/../DE.txt) == "GNOME" ]; then
-			dnf install ptyxis xapps gnome-shell nautilus gnome-browser-connector gnome-system-monitor gdm ibus-m17n dbus-x11 gnome-disk-utility kernel-devel flatpak gnome-software xisxwayland xorg-x11-server-Xwayland xwayland-run xwaylandvideobridge xorg-x11-server-Xwayland-devel -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab flatpak systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager yandex-browser-stable
+			dnf install ptyxis gnome-shell nautilus gnome-browser-connector gnome-system-monitor gdm ibus-m17n dbus-x11 gnome-disk-utility kernel-devel flatpak gnome-software -y # eza fzf pam_yubico gparted libXScrnSaver bleachbit keepassxc rclone xcb-util-keysyms xcb-util-renderutil baobab flatpak systemd-boot systemd-boot-unsigned erofs-utils biosdevname rng-tools busybox virt-manager yandex-browser-stable xapps xwaylandvideobridge xorg-x11-server-Xwayland-devel xorg-x11-server-Xwayland xwayland-run xisxwayland
 			if blkid | grep -q "btrfs"; then
 				dnf install btrfs-progs -y
 			else
@@ -441,10 +441,8 @@ fedora_system() {
 				fi
 			fi
 		elif [ $(cat $REPO_DIR/../DE.txt) == "KDE" ]; then
-			dnf install plasma-desktop plasma-nm sddm sddm-kcm NetworkManager-wifi wpa_supplicant konsole dolphin plasma-discover kwallet bluez bluez-tools bluedevil kdeconnectd sshfs -y
+			dnf install plasma-desktop plasma-nm sddm sddm-kcm NetworkManager-wifi wpa_supplicant konsole dolphin plasma-discover kwallet bluez bluez-tools bluedevil kdeconnectd -y
 
-			firewall-cmd --permanent --zone=public --add-service=kdeconnect
-			firewall-cmd --reload
 		fi
 	}
 
@@ -452,14 +450,16 @@ fedora_system() {
 		# repo_setup
 		dnf upgrade -y
 		dnf group install "hardware-support" "networkmanager-submodules" "fonts" -y
-		dnf install cockpit git zsh msr-tools conky code shfmt google-chrome-stable -y # microsoft-edge-stable podman cockpit-podman
+		dnf install cockpit git zsh msr-tools code shfmt google-chrome-stable sshfs -y # microsoft-edge-stable podman cockpit-podman conky
+		firewall-cmd --permanent --zone=public --add-service=kdeconnect
+		firewall-cmd --reload
 		flatpak_repo() {
 			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 		}
 		run
 		flatpak_repo
 		create_keys_secureboot
-		# install_gpu_driver
+		install_gpu_driver
 		# change_policy_keyring
 		# sign_kernel_garuda
 		# vscode_custom
