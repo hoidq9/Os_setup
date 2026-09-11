@@ -29,7 +29,7 @@ cursors() {
 }
 
 Graphics_cursors() {
-	if [ $(cat ../../DesktopEnvironment.txt) == "GNOME" ]; then
+	if [[ $(<../../DesktopEnvironment.txt) == "GNOME" ]]; then
 		cursors "$os_id"
 	fi
 }

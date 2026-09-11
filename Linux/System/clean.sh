@@ -13,7 +13,7 @@ System_clean() {
 	dnf autoremove -y
 	dnf install PackageKit-command-not-found -y
 
-	if [ $(cat ../DesktopEnvironment.txt) == "GNOME" ]; then
+	if [[ $(<../DesktopEnvironment.txt) == "GNOME" ]]; then
 		dnf install gnome-software -y
 	fi
 

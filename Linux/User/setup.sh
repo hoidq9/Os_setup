@@ -424,7 +424,7 @@ User_setup() {
 		# "autostart_vscode"
 	)
 
-	if [ $(cat ../DesktopEnvironment.txt) == "GNOME" ]; then
+	if [[ $(<../DesktopEnvironment.txt) == "GNOME" ]]; then
 		for task in "${tasks[@]}"; do
 			"$task"
 		done
@@ -432,11 +432,11 @@ User_setup() {
 
 	podman_service
 	check_and_run Ohmyzsh_User "$REPO_DIR/../logs/Ohmyzsh_User.log" "$REPO_DIR/../logs/Result.log"
-	if systemd-detect-virt | grep -q "none" && [ $(echo $XDG_CURRENT_DESKTOP) == "GNOME" ]; then
+	if systemd-detect-virt | grep -q "none" && [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
 		check_and_run User_gnome_extensions "$REPO_DIR/../logs/User_gnome_extensions.log" "$REPO_DIR/../logs/Result.log"
 	fi
 
-	if [ $(echo $XDG_CURRENT_DESKTOP) == "KDE" ]; then
+	if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]]; then
 		# kde_keyring
 		KDE_Desktop
 	fi

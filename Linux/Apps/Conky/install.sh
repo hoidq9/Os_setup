@@ -101,7 +101,9 @@ Apps_Conky() {
 
 if systemd-detect-virt | grep -q "none"; then
 	# if [ "$os_id" == "fedora" ]; then
-	check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+	if [[ $(<../../DesktopEnvironment.txt) == "KDE" ]]; then
+		check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
+	fi
 	# echo "hehe"
 	# fi
 fi

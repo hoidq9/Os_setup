@@ -44,7 +44,7 @@ os_themes() {
 }
 
 Graphics_themes() {
-	if [ $(cat ../../DesktopEnvironment.txt) == "GNOME" ]; then
+	if [[ $(<../../DesktopEnvironment.txt) == "GNOME" ]]; then
 		os_themes "$os_id"
 	fi
 }
