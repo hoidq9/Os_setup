@@ -1,5 +1,5 @@
 #!/bin/bash
-# echo $XDG_CURRENT_DESKTOP >DE.txt
+echo $XDG_CURRENT_DESKTOP >DesktopEnvironment.txt
 source "$(pwd)/variables.sh"
 
 if [ "$os_id" == "fedora" ]; then
@@ -13,8 +13,9 @@ if [ "$os_id" == "fedora" ]; then
 		fi
 		echo "$de_choice" >"$REPO_DIR"/DE.txt
 	fi
-elif [ "$os_id" == "rhel" ]; then
-	echo "GNOME" >"$REPO_DIR"/DE.txt
+# elif [ "$os_id" == "rhel" ]; then
+# 	echo "GNOME" >"$REPO_DIR"/DE.txt
+# 	echo "Haha"
 fi
 
 if [ ! -d "$REPO_DIR"/logs ]; then

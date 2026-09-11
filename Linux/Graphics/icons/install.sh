@@ -35,7 +35,7 @@ icons() {
 }
 
 Graphics_icons() {
-	if [ $(cat ../../DE.txt) == "GNOME" ]; then
+	if [ $(cat ../../DesktopEnvironment.txt) == "GNOME" ]; then
 		icons "$os_id"
 	fi
 }

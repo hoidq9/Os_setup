@@ -424,7 +424,7 @@ User_setup() {
 		# "autostart_vscode"
 	)
 
-	if [ $(cat ../DE.txt) == "GNOME" ]; then
+	if [ $(cat ../DesktopEnvironment.txt) == "GNOME" ]; then
 		for task in "${tasks[@]}"; do
 			"$task"
 		done
