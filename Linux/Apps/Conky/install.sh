@@ -49,8 +49,8 @@ Apps_Conky() {
 
 		cd $os_id
 
-		if [ ! -f $HOME/Conky/conky_text.conf ]; then # [ ! -f $HOME/Conky/conky_graph.conf ] &&
-			# cp conky_graph.conf $HOME/Conky
+		if [ ! -f $HOME/Conky/conky_text.conf ] && [ ! -f $HOME/Conky/conky_cpu_usage_graph.conf ]; then
+			cp conky_cpu_usage_graph.conf $HOME/Conky
 			cp conky_text.conf $HOME/Conky
 		fi
 
@@ -62,30 +62,18 @@ Apps_Conky() {
 
 		mv conky.AppImage $HOME/Conky
 		chmod +x $HOME/Conky/conky.AppImage
-		cp conky_rhel.desktop conky.desktop
+
 		sed -i "s/name_user_h/$user_current/g" conky.desktop
+		sed -i "s/name_user_h/$user_current/g" conky_rhel_text.desktop
+		sed -i "s/name_user_h/$user_current/g" conky_rhel_cpu_graph.desktop
+
 		if [ ! -d $HOME/.local/share/applications ]; then
 			mkdir -p $HOME/.local/share/applications
 		fi
+
 		cp conky.desktop $HOME/.local/share/applications
-
-		# cp conky_graph.desktop /home/$user_current/.config/autostart
-		cp conky_text.desktop /home/$user_current/.config/autostart
-		# sed -i "s/name_user_h/$user_current/g" /home/$user_current/.config/autostart/conky_graph.desktop
-		sed -i "s/name_user_h/$user_current/g" /home/$user_current/.config/autostart/conky_text.desktop
-
-		rm -rf conky.desktop
-
-		# if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-		# 	environment_display="wayland"
-		# elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-		# 	environment_display="x11"
-		# fi
-
-		# mkdir -p /home/$user_current/.config/conky
-		# if [ ! -f $HOME/.config/conky/conky.conf ]; then
-		# 	cp -f conky_$environment_display.conf /home/$user_current/.config/conky/conky.conf
-		# fi
+		cp conky_rhel_cpu_graph.desktop /home/$user_current/.config/autostart
+		cp conky_rhel_text.desktop /home/$user_current/.config/autostart
 
 		# mkdir -p ~/.config/systemd/user
 		# systemctl --user enable conky_text.service
@@ -94,16 +82,11 @@ Apps_Conky() {
 		# systemctl --user start conky_graph.service
 
 		loginctl enable-linger $user_current
-
-		# echo "Hehe"
 	fi
 }
 
 if systemd-detect-virt | grep -q "none"; then
-	# if [ "$os_id" == "fedora" ]; then
 	if [[ $(<../../DesktopEnvironment.txt) == "KDE" ]]; then
 		check_and_run Apps_Conky "$REPO_DIR/../../logs/Apps_Conky.log" "$REPO_DIR/../../logs/Result.log"
 	fi
-	# echo "hehe"
-	# fi
 fi

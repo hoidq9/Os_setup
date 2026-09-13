@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=conky
+Exec=bash -c "sleep 9 && /home/hoidq/Conky/conky.AppImage --daemonize"
+StartupNotify=false
+Terminal=false
+Icon=/usr/share/icons/rhel_icons/apps/scalable/indicator-cpufreq.svg
+Categories=System;Monitor;
+X-GNOME-Autostart-enabled=true
