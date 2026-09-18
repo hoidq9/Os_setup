@@ -16,20 +16,7 @@ Apps_Conky() {
 		cd $os_id
 
 		if [ "$os_id" == "fedora" ]; then
-			# if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-			#     cp conky_wayland.conf ~/.config/conky/
-			#     mv ~/.config/conky/conky_wayland.conf ~/.config/conky/conky.conf
-			# elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-			#     cp conky_x11.conf ~/.config/conky/
-			#     mv ~/.config/conky/conky_x11.conf ~/.config/conky/conky.conf
-			# fi
-
 			if [ ! -f $HOME/.config/conky/conky.conf ]; then
-				# if loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "wayland"; then
-				# 	cp -f conky_wayland.conf /home/$user_current/.config/conky/conky.conf
-				# elif loginctl show-session $(loginctl list-sessions | grep $user_current | awk '{print $1}') -p Type | grep -q "x11"; then
-				# 	cp -f conky_x11.conf /home/$user_current/.config/conky/conky.conf
-				# fi
 				cp -f conky_text.conf /home/$user_current/.config/conky/conky.conf
 			fi
 
@@ -49,9 +36,11 @@ Apps_Conky() {
 
 		cd $os_id
 
-		if [ ! -f $HOME/Conky/conky_text.conf ] && [ ! -f $HOME/Conky/conky_cpu_usage_graph.conf ]; then
-			cp conky_cpu_usage_graph.conf $HOME/Conky
+		if [ ! -f $HOME/Conky/conky_text.conf ] && [ ! -f $HOME/Conky/conky_cpu_graph.conf ] && [ ! -f $HOME/Conky/conky_uptodate.conf ]; then
+			cp conky_cpu_graph.conf $HOME/Conky
 			cp conky_text.conf $HOME/Conky
+			cp conky_uptodate.conf $HOME/Conky
+			cp *.sh $HOME/Conky
 		fi
 
 		curl -s https://api.github.com/repos/brndnmtthws/conky/releases/latest |
@@ -64,22 +53,15 @@ Apps_Conky() {
 		chmod +x $HOME/Conky/conky.AppImage
 
 		sed -i "s/name_user_h/$user_current/g" conky.desktop
-		sed -i "s/name_user_h/$user_current/g" conky_rhel_text.desktop
-		sed -i "s/name_user_h/$user_current/g" conky_rhel_cpu_graph.desktop
 
 		if [ ! -d $HOME/.local/share/applications ]; then
 			mkdir -p $HOME/.local/share/applications
 		fi
 
 		cp conky.desktop $HOME/.local/share/applications
-		cp conky_rhel_cpu_graph.desktop /home/$user_current/.config/autostart
-		cp conky_rhel_text.desktop /home/$user_current/.config/autostart
-
-		# mkdir -p ~/.config/systemd/user
-		# systemctl --user enable conky_text.service
-		# systemctl --user enable conky_graph.service
-		# systemctl --user start conky_text.service
-		# systemctl --user start conky_graph.service
+		cp conky.desktop /home/$user_current/.config/autostart
+		cp $REPO_DIR/start.sh $HOME/Conky
+		chmod +x $HOME/Conky/start.sh
 
 		loginctl enable-linger $user_current
 	fi
