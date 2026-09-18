@@ -499,7 +499,7 @@ rhel_system() {
 			packages_gnome
 		fi
 
-		dnf install zsh PackageKit-command-not-found git dbus-x11 gdb gcc flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code google-chrome-stable rpcbind portmap xorg-x11-server-Xwayland sshfs -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts rhc rhc-worker-playbook ansible-core yara yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos xisxwayland xwayland-run xorg-x11-server-Xwayland-devel xwaylandvideobridge
+		dnf install zsh PackageKit-command-not-found git dbus-x11 gdb gcc flatpak ibus-m17n podman msr-tools cockpit-machines cockpit-podman cockpit code google-chrome-stable rpcbind portmap xorg-x11-server-Xwayland sshfs rhc rhc-worker-playbook ansible-core yara -y # dconf-editor gnome-extensions-app.x86_64 podman-compose conky virt-manager redhat-mono-fonts yandex-browser-stable microsoft-edge-stable kernel-devel gnome-shell-extension-argos xisxwayland xwayland-run xorg-x11-server-Xwayland-devel xwaylandvideobridge
 		# systemctl restart libvirtd kdeconnectd
 		dnf group install "hardware-support" "networkmanager-submodules" "Fonts" -y
 		dnf upgrade -y
