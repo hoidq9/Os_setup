@@ -1,5 +1,5 @@
 #!/bin/bash
-
+os_id=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
 device_id=$(lspci -nn | grep -i nvidia | grep VGA | sed -n 's/.*\[\([0-9a-fA-F:]\+\)\].*/\1/p' | cut -d: -f2)
 
 driver_version=$(
@@ -27,4 +27,13 @@ else
 	nvidia_var=?
 fi
 
-echo "NVIDIA: $nvidia_var"
+if [ "$os_id" == "rhel" ]; then
+	repo_url="https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64/cuda-rhel10.repo"
+	if curl -fsL --range 0-0 "$repo_url" -o /dev/null; then
+		echo "NVIDIA: ✅"
+	else
+		echo "NVIDIA: ❌"
+	fi
+else
+	echo "NVIDIA: $nvidia_var"
+fi
