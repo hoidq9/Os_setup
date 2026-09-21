@@ -52,12 +52,14 @@ echo "bool_result_UKI=$bool_result_UKI"
 if [[ "$bool_result_UKI" == "true" ]]; then
 	if [[ "$result_UKI" == "No_UKI" ]] || [[ "$result_NVIDIA" == "No_NVIDIA" ]] || ! lsinitrd "$(sh "$REPO_DIR/../../Tools/check_UKI_boot_status.sh" --print-path-UKI)" 2>/dev/null | grep -qw "fido2"; then
 		mpathconf --enable
+		dracut -f -v --regenerate-all
 		ukify build --config=${REPO_DIR}/setup.cfg --output $(sh "$REPO_DIR/../../Tools/check_UKI_boot_status.sh" --print-path-UKI)
 	fi
 
 elif [[ "$bool_result_UKI" == "false" ]]; then
 	echo "add_dracutmodules+=\" fido2 \"" | tee /etc/dracut.conf.d/fido2.conf
 	mpathconf --enable
+	dracut -f -v --regenerate-all
 	ukify build --config=${REPO_DIR}/setup.cfg --output /boot/ukify-linux.efi
 fi
 
