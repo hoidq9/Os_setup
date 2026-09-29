@@ -144,7 +144,7 @@ nvidia_drivers() {
 		if curl -fsL --range 0-0 "$repo_url" -o /dev/null; then
 			dnf config-manager --add-repo "$repo_url"
 		fi
-		dnf install kmod-nvidia-open nvidia-driver nvidia-open nvidia-driver-assistant nvidia-driver-selinux -y
+		dnf install kmod-nvidia-latest-dkms nvidia-driver nvidia-open nvidia-driver-assistant nvidia-driver-selinux -y # kmod-nvidia-open
 
 	else
 		mkdir -p /NVIDIA
@@ -201,10 +201,10 @@ dkms_config() {
 	if [ -d /etc/dkms ]; then
 		if [ ! -f /etc/dkms/framework.conf ]; then
 			touch /etc/dkms/framework.conf
-		else
-			grep -qxF 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' | tee -a /etc/dkms/framework.conf
-			grep -qxF 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' | tee -a /etc/dkms/framework.conf
 		fi
+		grep -qxF 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' /etc/dkms/framework.conf || echo 'mok_signing_key=/keys/secureboot/'${os_id}-auth'.key' | tee -a /etc/dkms/framework.conf
+		grep -qxF 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' /etc/dkms/framework.conf || echo 'mok_certificate=/keys/secureboot/'${os_id}-auth'.x509' | tee -a /etc/dkms/framework.conf
+
 	fi
 }
 
