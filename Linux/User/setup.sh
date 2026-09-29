@@ -383,6 +383,7 @@ User_setup() {
 				git pull
 			fi
 
+			rm -rf ~/.local/share/gnome-shell/extensions/argos@pew.worldwidemann.com
 			mv -f $HOME/Prj/argos/argos@pew.worldwidemann.com ~/.local/share/gnome-shell/extensions/
 		fi
 
