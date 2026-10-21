@@ -126,7 +126,11 @@ alias search='sudo dnf search'
 alias search_all='sudo dnf search all'
 alias clean='sudo dnf clean all'
 alias update= 'sudo dnf update'
-alias upgrade='sudo dnf upgrade -y && flatpak update -y'
+if (($+commands[flatpak])); then
+	alias upgrade='sudo dnf upgrade -y && flatpak update -y'
+else
+	alias upgrade='sudo dnf upgrade -y'
+fi
 alias reinstall='sudo dnf reinstall -y'
 alias dinfo='sudo dnf info'
 alias ginfo='sudo dnf groupinfo'
