@@ -520,7 +520,7 @@ rhel_system() {
 		# fi
 
 		install_gpu_driver
-		change_policy_keyring
+		# change_policy_keyring
 		shfmt_install
 		services
 
